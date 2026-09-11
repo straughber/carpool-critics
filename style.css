@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap');
+
 /* ========================================================
    CARPOOL CINEMA CRITICS - PRODUCTION STYLESHEET
    ======================================================== */
@@ -10,6 +12,8 @@
   --bmw-red: #e63946;
   --text-bright: #ffffff;
   --text-dim: #94a3b8;
+  --font-header: 'Teko', sans-serif;
+  --font-body: 'Chivo', -apple-system, BlinkMacSystemFont, sans-serif;
   --card-bg: rgba(13, 18, 29, 0.94);
   --card-border: rgba(255, 255, 255, 0.08);
   --anim-timing: 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -19,17 +23,31 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
 }
 
 body {
   background-color: var(--bg-black);
   color: var(--text-bright);
+  font-family: var(--font-body);
   min-height: 100vh;
   overflow-x: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Headers Typography: Google Font Teko */
+h1, h2, h3, h4, h5, h6,
+.brand-title,
+.subpage-heading,
+.video-title,
+.transcript-heading-text,
+.info-panel-title,
+.bio-name {
+  font-family: var(--font-header);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 
 /* Master 16:9 Viewport Canvas */
@@ -97,18 +115,20 @@ body {
 }
 
 .brand-title {
-  font-size: clamp(18px, 2.2vw, 28px);
-  font-weight: 900;
-  letter-spacing: 3px;
+  font-family: var(--font-header);
+  font-size: clamp(26px, 3.2vw, 42px);
+  font-weight: 700;
+  letter-spacing: 3.5px;
   color: #ffffff;
   text-transform: uppercase;
   text-align: center;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.05;
   white-space: nowrap;
 }
 
 .brand-sub {
+  font-family: var(--font-body);
   font-size: clamp(9px, 1.05vw, 12px);
   font-weight: 700;
   letter-spacing: 1.8px;
@@ -476,9 +496,10 @@ body {
 }
 
 .subpage-heading {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: 2.5px;
+  font-family: var(--font-header);
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -566,8 +587,10 @@ body {
 .badge-shane { background: rgba(72, 202, 228, 0.18); color: var(--bmw-blue); }
 
 .bio-name {
-  font-size: 22px;
-  font-weight: 800;
+  font-family: var(--font-header);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 1px;
   margin-bottom: 8px;
 }
 
@@ -609,8 +632,10 @@ body {
 }
 
 .video-title {
-  font-size: 18px;
-  font-weight: 800;
+  font-family: var(--font-header);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
   color: #fff;
 }
 
@@ -657,8 +682,9 @@ body {
 }
 
 .transcript-heading-text {
-  font-size: 13px;
-  font-weight: 800;
+  font-family: var(--font-header);
+  font-size: 18px;
+  font-weight: 600;
   letter-spacing: 1px;
   color: #ffffff;
   text-transform: uppercase;
@@ -880,8 +906,9 @@ body {
 }
 
 .info-panel-title {
-  font-size: 14px;
-  font-weight: 800;
+  font-family: var(--font-header);
+  font-size: 20px;
+  font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -915,7 +942,7 @@ body {
     max-height: none;
   }
   .brand-title {
-    font-size: 18px;
+    font-size: 26px;
     letter-spacing: 2px;
     white-space: normal;
   }
