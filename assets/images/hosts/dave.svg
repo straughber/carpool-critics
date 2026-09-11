@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 480" fill="none">
+  <!-- Soft Portrait Glow -->
+  <ellipse cx="160" cy="220" rx="140" ry="200" fill="url(#daveGlow)" opacity="0.6"/>
+  <defs>
+    <radialGradient id="daveGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#f4a261" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Torso: White Graphic T-Shirt -->
+  <path d="M60 480 L70 280 L110 240 L160 255 L210 240 L250 280 L260 480 Z" fill="#ebeff5"/>
+  <circle cx="160" cy="330" r="32" fill="#d1d7e2"/>
+  <rect x="75" y="400" width="20" height="12" fill="#e63946"/> <!-- Festival wristband -->
+  <!-- Neck & Face -->
+  <path d="M135 205 L185 205 L180 250 L140 250 Z" fill="#e0ab85"/>
+  <ellipse cx="160" cy="180" rx="46" ry="52" fill="#ebba95"/>
+  <!-- Mustache & Goatee -->
+  <ellipse cx="160" cy="195" rx="22" ry="8" fill="#1b1c22"/>
+  <ellipse cx="160" cy="216" rx="12" ry="14" fill="#1b1c22"/>
+  <path d="M146 200 Q160 208 174 200 Z" fill="#302018"/>
+  <!-- Glasses -->
+  <rect x="126" y="160" width="30" height="25" rx="3" fill="none" stroke="#0a0c10" stroke-width="3"/>
+  <rect x="164" y="160" width="30" height="25" rx="3" fill="none" stroke="#0a0c10" stroke-width="3"/>
+  <line x1="156" y1="170" x2="164" y2="170" stroke="#0a0c10" stroke-width="3"/>
+  <!-- Eyes -->
+  <ellipse cx="141" cy="172" rx="4" ry="3" fill="#ffffff"/>
+  <circle cx="142" cy="172" r="2" fill="#302018"/>
+  <ellipse cx="179" cy="172" rx="4" ry="3" fill="#ffffff"/>
+  <circle cx="178" cy="172" r="2" fill="#302018"/>
+  <!-- Black Cap -->
+  <path d="M115 150 Q160 115 205 150 L210 170 L110 170 Z" fill="#12151b"/>
+  <path d="M100 165 Q160 145 220 165 L210 175 L110 175 Z" fill="#0a0c10"/>
+
+  <!-- Whiteboard Button: EPISODES -->
+  <g transform="translate(40, 360)">
+    <rect x="2" y="4" width="236" height="85" rx="6" fill="rgba(0,0,0,0.6)"/>
+    <rect x="0" y="0" width="240" height="85" rx="6" fill="#f8f9fa"/>
+    <rect x="0" y="0" width="240" height="6" rx="3" fill="#f4a261"/>
+    <text x="120" y="46" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="22" font-weight="900" fill="#0d1422" letter-spacing="2">EPISODES</text>
+    <text x="120" y="70" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="10" font-weight="800" fill="#f4a261" letter-spacing="1.5">DAVE • PASSENGER</text>
+  </g>
+</svg>
