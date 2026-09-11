@@ -213,7 +213,7 @@ function handleFormSubmission(e) {
     .finally(() => {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Transmit Dispatch';
+        submitBtn.innerText = 'Send';
       }
       setTimeout(() => {
         if (alert) alert.style.display = 'none';
