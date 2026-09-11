@@ -6,62 +6,46 @@ Website URL: **[https://straughber.github.io/curbside-cinema/](https://straughbe
 
 ---
 
-## Repository & Folder Architecture (Scales to 100+ Episodes)
+## Scalable Repository & Media Architecture
 
-To keep initial website load times blazing fast even with 100+ episodes and hundreds of thousands of words of dialogue, transcripts are **never** bundled into the main HTML file. Instead, they are lazy-loaded on-demand as static JSON assets.
+The repository is organized into dedicated directories for media, data, and presentation logic to maximize initial load performance, streamline asset management, and improve SEO indexing across search engines.
 
 ```text
 curbside-cinema/
-├── index.html                   # Main single-page web app (~27KB)
+├── index.html                   # Lightweight single-page app (~30KB) with Schema.org JSON-LD
 ├── style.css                    # Performance-optimized CSS with animations & responsive rules
 ├── script.js                    # Interaction routing & on-demand transcript lazy loader
-├── CurbsideCinema_Background.jpeg  # Background BMW X5 cockpit photo
-├── Alex_CurbsideCritic.webp     # Driver seat cutout
-├── Dave_CurbsideCritic.webp     # Center back seat cutout
-├── Shane_CurbsideCritic.webp    # Passenger seat cutout
-├── assets/                      # Vector fallbacks & image assets
-│   ├── alex.svg
-│   ├── dave.svg
-│   └── shane.svg
-└── data/                        # Scalable data architecture
+├── assets/                      # Media & visual assets categorized for SEO
+│   └── images/
+│       ├── cockpit/             # Vehicle interior & background imagery
+│       │   └── CurbsideCinema_Background.jpeg
+│       ├── hosts/               # Transparent host cutouts & vector fallbacks
+│       │   ├── Alex_CurbsideCritic.webp
+│       │   ├── Dave_CurbsideCritic.webp
+│       │   ├── Shane_CurbsideCritic.webp
+│       │   ├── alex.svg
+│       │   ├── dave.svg
+│       │   └── shane.svg
+│       └── episodes/            # Future episode thumbnails & posters (ep01 to ep100+)
+└── data/                        # Structured data architecture
     ├── episodes.json            # Master lightweight index of all episodes
     └── transcripts/             # Individual transcript files (loaded on-demand only)
         ├── ep42.json
         ├── ep41.json
         ├── ep40.json
-        └── ... (ep01 to ep100+)
+        └── ...
 ```
 
 ---
 
-## How Adding Future Episodes Works
+## Media Organization & SEO Guidelines
 
-When you record a new episode:
-
-1. **Add Transcript**:
-   Create `data/transcripts/ep<number>.json` using the structured format:
-   ```json
-   {
-     "episodeId": "ep43",
-     "title": "Episode 43: Title",
-     "recordedLocation": "BMW X5 Studio • Austin, TX",
-     "dialogue": [
-       {
-         "time": "00:00:15",
-         "speaker": "Shane",
-         "role": "Passenger",
-         "text": "..."
-       }
-     ]
-   }
-   ```
-2. **Register in Catalog**:
-   Add an entry into `data/episodes.json` with the episode metadata and YouTube video ID.
-3. **Commit**:
-   GitHub Pages builds automatically. The front page `index.html` remains featherlight, and visitors only download a transcript when they click that specific episode.
-
----
-
-## Accessibility & SEO Benefits
-* **Screen Reader Friendly**: Transcripts are marked up with semantic HTML (`<article>`, `<time>`, `<role="region">`, `aria-live="polite"`).
-* **Search Engine Indexable**: Each static file under `data/transcripts/` is a crawlable public endpoint that search engines can index for episode quotes, guest names, and movie titles.
+1. **Cockpit Environment (`assets/images/cockpit/`)**:
+   * Houses background plates. The site checks `assets/images/cockpit/CurbsideCinema_Background.jpeg` with automatic root-directory fallback.
+2. **Host Cutouts (`assets/images/hosts/`)**:
+   * Houses host cutouts. Named descriptively: `Alex_CurbsideCritic.webp`, `Dave_CurbsideCritic.webp`, `Shane_CurbsideCritic.webp`.
+   * Each host image tag features descriptive, keyword-rich `alt` text for search engine accessibility.
+3. **Episode Thumbnails (`assets/images/episodes/`)**:
+   * Reserved for episode posters (`ep42-thumb.webp`, etc.) to power OpenGraph social previews and Google Video/Image search indexing.
+4. **On-Demand Transcripts (`data/transcripts/`)**:
+   * Each episode's dialogue lives in a dedicated static JSON file, keeping initial page load under 30KB while making full text search-engine crawlable.
