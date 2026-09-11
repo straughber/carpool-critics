@@ -22,78 +22,81 @@
     </header>
 
     <!-- ======================================================== -->
-    <!-- VIEW 1: HOME COCKPIT VIEW (INTERACTIVE HOST BUTTONS) -->
+    <!-- VIEW 1: HOME COCKPIT VIEW (PROPORTIONAL HOST LAYERS) -->
     <!-- ======================================================== -->
     <main class="view-panel active" id="view-home">
       <div class="cockpit-stage">
-        <!-- Photorealistic Background Image -->
+        <!-- 1. Background Car Interior Image -->
         <img 
           src="CurbsideCinema_Background.jpeg" 
           alt="BMW X5 Interior Austin Skyline" 
-          class="bg-car-image" 
+          class="stage-layer bg-car-image" 
           onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpg';"
         />
 
-        <!-- Ambient BMW Interior Glow Overlay -->
+        <!-- Ambient Blue LED Reflection -->
         <div class="cockpit-ambient-glow"></div>
 
-        <!-- Interactive Host Buttons Layer -->
-        <div class="hosts-interactive-grid">
-
-          <!-- HOST 1: ALEX (LEFT / DRIVER SEAT) -> ABOUT US -->
-          <div class="host-anchor host-alex-anchor" id="btn-alex" onclick="switchSection('about')">
-            <div class="spotlight-cone cone-alex"></div>
-            <div class="host-content-wrapper">
-              <img 
-                src="Alex_CurbsideCritic.webp" 
-                alt="Alex - About Us" 
-                class="host-graphic"
-                onerror="this.onerror=null; this.src='assets/Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/alex.svg';};"
-              />
-              <div class="whiteboard-pill pill-alex">
-                <span class="pill-action">ABOUT US</span>
-                <span class="pill-host">ALEX • DRIVER</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- HOST 2: DAVE (MIDDLE / CENTER BACK SEAT) -> EPISODES -->
-          <div class="host-anchor host-dave-anchor" id="btn-dave" onclick="switchSection('episodes')">
-            <div class="spotlight-cone cone-dave"></div>
-            <div class="host-content-wrapper">
-              <img 
-                src="Dave_CurbsideCritic.webp" 
-                alt="Dave - Episodes" 
-                class="host-graphic"
-                onerror="this.onerror=null; this.src='assets/Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/dave.svg';};"
-              />
-              <div class="whiteboard-pill pill-dave">
-                <span class="pill-action">EPISODES</span>
-                <span class="pill-host">DAVE • BACK SEAT</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- HOST 3: SHANE (RIGHT / PASSENGER SEAT) -> CONTACT US -->
-          <div class="host-anchor host-shane-anchor" id="btn-shane" onclick="switchSection('contact')">
-            <div class="spotlight-cone cone-shane"></div>
-            <div class="host-content-wrapper">
-              <img 
-                src="Shane_CurbsideCritic.webp" 
-                alt="Shane - Contact Us" 
-                class="host-graphic"
-                onerror="this.onerror=null; this.src='assets/Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/shane.svg';};"
-              />
-              <div class="whiteboard-pill pill-shane">
-                <span class="pill-action">CONTACT US</span>
-                <span class="pill-host">SHANE • PASSENGER</span>
-              </div>
-            </div>
-          </div>
-
+        <!-- 2. Full-Width Host Cutout Layers & Spotlights -->
+        <!-- DAVE (Center Back Seat) -->
+        <div class="host-group group-dave" id="group-dave">
+          <div class="spotlight-cone cone-dave"></div>
+          <img 
+            src="Dave_CurbsideCritic.webp" 
+            alt="Dave" 
+            class="stage-layer host-cutout-img img-dave"
+            onerror="this.onerror=null; this.src='assets/Dave_CurbsideCritic.webp';"
+          />
         </div>
 
-        <!-- Cockpit Interaction Hint Pill -->
+        <!-- ALEX (Driver Seat, Left) -->
+        <div class="host-group group-alex" id="group-alex">
+          <div class="spotlight-cone cone-alex"></div>
+          <img 
+            src="Alex_CurbsideCritic.webp" 
+            alt="Alex" 
+            class="stage-layer host-cutout-img img-alex"
+            onerror="this.onerror=null; this.src='assets/Alex_CurbsideCritic.webp';"
+          />
+        </div>
+
+        <!-- SHANE (Passenger Seat, Right) -->
+        <div class="host-group group-shane" id="group-shane">
+          <div class="spotlight-cone cone-shane"></div>
+          <img 
+            src="Shane_CurbsideCritic.webp" 
+            alt="Shane" 
+            class="stage-layer host-cutout-img img-shane"
+            onerror="this.onerror=null; this.src='assets/Shane_CurbsideCritic.webp';"
+          />
+        </div>
+
+        <!-- 3. Clickable Host Hotspot Zones (Direct Interaction on Hosts) -->
+        <div 
+          class="host-hitbox hitbox-alex" 
+          onclick="switchSection('about')" 
+          title="Alex • About Us"
+          onmouseenter="setHover('alex', true)"
+          onmouseleave="setHover('alex', false)"
+        ></div>
+
+        <div 
+          class="host-hitbox hitbox-dave" 
+          onclick="switchSection('episodes')" 
+          title="Dave • Episodes"
+          onmouseenter="setHover('dave', true)"
+          onmouseleave="setHover('dave', false)"
+        ></div>
+
+        <div 
+          class="host-hitbox hitbox-shane" 
+          onclick="switchSection('contact')" 
+          title="Shane • Contact Us"
+          onmouseenter="setHover('shane', true)"
+          onmouseleave="setHover('shane', false)"
+        ></div>
+
+        <!-- Interaction Helper Pill -->
         <div class="cockpit-hint-pill">
           Interactive Cockpit • Click Any Host To Navigate
         </div>
