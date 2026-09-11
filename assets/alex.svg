@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" fill="none">
+  <!-- Soft Portrait Glow -->
+  <ellipse cx="150" cy="200" rx="130" ry="180" fill="url(#alexGlow)" opacity="0.65"/>
+  <defs>
+    <radialGradient id="alexGlow" cx="50%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#e63946" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Torso: Maroon Striped Button-down Shirt -->
+  <path d="M50 450 L65 260 L105 225 L150 240 L195 225 L235 260 L250 450 Z" fill="#872a37"/>
+  <!-- Pinstripes -->
+  <line x1="85" y1="270" x2="80" y2="450" stroke="#661c27" stroke-width="2"/>
+  <line x1="115" y1="250" x2="110" y2="450" stroke="#661c27" stroke-width="2"/>
+  <line x1="185" y1="250" x2="190" y2="450" stroke="#661c27" stroke-width="2"/>
+  <line x1="215" y1="270" x2="220" y2="450" stroke="#661c27" stroke-width="2"/>
+  <path d="M130 230 L150 280 L170 230 Z" fill="#75222f"/>
+  <line x1="150" y1="260" x2="150" y2="450" stroke="#52151e" stroke-width="3"/>
+  <!-- Neck & Face -->
+  <path d="M130 190 L170 190 L165 235 L135 235 Z" fill="#f0be9f"/>
+  <ellipse cx="150" cy="165" rx="42" ry="50" fill="#f5c7ab"/>
+  <!-- Curly Reddish Hair -->
+  <ellipse cx="150" cy="120" rx="46" ry="32" fill="#b84d28"/>
+  <ellipse cx="150" cy="112" rx="38" ry="24" fill="#d96638"/>
+  <!-- Reddish Beard & Smile -->
+  <ellipse cx="150" cy="190" rx="38" ry="30" fill="#b84d28"/>
+  <ellipse cx="150" cy="182" rx="32" ry="22" fill="#f5c7ab"/>
+  <path d="M136 190 Q150 202 164 190 Z" fill="#5c1c20"/>
+  <rect x="139" y="188" width="22" height="6" rx="2" fill="#ffffff"/>
+  <!-- Eyes -->
+  <ellipse cx="136" cy="158" rx="5" ry="4" fill="#ffffff"/>
+  <circle cx="137" cy="158" r="2.5" fill="#4d2b16"/>
+  <ellipse cx="164" cy="158" rx="5" ry="4" fill="#ffffff"/>
+  <circle cx="163" cy="158" r="2.5" fill="#4d2b16"/>
+
+  <!-- Whiteboard Button: ABOUT US -->
+  <g transform="translate(30, 320)">
+    <rect x="2" y="4" width="236" height="85" rx="6" fill="rgba(0,0,0,0.6)"/>
+    <rect x="0" y="0" width="240" height="85" rx="6" fill="#f8f9fa"/>
+    <rect x="0" y="0" width="240" height="6" rx="3" fill="#e63946"/>
+    <text x="120" y="46" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="22" font-weight="900" fill="#0d1422" letter-spacing="2">ABOUT US</text>
+    <text x="120" y="70" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="10" font-weight="800" fill="#e63946" letter-spacing="1.5">ALEX • BACK CENTER</text>
+  </g>
+</svg>
