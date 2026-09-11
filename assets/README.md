@@ -1,21 +1,19 @@
 # Curbside Cinema Assets Guide
 
 ### 1. Car Background Image
-Upload your high-res background image as:
-- `CurbsideCinema_Background.jpeg` (or `.jpg`) into the **root folder** of this repository.
-The website's `index.html` and `style.css` are configured to display it automatically.
+- File: `CurbsideCinema_Background.jpeg` in the repository root.
 
-### 2. Host Button Images
-The repository includes three SVG placeholders in this `assets/` folder:
-- `assets/shane.svg`: Shane (Driver Seat, Left) -> Links to Contact Us
-- `assets/alex.svg`: Alex (Center Back Seat, Middle) -> Links to About Us
-- `assets/dave.svg`: Dave (Passenger Seat, Right) -> Links to Episodes
+### 2. Host Cutout Images
+The code is configured for the following seating layout:
+- **Left (Driver Seat)**: `Alex_CurbsideCritic.webp` -> Navigates to **About Us**
+- **Middle (Center Back Seat)**: `Dave_CurbsideCritic.webp` -> Navigates to **Episodes**
+- **Right (Passenger Seat)**: `Shane_CurbsideCritic.webp` -> Navigates to **Contact Us**
 
-#### Replacing With Real Transparent PNG Cutouts:
-To use real photo cutouts of the hosts:
-1. Cut out Shane, Alex, and Dave from your theater photo from the hips up (with a transparent background).
-2. Save them as:
-   - `assets/shane.png`
-   - `assets/alex.png`
-   - `assets/dave.png`
-3. Upload them into this `assets/` folder. The `index.html` file includes an automatic `onerror` fallback that will immediately display the PNGs in place of the SVGs!
+#### How to Add Them:
+1. In the repository, click **Add file** > **Upload files**.
+2. Upload:
+   - `Alex_CurbsideCritic.webp`
+   - `Dave_CurbsideCritic.webp`
+   - `Shane_CurbsideCritic.webp`
+   *(Either directly into the repository root or into this `assets/` folder).*
+3. Commit the changes. The site automatically detects them and places each host in their cockpit seat!
