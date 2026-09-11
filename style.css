@@ -159,52 +159,88 @@ body {
   transition: transform var(--anim-timing), filter var(--anim-timing);
 }
 
-/* HOST 1: SHANE (Driver Seat, Left) */
-.host-shane-anchor {
-  left: 21%;
-  width: 25%;
+/* HOST 1: ALEX (Driver Seat, Left) */
+.host-alex-anchor {
+  left: 20%;
+  width: 27%;
   bottom: 8%;
-  height: 72%;
+  height: 75%;
 }
 
-/* HOST 2: ALEX (Center Back Seat, Middle) */
-.host-alex-anchor {
-  left: 39%;
-  width: 22%;
-  bottom: 24%;
-  height: 62%;
+/* HOST 2: DAVE (Center Back Seat, Middle) */
+.host-dave-anchor {
+  left: 40%;
+  width: 20%;
+  bottom: 22%;
+  height: 60%;
   z-index: 24;
 }
 
-/* HOST 3: DAVE (Passenger Seat, Right) */
-.host-dave-anchor {
-  left: 54%;
-  width: 25%;
+/* HOST 3: SHANE (Passenger Seat, Right) */
+.host-shane-anchor {
+  left: 53%;
+  width: 27%;
   bottom: 8%;
-  height: 72%;
+  height: 75%;
 }
 
 .host-content-wrapper {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
 }
 
 .host-graphic {
   width: 100%;
   height: auto;
-  max-height: 100%;
+  max-height: 85%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.85));
+}
+
+/* Whiteboard / Pill Label */
+.whiteboard-pill {
+  margin-top: -12px;
+  z-index: 30;
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 8px 18px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  border-top: 4px solid var(--bmw-blue);
+  transition: transform var(--anim-timing), background-color var(--anim-timing);
+}
+
+.pill-alex { border-top-color: var(--bmw-red); }
+.pill-dave { border-top-color: var(--bmw-amber); }
+.pill-shane { border-top-color: var(--bmw-blue); }
+
+.pill-action {
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0d1422;
+  letter-spacing: 1.5px;
+}
+
+.pill-host {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 1.2px;
+  margin-top: 2px;
 }
 
 /* SPOTLIGHT CONE (CSS Radial Gradient Overlay) */
 .spotlight-cone {
   position: absolute;
-  inset: -15%;
+  inset: -20%;
   pointer-events: none;
   border-radius: 50%;
   mix-blend-mode: screen;
@@ -212,16 +248,16 @@ body {
   transition: opacity var(--anim-timing), filter var(--anim-timing);
 }
 
-.cone-shane {
-  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(72, 202, 228, 0.15) 50%, transparent 80%);
-}
-
 .cone-alex {
-  background: radial-gradient(ellipse at 50% 25%, rgba(255, 245, 240, 0.40) 0%, rgba(230, 57, 70, 0.15) 50%, transparent 80%);
+  background: radial-gradient(ellipse at 50% 25%, rgba(255, 245, 240, 0.40) 0%, rgba(230, 57, 70, 0.16) 50%, transparent 80%);
 }
 
 .cone-dave {
-  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(244, 162, 97, 0.15) 50%, transparent 80%);
+  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(244, 162, 97, 0.16) 50%, transparent 80%);
+}
+
+.cone-shane {
+  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(72, 202, 228, 0.16) 50%, transparent 80%);
 }
 
 /* HOVER ANIMATION: 10% SCALE UP + SPOTLIGHT BRIGHTNESS */
@@ -233,6 +269,11 @@ body {
 .host-anchor:hover .spotlight-cone {
   opacity: 1.0;
   filter: brightness(1.6);
+}
+
+.host-anchor:hover .whiteboard-pill {
+  background: #ffffff;
+  transform: translateY(-2px);
 }
 
 .host-anchor:active {
@@ -367,9 +408,9 @@ body {
   margin-bottom: 12px;
 }
 
-.badge-shane { background: rgba(72, 202, 228, 0.18); color: var(--bmw-blue); }
 .badge-alex  { background: rgba(230, 57, 70, 0.18); color: var(--bmw-red); }
 .badge-dave  { background: rgba(244, 162, 97, 0.18); color: var(--bmw-amber); }
+.badge-shane { background: rgba(72, 202, 228, 0.18); color: var(--bmw-blue); }
 
 .bio-name {
   font-size: 22px;
@@ -592,5 +633,14 @@ body {
   }
   .subpage-scroll-container {
     padding: 90px 20px 30px;
+  }
+  .whiteboard-pill {
+    padding: 4px 10px;
+  }
+  .pill-action {
+    font-size: 12px;
+  }
+  .pill-host {
+    font-size: 7px;
   }
 }
