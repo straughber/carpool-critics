@@ -167,14 +167,58 @@ function toggleTranscript() {
   if (icon) icon.innerText = isCollapsed ? '▼' : '▲';
 }
 
+// Web3Forms AJAX Form Submission Handler
 function handleFormSubmission(e) {
   e.preventDefault();
+  const form = e.target;
   const alert = document.getElementById('form-feedback');
-  alert.style.display = 'block';
-  e.target.reset();
-  setTimeout(() => {
-    alert.style.display = 'none';
-  }, 4500);
+  const submitBtn = form.querySelector('.btn-send-dispatch');
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Transmitting...';
+  }
+
+  const formData = new FormData(form);
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        if (alert) {
+          alert.innerText = '✓ Dispatch transmitted successfully! We received your message.';
+          alert.style.color = '#48cae4';
+          alert.style.display = 'block';
+        }
+        form.reset();
+      } else {
+        if (alert) {
+          alert.innerText = 'Error: ' + (data.message || 'Could not send message.');
+          alert.style.color = '#e63946';
+          alert.style.display = 'block';
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Submission error:', err);
+      if (alert) {
+        alert.innerText = 'Network error. Please try again later.';
+        alert.style.color = '#e63946';
+        alert.style.display = 'block';
+      }
+    })
+    .finally(() => {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Transmit Dispatch';
+      }
+      setTimeout(() => {
+        if (alert) alert.style.display = 'none';
+      }, 6000);
+    });
 }
 
 // Pre-load default episode transcript on initial visit
