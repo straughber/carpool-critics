@@ -1,0 +1,37 @@
+{
+  "episodeId": "ep42",
+  "title": "Episode 42: Midnight In Austin • Post-Screening Dispatch",
+  "recordedLocation": "BMW X5 Studio • Overlooking Lady Bird Lake, Austin, TX",
+  "dialogue": [
+    {
+      "time": "00:00:12",
+      "speaker": "Shane",
+      "role": "Passenger",
+      "text": "Engine's idling, parking brake is on, and the Austin skyline is glowing right out the back window. We literally walked out of the midnight screening ten minutes ago. Alex, take the wheel on this one—what was your immediate reaction to that opening sequence?"
+    },
+    {
+      "time": "00:00:35",
+      "speaker": "Alex",
+      "role": "Driver",
+      "text": "The camera blocking in the first twelve minutes was masterclass level. Shooting through rainy windshields with practical sodium-vapor streetlights created an overwhelming sense of dread before a single line of dialogue was spoken. It sets the tone for the entire mystery."
+    },
+    {
+      "time": "00:01:02",
+      "speaker": "Dave",
+      "role": "Center Back",
+      "text": "From the back seat here, I gotta point out the practical creature effects in the subway tunnel. Notice how they didn't use motion blur to hide rubber seams? They used silhouette and strobe lighting the way Ridley Scott did in Alien. That was genuine craftsmanship."
+    },
+    {
+      "time": "00:01:28",
+      "speaker": "Shane",
+      "role": "Passenger",
+      "text": "And the sound design! Sitting here in the car with the theater acoustics still ringing in my ears, the rumble of the engine in the chase scene was recorded with real binaural mics. Let's break down where the second act stumbled before getting into the twist ending."
+    },
+    {
+      "time": "00:01:52",
+      "speaker": "Alex",
+      "role": "Driver",
+      "text": "Agreed. The subplot with the detective's estranged sister felt like studio interference designed to pad runtime, but the finale completely redeemed it. Let's give our final hubcap ratings."
+    }
+  ]
+}
