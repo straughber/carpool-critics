@@ -54,7 +54,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.3.0" />
+  <link rel="stylesheet" href="style.css?v=3.4.0" />
 
   <style>
     /* Global Typography: Chivo for all Body, Teko for Headers */
@@ -320,6 +320,30 @@
       pointer-events: auto !important;
     }
 
+    .brand-title {
+      font-size: clamp(18px, 2.2vw, 28px) !important;
+      font-weight: 900 !important;
+      letter-spacing: 3px !important;
+      color: #ffffff !important;
+      text-transform: uppercase !important;
+      text-align: center !important;
+      margin: 0 !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+    }
+
+    .brand-sub {
+      font-size: clamp(9px, 1.05vw, 12px) !important;
+      font-weight: 700 !important;
+      letter-spacing: 1.8px !important;
+      color: #f4a261 !important;
+      margin-top: 4px !important;
+      text-transform: uppercase !important;
+      text-align: center !important;
+      line-height: 1.3 !important;
+      white-space: nowrap !important;
+    }
+
     /* Mobile Navigation Buttons Underneath Title Box (Alphabetical Order) */
     .mobile-nav-bar {
       display: none !important;
@@ -451,8 +475,7 @@
 
     .transcript-badge-group {
       display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
+      align-items: center !gap: 10px !important;
     }
 
     .transcript-tag {
@@ -717,23 +740,23 @@
           <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
         </div>
         <p class="subpage-intro">
-          Broadcasting live from the cabin of a BMW X5 overlooking the Austin night skyline. Carpool Cinema Critics brings raw, unfiltered movie debriefs the second the credits roll.
+          Three dudes who hit up pre-screenings and hang out in the parking lot to unpack hot takes, have plenty of laughs, and give incorrect opinions.
         </p>
         <div class="hosts-bio-grid">
           <div class="bio-card">
             <span class="seat-badge badge-alex">Driver Seat</span>
             <h3 class="bio-name">Alex</h3>
-            <p class="bio-description">Behind the wheel in the maroon striped shirt. Dissects screenplay pacing, narrative arcs, and psychological thrillers with razor-sharp insight.</p>
+            <p class="bio-description">He channels his background in writing into a deep appreciation for strong storytelling and character arcs. Whether he is unpacking complex narratives or celebrating the finer, eye-opening documentaries in life, he brings thoughtful analysis and sharp wit to the front seat.</p>
           </div>
           <div class="bio-card">
-            <span class="seat-badge badge-dave">Center Back Seat</span>
+            <span class="seat-badge badge-dave">Back Seat</span>
             <h3 class="bio-name">Dave</h3>
-            <p class="bio-description">Holding court between the front seats in the white graphic tee and black cap. The resident franchise historian and creature feature champion with encyclopedic cinema memory.</p>
+            <p class="bio-description">The man, the myth, the legend, leverages a background in tech to appreciate smart execution in cinema. Despite his analytical side, he carries a massive soft spot for a great rom-com, bringing infectious optimism with a side of love for happily ever after.</p>
           </div>
           <div class="bio-card">
             <span class="seat-badge badge-shane">Passenger Seat</span>
             <h3 class="bio-name">Shane</h3>
-            <p class="bio-description">Riding shotgun in the Columbia blue fishing shirt. Breaks down cinematography, lighting choices, framing, and the technical mechanics of modern film.</p>
+            <p class="bio-description">With a background in design, marketing, and sports nutrition, he's always appreciating the details and is a total sucker for a good coming-of-age story.</p>
           </div>
         </div>
       </div>
@@ -857,6 +880,6 @@
 
   </div>
 
-  <script src="script.js?v=3.3.0"></script>
+  <script src="script.js?v=3.4.0"></script>
 </body>
 </html>
