@@ -50,9 +50,68 @@
   }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=3.0.0" />
+  <!-- Google Fonts: Teko (Headers) & Chivo (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=3.1.0" />
 
   <style>
+    /* Global Typography: Chivo for all Body, Teko for Headers */
+    :root {
+      --font-header: 'Teko', sans-serif;
+      --font-body: 'Chivo', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      font-family: var(--font-body) !important;
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .brand-title,
+    .subpage-heading,
+    .video-title,
+    .transcript-heading-text,
+    .info-panel-title,
+    .bio-name {
+      font-family: var(--font-header) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1.5px !important;
+    }
+
+    .brand-title {
+      font-size: clamp(26px, 3.2vw, 42px) !important;
+      font-weight: 700 !important;
+      letter-spacing: 3.5px !important;
+      line-height: 1.05 !important;
+    }
+
+    .brand-sub {
+      font-family: var(--font-body) !important;
+      font-weight: 700 !important;
+    }
+
+    .subpage-heading {
+      font-size: 34px !important;
+      letter-spacing: 1.5px !important;
+    }
+
+    .video-title {
+      font-size: 24px !important;
+      letter-spacing: 1px !important;
+    }
+
+    .bio-name {
+      font-size: 28px !important;
+      letter-spacing: 1px !important;
+    }
+
+    .transcript-heading-text {
+      font-size: 18px !important;
+      letter-spacing: 1px !important;
+    }
+
     /* Ensure host layers are 100% full-width and full-height overlays */
     .cockpit-stage {
       width: 100% !important;
@@ -262,30 +321,6 @@
       pointer-events: auto !important;
     }
 
-    .brand-title {
-      font-size: clamp(18px, 2.2vw, 28px) !important;
-      font-weight: 900 !important;
-      letter-spacing: 3px !important;
-      color: #ffffff !important;
-      text-transform: uppercase !important;
-      text-align: center !important;
-      margin: 0 !important;
-      line-height: 1.2 !important;
-      white-space: nowrap !important;
-    }
-
-    .brand-sub {
-      font-size: clamp(9px, 1.05vw, 12px) !important;
-      font-weight: 700 !important;
-      letter-spacing: 1.8px !important;
-      color: #f4a261 !important;
-      margin-top: 4px !important;
-      text-transform: uppercase !important;
-      text-align: center !important;
-      line-height: 1.3 !important;
-      white-space: nowrap !important;
-    }
-
     /* Mobile Navigation Buttons Underneath Title Box (Alphabetical Order) */
     .mobile-nav-bar {
       display: none !important;
@@ -430,15 +465,6 @@
       padding: 3px 8px !important;
       border-radius: 4px !important;
       text-transform: uppercase !important;
-    }
-
-    .transcript-heading-text {
-      font-size: 13px !important;
-      font-weight: 800 !important;
-      letter-spacing: 1px !important;
-      color: #ffffff !important;
-      text-transform: uppercase !important;
-      margin: 0 !important;
     }
 
     .transcript-toggle {
@@ -635,7 +661,7 @@
           />
         </div>
 
-        <!-- 3. Clickable Host Hotspots (Active on Desktop with Labels) -->
+        <!-- 3. Clickable Host Hotspots with Front Navigation Labels -->
         <div 
           class="host-hitbox hitbox-alex" 
           onclick="switchSection('about')" 
@@ -819,6 +845,6 @@
 
   </div>
 
-  <script src="script.js?v=3.0.0"></script>
+  <script src="script.js?v=3.1.0"></script>
 </body>
 </html>
