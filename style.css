@@ -31,10 +31,11 @@ body {
   color: var(--text-bright);
   font-family: var(--font-body);
   min-height: 100vh;
+  height: 100vh;
   overflow-x: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch; /* Stretches 100% full height vertically */
 }
 
 /* Headers Typography: Google Font Teko */
@@ -50,12 +51,14 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: 1.5px;
 }
 
-/* Master 16:9 Viewport Canvas */
+/* Master Viewport: 100% Full Height Vertically, Left & Right Margins Only */
 .cinema-viewport {
   width: 100vw;
   max-width: 1600px;
   height: 100vh;
-  max-height: 900px;
+  min-height: 100vh;
+  max-height: none;        /* Removes the 900px vertical constraint */
+  margin: 0 auto;          /* Centers horizontally with side margins on wide screens */
   position: relative;
   background-color: var(--bg-black);
   overflow: hidden;
