@@ -1,0 +1,35 @@
+[
+  {
+    "id": "ep42",
+    "number": 42,
+    "title": "Episode 42: Midnight In Austin • Post-Screening Dispatch",
+    "shortTitle": "Ep. 42: Midnight In Austin",
+    "youtubeId": "dQw4w9WgXcQ",
+    "duration": "1h 12m",
+    "date": "Released Yesterday",
+    "description": "Recorded live from the BMW X5 overlooking Lady Bird Lake right after a midnight premiere. Full spoiler breakdown on cinematography, pacing, and third-act revelations.",
+    "transcriptFile": "data/transcripts/ep42.json"
+  },
+  {
+    "id": "ep41",
+    "number": 41,
+    "title": "Episode 41: Blockbuster Highs & Franchise Fatigue",
+    "shortTitle": "Ep. 41: Blockbuster Fatigue",
+    "youtubeId": "L_LUpnjgPso",
+    "duration": "58m",
+    "date": "1 week ago",
+    "description": "Debriefing summer blockbuster trends from the car. Alex, Dave, and Shane debate whether practical stunt work can save generic franchise writing.",
+    "transcriptFile": "data/transcripts/ep41.json"
+  },
+  {
+    "id": "ep40",
+    "number": 40,
+    "title": "Episode 40: Practical Horror vs Digital Noise",
+    "shortTitle": "Ep. 40: Practical Horror FX",
+    "youtubeId": "fJ9rUzIMcZQ",
+    "duration": "1h 24m",
+    "date": "2 weeks ago",
+    "description": "A deep dive into retro practical monster effects vs modern CGI mud. Dave champions 80s animatronics while Alex and Shane analyze atmospheric sound design.",
+    "transcriptFile": "data/transcripts/ep40.json"
+  }
+]
