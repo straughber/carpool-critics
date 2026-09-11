@@ -6,7 +6,51 @@
   <title>Carpool Cinema Critics | Austin, TX</title>
   <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
   
-  <link rel="stylesheet" href="style.css?v=2.6.0" />
+  <!-- Canonical & Social SEO Metadata -->
+  <link rel="canonical" href="https://straughber.github.io/curbside-cinema/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Carpool Cinema Critics | Austin, TX" />
+  <meta property="og:description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline with hosts Alex, Dave, and Shane." />
+  <meta property="og:image" content="CurbsideCinema_Background.jpeg" />
+  <meta property="og:url" content="https://straughber.github.io/curbside-cinema/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Carpool Cinema Critics" />
+  <meta name="twitter:description" content="Fresh Out the Doors, Straight to the Dash - Austin, TX" />
+  <meta name="twitter:image" content="CurbsideCinema_Background.jpeg" />
+
+  <!-- Schema.org JSON-LD Structured Data for Podcast & WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "PodcastSeries",
+    "name": "Carpool Cinema Critics",
+    "description": "Film review debriefs recorded live inside a BMW X5 overlooking the Austin, Texas skyline the moment the credits roll.",
+    "url": "https://straughber.github.io/curbside-cinema/",
+    "locationCreated": {
+      "@type": "Place",
+      "name": "Austin, Texas"
+    },
+    "creator": [
+      {
+        "@type": "Person",
+        "name": "Alex",
+        "jobTitle": "Host & Driver"
+      },
+      {
+        "@type": "Person",
+        "name": "Dave",
+        "jobTitle": "Host & Back Row Historian"
+      },
+      {
+        "@type": "Person",
+        "name": "Shane",
+        "jobTitle": "Host & Passenger"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css?v=3.0.0" />
 
   <style>
     /* Ensure host layers are 100% full-width and full-height overlays */
@@ -546,12 +590,12 @@
         <!-- Seamless Full-Bleed Vignette (Restricted to Cockpit) -->
         <div class="vignette-overlay"></div>
 
-        <!-- 1. Background Car Interior Image -->
+        <!-- 1. Background Car Interior Image (Categorized Media with Fallbacks) -->
         <img 
-          src="CurbsideCinema_Background.jpeg" 
-          alt="BMW X5 Interior Austin Skyline" 
+          src="assets/images/cockpit/CurbsideCinema_Background.jpeg" 
+          alt="Carpool Cinema Critics mobile studio inside a BMW X5 overlooking the Austin, Texas night skyline" 
           class="stage-layer bg-car-image" 
-          onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpg';"
+          onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpeg'; this.onerror=function(){this.src='CurbsideCinema_Background.jpg';};"
         />
 
         <!-- Ambient Blue LED Reflection -->
@@ -562,10 +606,10 @@
         <div class="host-group group-dave" id="group-dave">
           <div class="spotlight-cone cone-dave"></div>
           <img 
-            src="Dave_CurbsideCritic.webp" 
-            alt="Dave" 
+            src="assets/images/hosts/Dave_CurbsideCritic.webp" 
+            alt="Dave, center back row host and creature feature historian on Carpool Cinema Critics" 
             class="stage-layer host-cutout-img img-dave"
-            onerror="this.onerror=null; this.src='assets/Dave_CurbsideCritic.webp';"
+            onerror="this.onerror=null; this.src='Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/dave.svg';};"
           />
         </div>
 
@@ -573,10 +617,10 @@
         <div class="host-group group-alex" id="group-alex">
           <div class="spotlight-cone cone-alex"></div>
           <img 
-            src="Alex_CurbsideCritic.webp" 
-            alt="Alex" 
+            src="assets/images/hosts/Alex_CurbsideCritic.webp" 
+            alt="Alex, driver and host analyzing screenplay pacing and narrative arcs on Carpool Cinema Critics" 
             class="stage-layer host-cutout-img img-alex"
-            onerror="this.onerror=null; this.src='assets/Alex_CurbsideCritic.webp';"
+            onerror="this.onerror=null; this.src='Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/alex.svg';};"
           />
         </div>
 
@@ -584,10 +628,10 @@
         <div class="host-group group-shane" id="group-shane">
           <div class="spotlight-cone cone-shane"></div>
           <img 
-            src="Shane_CurbsideCritic.webp" 
-            alt="Shane" 
+            src="assets/images/hosts/Shane_CurbsideCritic.webp" 
+            alt="Shane, passenger host analyzing camera movement and cinematography on Carpool Cinema Critics" 
             class="stage-layer host-cutout-img img-shane"
-            onerror="this.onerror=null; this.src='assets/Shane_CurbsideCritic.webp';"
+            onerror="this.onerror=null; this.src='Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/shane.svg';};"
           />
         </div>
 
@@ -775,6 +819,6 @@
 
   </div>
 
-  <script src="script.js?v=2.6.0"></script>
+  <script src="script.js?v=3.0.0"></script>
 </body>
 </html>
