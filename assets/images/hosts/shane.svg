@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 480" fill="none">
+  <!-- Soft Portrait Glow -->
+  <ellipse cx="160" cy="220" rx="140" ry="200" fill="url(#shaneGlow)" opacity="0.6"/>
+  <defs>
+    <radialGradient id="shaneGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#48cae4" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Torso: Light Blue Columbia Shirt -->
+  <path d="M60 480 L70 280 L110 240 L160 260 L210 240 L250 280 L260 480 Z" fill="#7ba3be"/>
+  <!-- Collar & Undershirt -->
+  <path d="M135 245 L160 290 L185 245 Z" fill="#d29f82"/>
+  <path d="M145 280 L160 295 L175 280 Z" fill="#ffffff"/>
+  <!-- Pocket & Columbia Label -->
+  <rect x="85" y="320" width="45" height="50" rx="4" fill="#6c93ae"/>
+  <rect x="95" y="335" width="25" height="8" fill="#1b2a38"/>
+  <!-- Neck & Face -->
+  <path d="M135 210 L185 210 L180 255 L140 255 Z" fill="#e2af90"/>
+  <ellipse cx="160" cy="180" rx="46" ry="54" fill="#ebb99a"/>
+  <!-- Full Beard & Stubble -->
+  <ellipse cx="160" cy="205" rx="40" ry="32" fill="#4a372c"/>
+  <ellipse cx="160" cy="198" rx="35" ry="24" fill="#ebb99a"/>
+  <!-- Warm Smile -->
+  <path d="M142 204 Q160 218 178 204 Z" fill="#5a1e1e"/>
+  <rect x="146" y="204" width="28" height="6" rx="2" fill="#ffffff"/>
+  <!-- Eyes -->
+  <ellipse cx="144" cy="172" rx="5" ry="4" fill="#ffffff"/>
+  <circle cx="145" cy="172" r="2.5" fill="#382618"/>
+  <ellipse cx="176" cy="172" rx="5" ry="4" fill="#ffffff"/>
+  <circle cx="175" cy="172" r="2.5" fill="#382618"/>
+  <!-- Glasses -->
+  <rect x="130" y="160" width="28" height="24" rx="3" fill="none" stroke="#14181f" stroke-width="2.5"/>
+  <rect x="162" y="160" width="28" height="24" rx="3" fill="none" stroke="#14181f" stroke-width="2.5"/>
+  <line x1="158" y1="170" x2="162" y2="170" stroke="#14181f" stroke-width="2.5"/>
+  <!-- Black Cap -->
+  <path d="M115 150 Q160 115 205 150 L210 170 L110 170 Z" fill="#12151b"/>
+  <path d="M100 165 Q160 145 220 165 L210 175 L110 175 Z" fill="#0a0c10"/>
+
+  <!-- Whiteboard Button: CONTACT US -->
+  <g transform="translate(40, 360)">
+    <rect x="2" y="4" width="236" height="85" rx="6" fill="rgba(0,0,0,0.6)"/>
+    <rect x="0" y="0" width="240" height="85" rx="6" fill="#f8f9fa"/>
+    <rect x="0" y="0" width="240" height="6" rx="3" fill="#48cae4"/>
+    <text x="120" y="46" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="22" font-weight="900" fill="#0d1422" letter-spacing="2">CONTACT US</text>
+    <text x="120" y="70" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="10" font-weight="800" fill="#48cae4" letter-spacing="1.5">SHANE • DRIVER</text>
+  </g>
+</svg>
