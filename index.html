@@ -7,7 +7,7 @@
   <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
   
   <!-- Cache-busting query to prevent stale browser caches -->
-  <link rel="stylesheet" href="style.css?v=2.1.0" />
+  <link rel="stylesheet" href="style.css?v=2.2.0" />
 
   <!-- Critical Inline Styles to Guarantee 1:1 Full-Width Proportional Scaling matching Reference Image -->
   <style>
@@ -117,6 +117,23 @@
       align-items: center !important;
       pointer-events: none !important;
       z-index: 45 !important;
+      transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.35s !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    .title-header.header-hidden {
+      opacity: 0 !important;
+      transform: translate(-50%, -14px) !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+
+    /* Subpage container without top cramping */
+    .subpage-scroll-container {
+      padding: 44px 60px 45px !important;
+      position: relative !important;
+      z-index: 40 !important;
     }
 
     .title-badge {
@@ -206,10 +223,7 @@
 <body>
 
   <div class="cinema-viewport">
-    <!-- Seamless Full-Bleed Vignette -->
-    <div class="vignette-overlay"></div>
-
-    <!-- Minimalist Title Header (No Traditional Top Nav) -->
+    <!-- Minimalist Title Header (Fades away when navigating to sub-pages) -->
     <header class="title-header">
       <div class="title-badge">
         <h1 class="brand-title">CARPOOL CINEMA CRITICS</h1>
@@ -222,6 +236,9 @@
     <!-- ======================================================== -->
     <main class="view-panel active" id="view-home">
       <div class="cockpit-stage">
+        <!-- Seamless Full-Bleed Vignette (Restricted to Cockpit) -->
+        <div class="vignette-overlay"></div>
+
         <!-- 1. Background Car Interior Image -->
         <img 
           src="CurbsideCinema_Background.jpeg" 
@@ -427,6 +444,6 @@
 
   </div>
 
-  <script src="script.js?v=2.1.0"></script>
+  <script src="script.js?v=2.2.0"></script>
 </body>
 </html>
