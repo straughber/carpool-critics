@@ -6,10 +6,8 @@
   <title>Carpool Cinema Critics | Austin, TX</title>
   <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
   
-  <!-- Cache-busting query to prevent stale browser caches -->
-  <link rel="stylesheet" href="style.css?v=2.4.0" />
+  <link rel="stylesheet" href="style.css?v=2.5.0" />
 
-  <!-- Critical Inline Styles to Guarantee 1:1 Full-Width Proportional Scaling matching Reference Image -->
   <style>
     /* Ensure host layers are 100% full-width and full-height overlays */
     .cockpit-stage {
@@ -111,7 +109,7 @@
       height: 65% !important;
     }
 
-    /* Host Navigation Button Labels in Front of Each Host */
+    /* Desktop Host Navigation Button Labels in Front of Each Host */
     .host-nav-label {
       background: rgba(8, 11, 18, 0.88) !important;
       backdrop-filter: blur(10px) !important;
@@ -171,7 +169,6 @@
       background: #48cae4;
     }
 
-    /* Hover State: Label Illuminates & Elevates */
     .host-hitbox:hover .host-nav-label {
       background: #ffffff !important;
       color: #080b12 !important;
@@ -188,6 +185,7 @@
       transform: translateX(-50%) !important;
       width: 100% !important;
       display: flex !important;
+      flex-direction: column !important;
       justify-content: center !important;
       align-items: center !important;
       pointer-events: none !important;
@@ -204,13 +202,6 @@
       visibility: hidden !important;
     }
 
-    /* Subpage container without top cramping */
-    .subpage-scroll-container {
-      padding: 44px 60px 45px !important;
-      position: relative !important;
-      z-index: 40 !important;
-    }
-
     .title-badge {
       background: rgba(8, 11, 18, 0.88) !important;
       backdrop-filter: blur(14px) !important;
@@ -224,12 +215,13 @@
       justify-content: center !important;
       text-align: center !important;
       max-width: 90vw !important;
+      pointer-events: auto !important;
     }
 
     .brand-title {
-      font-size: clamp(20px, 2.2vw, 28px) !important;
+      font-size: clamp(18px, 2.2vw, 28px) !important;
       font-weight: 900 !important;
-      letter-spacing: 4px !important;
+      letter-spacing: 3px !important;
       color: #ffffff !important;
       text-transform: uppercase !important;
       text-align: center !important;
@@ -239,9 +231,9 @@
     }
 
     .brand-sub {
-      font-size: clamp(10px, 1.05vw, 12px) !important;
+      font-size: clamp(9px, 1.05vw, 12px) !important;
       font-weight: 700 !important;
-      letter-spacing: 2px !important;
+      letter-spacing: 1.8px !important;
       color: #f4a261 !important;
       margin-top: 4px !important;
       text-transform: uppercase !important;
@@ -250,7 +242,90 @@
       white-space: nowrap !important;
     }
 
-    /* Guaranteed Center-Aligned Hint Pill on all Viewports & Resizes */
+    /* Mobile Navigation Buttons Underneath Title Box (Alphabetical Order) */
+    .mobile-nav-bar {
+      display: none !important;
+      pointer-events: auto !important;
+      margin-top: 10px !important;
+      gap: 8px !important;
+      justify-content: center !important;
+      align-items: center !important;
+      flex-wrap: wrap !important;
+      max-width: 92vw !important;
+    }
+
+    .mobile-btn {
+      background: rgba(10, 14, 24, 0.90) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      color: #ffffff !important;
+      padding: 7px 14px !important;
+      border-radius: 24px !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      letter-spacing: 1px !important;
+      text-transform: uppercase !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.75) !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    .mobile-btn-about {
+      border-color: rgba(230, 57, 70, 0.45) !important;
+    }
+    .mobile-btn-about::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #e63946;
+    }
+
+    .mobile-btn-contact {
+      border-color: rgba(72, 202, 228, 0.45) !important;
+    }
+    .mobile-btn-contact::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #48cae4;
+    }
+
+    .mobile-btn-episodes {
+      border-color: rgba(244, 162, 97, 0.45) !important;
+    }
+    .mobile-btn-episodes::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f4a261;
+    }
+
+    .mobile-btn:active {
+      background: #ffffff !important;
+      color: #000000 !important;
+      transform: scale(0.96) !important;
+    }
+
+    /* Subpage container without top cramping */
+    .subpage-scroll-container {
+      padding: 44px 60px 45px !important;
+      position: relative !important;
+      z-index: 40 !important;
+    }
+
+    /* Guaranteed Center-Aligned Hint Pill on all Viewports */
     .cockpit-hint-pill {
       position: absolute !important;
       bottom: 22px !important;
@@ -277,33 +352,53 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.75) !important;
     }
 
-    @media (max-width: 680px) {
+    /* STRICT MOBILE-ONLY OVERRIDES */
+    @media (max-width: 768px) {
       .brand-title, .brand-sub {
         white-space: normal !important;
       }
-      .cockpit-hint-pill {
-        white-space: normal !important;
-        max-width: 85vw !important;
-        padding: 6px 18px !important;
-        font-size: 10px !important;
+      
+      /* 1. Show mobile buttons underneath title box in alphabetical order */
+      .mobile-nav-bar {
+        display: flex !important;
       }
-    }
 
-    /* Strictly ensure no side text or whiteboard labels are shown */
-    .whiteboard-pill, .host-text-label {
-      display: none !important;
+      /* 2. Hide desktop host labels over the car cockpit on mobile */
+      .host-nav-label {
+        display: none !important;
+      }
+
+      /* 3. Adjust mobile hitboxes and hint pill */
+      .cockpit-hint-pill {
+        bottom: 12px !important;
+        white-space: normal !important;
+        max-width: 88vw !important;
+        padding: 5px 14px !important;
+        font-size: 9px !important;
+      }
+
+      .subpage-scroll-container {
+        padding: 30px 18px 25px !important;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="cinema-viewport">
-    <!-- Minimalist Title Header (Fades away when navigating to sub-pages) -->
+    <!-- Minimalist Title Header (With Mobile Buttons Underneath) -->
     <header class="title-header">
       <div class="title-badge">
         <h1 class="brand-title">CARPOOL CINEMA CRITICS</h1>
         <p class="brand-sub">Fresh Out the Doors, Straight to the Dash - Austin, TX</p>
       </div>
+
+      <!-- Mobile-only Buttons in Alphabetical Order: About Us, Contact Us, Episodes -->
+      <nav class="mobile-nav-bar" aria-label="Mobile Navigation">
+        <button class="mobile-btn mobile-btn-about" onclick="switchSection('about')">About Us</button>
+        <button class="mobile-btn mobile-btn-contact" onclick="switchSection('contact')">Contact Us</button>
+        <button class="mobile-btn mobile-btn-episodes" onclick="switchSection('episodes')">Episodes</button>
+      </nav>
     </header>
 
     <!-- ======================================================== -->
@@ -359,7 +454,7 @@
           />
         </div>
 
-        <!-- 3. Clickable Host Hotspots with Front Navigation Labels -->
+        <!-- 3. Clickable Host Hotspots (Active on Desktop with Labels) -->
         <div 
           class="host-hitbox hitbox-alex" 
           onclick="switchSection('about')" 
@@ -407,23 +502,23 @@
           <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
         </div>
         <p class="subpage-intro">
-          We are three dudes who hit up pre-screenings and then hang out in the parking lot to unpack whatever we just watched before we even put the vehicle in drive. Expect hot takes, plenty of laughs, and incorrect opinions. 
+          Broadcasting live from the cabin of a BMW X5 overlooking the Austin night skyline. Carpool Cinema Critics brings raw, unfiltered movie debriefs the second the credits roll.
         </p>
         <div class="hosts-bio-grid">
           <div class="bio-card">
             <span class="seat-badge badge-alex">Driver Seat</span>
             <h3 class="bio-name">Alex</h3>
-            <p class="bio-description">Alex channels his background in writing into a deep appreciation for strong storytelling and character arcs. Whether he is unpacking complex narratives or celebrating the finer, eye-opening documentaries in life, he brings thoughtful analysis and sharp wit to the front seat.</p>
+            <p class="bio-description">Behind the wheel in the maroon striped shirt. Dissects screenplay pacing, narrative arcs, and psychological thrillers with razor-sharp insight.</p>
           </div>
           <div class="bio-card">
             <span class="seat-badge badge-dave">Center Back Seat</span>
             <h3 class="bio-name">Dave</h3>
-            <p class="bio-description">Dave leverages a background in tech to appreciate clever world-building and smart execution in cinema. Despite his analytical side, he carries a massive soft spot for a great romcom, bringing infectious optimism and high energy to every debate about love and happy endings.</p>
+            <p class="bio-description">Holding court between the front seats in the white graphic tee and black cap. The resident franchise historian and creature feature champion with encyclopedic cinema memory.</p>
           </div>
           <div class="bio-card">
             <span class="seat-badge badge-shane">Passenger Seat</span>
             <h3 class="bio-name">Shane</h3>
-            <p class="bio-description">Shane brings a sharp eye from his background in design and marketing, always catching the visual cues and promotional beats others miss. He is a total sucker for a good coming of age story, bringing genuine enthusiasm and heart to every discussion about growth and nostalgia on screen.</p>
+            <p class="bio-description">Riding shotgun in the Columbia blue fishing shirt. Breaks down cinematography, lighting choices, framing, and the technical mechanics of modern film.</p>
           </div>
         </div>
       </div>
@@ -502,9 +597,9 @@
             </div>
             <div class="input-group">
               <label class="input-label">Movie Review Request / Message</label>
-              <textarea rows="4" required class="textarea-input" placeholder="What movie should Alex, Dave, and Shane review next?"></textarea>
+              <textarea rows="4" required class="textarea-input" placeholder="What movie should Alex, Dave, and Shane review next from the BMW?"></textarea>
             </div>
-            <button type="submit" class="btn-send-dispatch">Send</button>
+            <button type="submit" class="btn-send-dispatch">Transmit Dispatch</button>
             <div class="form-feedback-alert" id="form-feedback">✓ Transmitted directly to the BMW console!</div>
           </form>
           <div class="contact-info-panel">
@@ -513,7 +608,7 @@
               For Austin theatrical invites, podcast sponsorships, or guest appearances, contact the crew directly.
             </p>
             <div class="info-email-highlight">
-              ✉ carpoolcinemacritics@gmail.com
+              ✉ crew@curbsidecinema.com
             </div>
             <p class="info-panel-sub">
               Recorded on location in Austin, TX. Available on Spotify, Apple Podcasts, YouTube, and Letterboxd.
@@ -525,6 +620,6 @@
 
   </div>
 
-  <script src="script.js?v=2.4.0"></script>
+  <script src="script.js?v=2.5.0"></script>
 </body>
 </html>
