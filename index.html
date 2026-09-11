@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curbside Cinema | Recorded Live in the BMW X5</title>
+  <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="cinema-viewport">
+    <!-- Seamless Full-Bleed Vignette -->
+    <div class="vignette-overlay"></div>
+
+    <!-- Minimalist Title Header (No Traditional Top Nav) -->
+    <header class="title-header">
+      <div class="title-badge">
+        <h1 class="brand-title">CURBSIDE CINEMA</h1>
+        <p class="brand-sub">Recorded Live in the BMW X5 • Austin, TX</p>
+      </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: HOME COCKPIT VIEW (INTERACTIVE HOST BUTTONS) -->
+    <!-- ======================================================== -->
+    <main class="view-panel active" id="view-home">
+      <div class="cockpit-stage">
+        <!-- Photorealistic Background Image -->
+        <img 
+          src="CurbsideCinema_Background.jpeg" 
+          alt="BMW X5 Interior Austin Skyline" 
+          class="bg-car-image" 
+          onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpg';"
+        />
+
+        <!-- Ambient BMW Interior Glow Overlay -->
+        <div class="cockpit-ambient-glow"></div>
+
+        <!-- Interactive Host Buttons Layer -->
+        <div class="hosts-interactive-grid">
+
+          <!-- HOST 1: SHANE (DRIVER SEAT, LEFT) -> CONTACT US -->
+          <div class="host-anchor host-shane-anchor" id="btn-shane" onclick="switchSection('contact')">
+            <div class="spotlight-cone cone-shane"></div>
+            <div class="host-content-wrapper">
+              <img 
+                src="assets/shane.svg" 
+                alt="Shane - Contact Us Button" 
+                class="host-graphic"
+                onerror="this.onerror=null; this.src='assets/shane.png';"
+              />
+            </div>
+          </div>
+
+          <!-- HOST 2: ALEX (CENTER BACK SEAT, MIDDLE) -> ABOUT US -->
+          <div class="host-anchor host-alex-anchor" id="btn-alex" onclick="switchSection('about')">
+            <div class="spotlight-cone cone-alex"></div>
+            <div class="host-content-wrapper">
+              <img 
+                src="assets/alex.svg" 
+                alt="Alex - About Us Button" 
+                class="host-graphic"
+                onerror="this.onerror=null; this.src='assets/alex.png';"
+              />
+            </div>
+          </div>
+
+          <!-- HOST 3: DAVE (PASSENGER SEAT, RIGHT) -> EPISODES -->
+          <div class="host-anchor host-dave-anchor" id="btn-dave" onclick="switchSection('episodes')">
+            <div class="spotlight-cone cone-dave"></div>
+            <div class="host-content-wrapper">
+              <img 
+                src="assets/dave.svg" 
+                alt="Dave - Episodes Button" 
+                class="host-graphic"
+                onerror="this.onerror=null; this.src='assets/dave.png';"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Cockpit Interaction Hint Pill -->
+        <div class="cockpit-hint-pill">
+          Interactive Cockpit • Click Any Host To Navigate
+        </div>
+      </div>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: ABOUT US SUB-PAGE -->
+    <!-- ======================================================== -->
+    <section class="view-panel" id="view-about">
+      <div class="subpage-scroll-container">
+        <div class="subpage-nav-bar">
+          <h2 class="subpage-heading">About Curbside Cinema</h2>
+          <button class="btn-back-car" onclick="switchSection('home')">← Back to BMW X5</button>
+        </div>
+        <p class="subpage-intro">
+          Broadcasting live from the cabin of a BMW X5 overlooking the Austin night skyline. Curbside Cinema brings raw, unfiltered movie debriefs the second the credits roll.
+        </p>
+        <div class="hosts-bio-grid">
+          <div class="bio-card">
+            <span class="seat-badge badge-shane">Driver Seat</span>
+            <h3 class="bio-name">Shane</h3>
+            <p class="bio-description">Behind the wheel in the Columbia blue fishing shirt. Breaks down cinematography, camera angles, pacing, and the mechanical execution of modern cinema.</p>
+          </div>
+          <div class="bio-card">
+            <span class="seat-badge badge-alex">Center Back Seat</span>
+            <h3 class="bio-name">Alex</h3>
+            <p class="bio-description">Holding court between the front seats in the maroon striped shirt. Dissects narrative structure, thematic depth, character dynamics, and psychological thrillers.</p>
+          </div>
+          <div class="bio-card">
+            <span class="seat-badge badge-dave">Passenger Seat</span>
+            <h3 class="bio-name">Dave</h3>
+            <p class="bio-description">Riding shotgun in the graphic tee and black cap. Resident franchise historian and champion of practical monster effects with an encyclopedic memory of 80s and 90s cinema.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 3: EPISODES SUB-PAGE (YOUTUBE EMBED) -->
+    <!-- ======================================================== -->
+    <section class="view-panel" id="view-episodes">
+      <div class="subpage-scroll-container">
+        <div class="subpage-nav-bar">
+          <h2 class="subpage-heading">Episodes & Reviews</h2>
+          <button class="btn-back-car" onclick="switchSection('home')">← Back to BMW X5</button>
+        </div>
+        <div class="episodes-container-layout">
+          <div>
+            <div class="youtube-responsive-box">
+              <iframe 
+                id="main-video-player" 
+                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" 
+                title="Curbside Cinema Episode" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="video-meta-box">
+              <h3 id="current-video-title" class="video-title">Episode 42: Midnight In Austin • Post-Screening Dispatch</h3>
+              <p class="video-sub">Recorded live from the BMW X5 overlooking Lady Bird Lake right after a midnight premiere.</p>
+            </div>
+          </div>
+          <div class="episodes-playlist-stack">
+            <div class="playlist-card active" onclick="loadYouTubeVideo('dQw4w9WgXcQ', 'Episode 42: Midnight In Austin • Post-Screening Dispatch')">
+              <div>
+                <div class="pl-ep-title">Ep. 42: Midnight In Austin</div>
+                <div class="pl-ep-meta">1h 12m • Released Yesterday</div>
+              </div>
+              <span class="pl-play-tag">▶ PLAY</span>
+            </div>
+            <div class="playlist-card" onclick="loadYouTubeVideo('L_LUpnjgPso', 'Episode 41: Blockbuster Highs & Franchise Fatigue')">
+              <div>
+                <div class="pl-ep-title">Ep. 41: Blockbuster Fatigue</div>
+                <div class="pl-ep-meta">58m • 1 week ago</div>
+              </div>
+              <span class="pl-play-tag">▶ PLAY</span>
+            </div>
+            <div class="playlist-card" onclick="loadYouTubeVideo('fJ9rUzIMcZQ', 'Episode 40: Practical Horror vs Digital Noise')">
+              <div>
+                <div class="pl-ep-title">Ep. 40: Practical Horror FX</div>
+                <div class="pl-ep-meta">1h 24m • 2 weeks ago</div>
+              </div>
+              <span class="pl-play-tag">▶ PLAY</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 4: CONTACT US SUB-PAGE -->
+    <!-- ======================================================== -->
+    <section class="view-panel" id="view-contact">
+      <div class="subpage-scroll-container">
+        <div class="subpage-nav-bar">
+          <h2 class="subpage-heading">Contact The Studio</h2>
+          <button class="btn-back-car" onclick="switchSection('home')">← Back to BMW X5</button>
+        </div>
+        <div class="contact-grid-layout">
+          <form onsubmit="handleFormSubmission(event)">
+            <div class="input-group">
+              <label class="input-label">Your Name</label>
+              <input type="text" required class="text-input" placeholder="e.g. Christopher Nolan" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">Email Address</label>
+              <input type="email" required class="text-input" placeholder="director@studio.com" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">Movie Review Request / Message</label>
+              <textarea rows="4" required class="textarea-input" placeholder="What movie should Shane, Alex, and Dave review next from the BMW?"></textarea>
+            </div>
+            <button type="submit" class="btn-send-dispatch">Transmit Dispatch</button>
+            <div class="form-feedback-alert" id="form-feedback">✓ Transmitted directly to the BMW console!</div>
+          </form>
+          <div class="contact-info-panel">
+            <h4 class="info-panel-title">Austin Studio Box</h4>
+            <p class="info-panel-text">
+              For Austin theatrical invites, podcast sponsorships, or guest appearances, contact the crew directly.
+            </p>
+            <div class="info-email-highlight">
+              ✉ crew@curbsidecinema.com
+            </div>
+            <p class="info-panel-sub">
+              Recorded on location in Austin, TX. Available on Spotify, Apple Podcasts, YouTube, and Letterboxd.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
