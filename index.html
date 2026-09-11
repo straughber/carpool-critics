@@ -5,7 +5,111 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Curbside Cinema | Recorded Live in the BMW X5</title>
   <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
-  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Cache-busting query to prevent stale browser caches -->
+  <link rel="stylesheet" href="style.css?v=2.0.1" />
+
+  <!-- Critical Inline Styles to Guarantee 1:1 Full-Width Proportional Scaling matching Reference Image -->
+  <style>
+    /* Ensure host layers are 100% full-width and full-height overlays */
+    .cockpit-stage {
+      width: 100% !important;
+      height: 100% !important;
+      position: relative !important;
+      background-color: #000000 !important;
+      overflow: hidden !important;
+    }
+
+    .stage-layer {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center !important;
+      display: block !important;
+      pointer-events: none !important;
+    }
+
+    .bg-car-image {
+      z-index: 1 !important;
+    }
+
+    .host-group {
+      position: absolute !important;
+      inset: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .group-dave  { z-index: 5 !important; }
+    .group-alex  { z-index: 10 !important; }
+    .group-shane { z-index: 10 !important; }
+
+    .host-cutout-img {
+      pointer-events: none !important;
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease !important;
+      will-change: transform, filter !important;
+    }
+
+    /* Transform origins centered on each person in the reference image */
+    .img-alex {
+      transform-origin: 30% 50% !important;
+    }
+
+    .img-dave {
+      transform-origin: 50% 45% !important;
+    }
+
+    .img-shane {
+      transform-origin: 71% 50% !important;
+    }
+
+    /* Hover State: 10% scale up & spotlight brightens */
+    .host-group.is-hovered .host-cutout-img {
+      transform: scale(1.10) !important;
+      filter: brightness(1.25) drop-shadow(0 20px 40px rgba(0, 0, 0, 0.95)) !important;
+    }
+
+    .host-group.is-hovered .spotlight-cone {
+      opacity: 1.0 !important;
+      filter: brightness(1.6) !important;
+    }
+
+    /* Life-size Clickable Hotspots Matching Reference Image */
+    .host-hitbox {
+      position: absolute !important;
+      cursor: pointer !important;
+      z-index: 30 !important;
+      border-radius: 20px !important;
+    }
+
+    .hitbox-alex {
+      left: 14% !important;
+      top: 20% !important;
+      width: 33% !important;
+      height: 65% !important;
+    }
+
+    .hitbox-dave {
+      left: 42% !important;
+      top: 25% !important;
+      width: 16% !important;
+      height: 44% !important;
+    }
+
+    .hitbox-shane {
+      left: 55% !important;
+      top: 20% !important;
+      width: 33% !important;
+      height: 65% !important;
+    }
+
+    /* Strictly ensure no side text or whiteboard labels are shown */
+    .whiteboard-pill, .host-text-label {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -22,7 +126,7 @@
     </header>
 
     <!-- ======================================================== -->
-    <!-- VIEW 1: HOME COCKPIT VIEW (PROPORTIONAL HOST LAYERS) -->
+    <!-- VIEW 1: HOME COCKPIT VIEW (PROPORTIONAL LIFE-SIZE HOSTS) -->
     <!-- ======================================================== -->
     <main class="view-panel active" id="view-home">
       <div class="cockpit-stage">
@@ -71,7 +175,7 @@
           />
         </div>
 
-        <!-- 3. Clickable Host Hotspot Zones (Direct Interaction on Hosts) -->
+        <!-- 3. Clickable Host Hotspots (Direct Interaction on Life-Size Hosts) -->
         <div 
           class="host-hitbox hitbox-alex" 
           onclick="switchSection('about')" 
@@ -231,6 +335,6 @@
 
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2.0.1"></script>
 </body>
 </html>
