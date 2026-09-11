@@ -12,6 +12,17 @@ function switchSection(sectionId) {
   }
 }
 
+function setHover(hostKey, isHovered) {
+  const group = document.getElementById('group-' + hostKey);
+  if (group) {
+    if (isHovered) {
+      group.classList.add('is-hovered');
+    } else {
+      group.classList.remove('is-hovered');
+    }
+  }
+}
+
 function loadYouTubeVideo(youtubeId, title) {
   const player = document.getElementById('main-video-player');
   const titleEl = document.getElementById('current-video-title');
