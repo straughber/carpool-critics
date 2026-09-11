@@ -63,6 +63,7 @@ body {
   transform: translateX(-50%);
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 45;
@@ -92,12 +93,13 @@ body {
   justify-content: center;
   text-align: center;
   max-width: 90vw;
+  pointer-events: auto;
 }
 
 .brand-title {
-  font-size: clamp(20px, 2.2vw, 28px);
+  font-size: clamp(18px, 2.2vw, 28px);
   font-weight: 900;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   color: #ffffff;
   text-transform: uppercase;
   text-align: center;
@@ -107,15 +109,91 @@ body {
 }
 
 .brand-sub {
-  font-size: clamp(10px, 1.05vw, 12px);
+  font-size: clamp(9px, 1.05vw, 12px);
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   color: var(--bmw-amber);
   margin-top: 4px;
   text-transform: uppercase;
   text-align: center;
   line-height: 1.3;
   white-space: nowrap;
+}
+
+/* Mobile-only Navigation Buttons Underneath Title Box (Alphabetical Order) */
+.mobile-nav-bar {
+  display: none;
+  pointer-events: auto;
+  margin-top: 10px;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 92vw;
+}
+
+.mobile-btn {
+  background: rgba(10, 14, 24, 0.90);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  padding: 7px 14px;
+  border-radius: 24px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.75);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-btn-about {
+  border-color: rgba(230, 57, 70, 0.45);
+}
+.mobile-btn-about::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e63946;
+}
+
+.mobile-btn-contact {
+  border-color: rgba(72, 202, 228, 0.45);
+}
+.mobile-btn-contact::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #48cae4;
+}
+
+.mobile-btn-episodes {
+  border-color: rgba(244, 162, 97, 0.45);
+}
+.mobile-btn-episodes::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f4a261;
+}
+
+.mobile-btn:active {
+  background: #ffffff;
+  color: #000000;
+  transform: scale(0.96);
 }
 
 /* View Panels Switcher */
@@ -277,7 +355,7 @@ body {
   height: 65%;
 }
 
-/* Host Navigation Button Labels in Front of Each Host */
+/* Host Navigation Button Labels in Front of Each Host (Desktop) */
 .host-nav-label {
   background: rgba(8, 11, 18, 0.88);
   backdrop-filter: blur(10px);
@@ -700,27 +778,34 @@ body {
     max-height: none;
   }
   .brand-title {
-    font-size: 20px;
-    letter-spacing: 3px;
+    font-size: 18px;
+    letter-spacing: 2px;
     white-space: normal;
   }
   .brand-sub {
-    font-size: 10px;
+    font-size: 9px;
     white-space: normal;
   }
+
+  /* Show mobile navigation buttons underneath title box */
+  .mobile-nav-bar {
+    display: flex;
+  }
+
+  /* Hide desktop labels on mobile to prevent clutter */
   .host-nav-label {
-    padding: 7px 18px;
-    font-size: 11px;
-    letter-spacing: 1.2px;
+    display: none !important;
   }
+
   .cockpit-hint-pill {
+    bottom: 12px;
     white-space: normal;
-    max-width: 86vw;
-    padding: 6px 18px;
-    font-size: 10px;
+    max-width: 88vw;
+    padding: 5px 14px;
+    font-size: 9px;
     text-align: center;
   }
   .subpage-scroll-container {
-    padding: 90px 20px 30px;
+    padding: 30px 18px 25px;
   }
 }
