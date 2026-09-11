@@ -1,0 +1,596 @@
+/* ========================================================
+   CURBSIDE CINEMA - PRODUCTION STYLESHEET
+   ======================================================== */
+
+:root {
+  --bg-black: #000000;
+  --cockpit-dark: #070a12;
+  --bmw-blue: #48cae4;
+  --bmw-amber: #f4a261;
+  --bmw-red: #e63946;
+  --text-bright: #ffffff;
+  --text-dim: #94a3b8;
+  --card-bg: rgba(13, 18, 29, 0.94);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --anim-timing: 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--bg-black);
+  color: var(--text-bright);
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Master 16:9 Viewport Canvas */
+.cinema-viewport {
+  width: 100vw;
+  max-width: 1600px;
+  height: 100vh;
+  max-height: 900px;
+  position: relative;
+  background-color: var(--bg-black);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Deep Radial Vignette (Seamless Full-Bleed into Black Background) */
+.vignette-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 35;
+  background: radial-gradient(circle at center, transparent 62%, rgba(0, 0, 0, 0.75) 82%, #000000 100%);
+  box-shadow: inset 0 0 140px 50px #000000;
+}
+
+/* Minimalist Floating Title Header */
+.title-header {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+  text-align: center;
+  pointer-events: none;
+}
+
+.title-badge {
+  background: rgba(8, 11, 18, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 36px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  display: inline-block;
+}
+
+.brand-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.brand-sub {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--bmw-amber);
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+/* View Panels Switcher */
+.view-panel {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.98);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.view-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+  z-index: 20;
+}
+
+/* ========================================================
+   HOME VIEW: COCKPIT & HOST BUTTONS
+   ======================================================== */
+.cockpit-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: var(--cockpit-dark);
+  overflow: hidden;
+}
+
+.bg-car-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  display: block;
+}
+
+/* Ambient Blue LED Reflection */
+.cockpit-ambient-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 85%, rgba(72, 202, 228, 0.12) 0%, transparent 60%);
+  mix-blend-mode: screen;
+}
+
+/* Interactive Host Grid Positioning (Matches Seat Coordinates in Background Photo) */
+.hosts-interactive-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+}
+
+.host-anchor {
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  transform-origin: center bottom;
+  transition: transform var(--anim-timing), filter var(--anim-timing);
+}
+
+/* HOST 1: SHANE (Driver Seat, Left) */
+.host-shane-anchor {
+  left: 21%;
+  width: 25%;
+  bottom: 8%;
+  height: 72%;
+}
+
+/* HOST 2: ALEX (Center Back Seat, Middle) */
+.host-alex-anchor {
+  left: 39%;
+  width: 22%;
+  bottom: 24%;
+  height: 62%;
+  z-index: 24;
+}
+
+/* HOST 3: DAVE (Passenger Seat, Right) */
+.host-dave-anchor {
+  left: 54%;
+  width: 25%;
+  bottom: 8%;
+  height: 72%;
+}
+
+.host-content-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.host-graphic {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
+}
+
+/* SPOTLIGHT CONE (CSS Radial Gradient Overlay) */
+.spotlight-cone {
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  opacity: 0.45;
+  transition: opacity var(--anim-timing), filter var(--anim-timing);
+}
+
+.cone-shane {
+  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(72, 202, 228, 0.15) 50%, transparent 80%);
+}
+
+.cone-alex {
+  background: radial-gradient(ellipse at 50% 25%, rgba(255, 245, 240, 0.40) 0%, rgba(230, 57, 70, 0.15) 50%, transparent 80%);
+}
+
+.cone-dave {
+  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(244, 162, 97, 0.15) 50%, transparent 80%);
+}
+
+/* HOVER ANIMATION: 10% SCALE UP + SPOTLIGHT BRIGHTNESS */
+.host-anchor:hover {
+  transform: scale(1.10) translateY(-10px);
+  filter: brightness(1.28) drop-shadow(0 25px 40px rgba(0, 0, 0, 0.95));
+}
+
+.host-anchor:hover .spotlight-cone {
+  opacity: 1.0;
+  filter: brightness(1.6);
+}
+
+.host-anchor:active {
+  transform: scale(1.05) translateY(-4px);
+}
+
+/* Hint Pill */
+.cockpit-hint-pill {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 36;
+  background: rgba(10, 14, 24, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ========================================================
+   SUB-PAGE TEMPLATES (About, Episodes, Contact)
+   ======================================================== */
+.subpage-scroll-container {
+  width: 100%;
+  height: 100%;
+  padding: 105px 60px 45px;
+  background: radial-gradient(circle at 50% 15%, #101726 0%, #04060a 100%);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.subpage-nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+}
+
+.subpage-heading {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subpage-heading::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 26px;
+  background: var(--bmw-blue);
+  border-radius: 2px;
+}
+
+.btn-back-car {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text-bright);
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-back-car:hover {
+  background: var(--bmw-blue);
+  border-color: var(--bmw-blue);
+  color: #000;
+  transform: translateX(-4px);
+  box-shadow: 0 4px 20px rgba(72, 202, 228, 0.4);
+}
+
+.subpage-intro {
+  color: var(--text-dim);
+  font-size: 15px;
+  margin-bottom: 26px;
+  max-width: 820px;
+  line-height: 1.6;
+}
+
+/* ABOUT US CARDS */
+.hosts-bio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 820px) {
+  .hosts-bio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bio-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 26px;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.bio-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.seat-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.badge-shane { background: rgba(72, 202, 228, 0.18); color: var(--bmw-blue); }
+.badge-alex  { background: rgba(230, 57, 70, 0.18); color: var(--bmw-red); }
+.badge-dave  { background: rgba(244, 162, 97, 0.18); color: var(--bmw-amber); }
+
+.bio-name {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.bio-description {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+/* EPISODES & YOUTUBE PLAYER */
+.episodes-container-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 28px;
+}
+
+@media (max-width: 860px) {
+  .episodes-container-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.youtube-responsive-box {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--card-border);
+}
+
+.youtube-responsive-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.video-meta-box {
+  margin-top: 16px;
+}
+
+.video-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.video-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 5px;
+}
+
+.episodes-playlist-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.playlist-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 14px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playlist-card:hover, .playlist-card.active {
+  border-color: var(--bmw-amber);
+  background: #141b2c;
+  transform: translateX(4px);
+}
+
+.pl-ep-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pl-ep-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.pl-play-tag {
+  color: var(--bmw-amber);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* CONTACT FORM */
+.contact-grid-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 820px) {
+  .contact-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.text-input, .textarea-input {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.text-input:focus, .textarea-input:focus {
+  border-color: var(--bmw-blue);
+}
+
+.btn-send-dispatch {
+  background: var(--bmw-red);
+  border: none;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-send-dispatch:hover {
+  background: #ff4d5a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+}
+
+.form-feedback-alert {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--bmw-blue);
+  display: none;
+}
+
+.contact-info-panel {
+  background: var(--card-bg);
+  padding: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  height: fit-content;
+}
+
+.info-panel-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  color: var(--bmw-blue);
+}
+
+.info-panel-text {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.info-email-highlight {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.info-panel-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 16px;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .cinema-viewport {
+    height: 100vh;
+    max-height: none;
+  }
+  .brand-title {
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+  .brand-sub {
+    font-size: 9px;
+  }
+  .subpage-scroll-container {
+    padding: 90px 20px 30px;
+  }
+}
