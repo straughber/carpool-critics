@@ -1,5 +1,5 @@
 /* ========================================================
-   CURBSIDE CINEMA - INTERACTION LOGIC
+   CARPOOL CINEMA CRITICS - INTERACTION LOGIC
    ======================================================== */
 
 function switchSection(sectionId) {
@@ -9,6 +9,16 @@ function switchSection(sectionId) {
   const activePanel = document.getElementById('view-' + sectionId);
   if (activePanel) {
     activePanel.classList.add('active');
+  }
+
+  // Fade out and hide top title box when navigating away from home
+  const header = document.querySelector('.title-header');
+  if (header) {
+    if (sectionId === 'home') {
+      header.classList.remove('header-hidden');
+    } else {
+      header.classList.add('header-hidden');
+    }
   }
 }
 
