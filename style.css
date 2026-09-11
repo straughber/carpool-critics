@@ -76,7 +76,7 @@ h1, h2, h3, h4, h5, h6,
 /* Minimalist Floating Title Header */
 .title-header {
   position: absolute;
-  top: 26px;
+  top: 42px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
