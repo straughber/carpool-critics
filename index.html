@@ -7,7 +7,7 @@
   <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
   
   <!-- Cache-busting query to prevent stale browser caches -->
-  <link rel="stylesheet" href="style.css?v=2.2.0" />
+  <link rel="stylesheet" href="style.css?v=2.3.0" />
 
   <!-- Critical Inline Styles to Guarantee 1:1 Full-Width Proportional Scaling matching Reference Image -->
   <style>
@@ -82,6 +82,11 @@
       cursor: pointer !important;
       z-index: 30 !important;
       border-radius: 20px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      padding-bottom: 22px !important;
     }
 
     .hitbox-alex {
@@ -96,6 +101,7 @@
       top: 25% !important;
       width: 16% !important;
       height: 44% !important;
+      padding-bottom: 12px !important;
     }
 
     .hitbox-shane {
@@ -103,6 +109,75 @@
       top: 20% !important;
       width: 33% !important;
       height: 65% !important;
+    }
+
+    /* Host Navigation Button Labels in Front of Each Host */
+    .host-nav-label {
+      background: rgba(8, 11, 18, 0.88) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      color: #ffffff !important;
+      padding: 9px 26px !important;
+      border-radius: 30px !important;
+      font-size: clamp(12px, 1.1vw, 15px) !important;
+      font-weight: 800 !important;
+      letter-spacing: 2px !important;
+      text-transform: uppercase !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85) !important;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+      pointer-events: auto !important;
+      user-select: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      white-space: nowrap !important;
+      z-index: 35 !important;
+    }
+
+    .label-alex {
+      border-color: rgba(230, 57, 70, 0.45) !important;
+    }
+    .label-alex::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #e63946;
+    }
+
+    .label-dave {
+      border-color: rgba(244, 162, 97, 0.45) !important;
+    }
+    .label-dave::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f4a261;
+    }
+
+    .label-shane {
+      border-color: rgba(72, 202, 228, 0.45) !important;
+    }
+    .label-shane::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #48cae4;
+    }
+
+    /* Hover State: Label Illuminates & Elevates */
+    .host-hitbox:hover .host-nav-label {
+      background: #ffffff !important;
+      color: #080b12 !important;
+      border-color: #ffffff !important;
+      transform: translateY(-4px) scale(1.05) !important;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 255, 255, 0.35) !important;
     }
 
     /* Centered Header Badge without awkward line-breaks */
@@ -284,14 +359,16 @@
           />
         </div>
 
-        <!-- 3. Clickable Host Hotspots (Direct Interaction on Life-Size Hosts) -->
+        <!-- 3. Clickable Host Hotspots with Front Navigation Labels -->
         <div 
           class="host-hitbox hitbox-alex" 
           onclick="switchSection('about')" 
           title="Alex • About Us"
           onmouseenter="setHover('alex', true)"
           onmouseleave="setHover('alex', false)"
-        ></div>
+        >
+          <div class="host-nav-label label-alex">About Us</div>
+        </div>
 
         <div 
           class="host-hitbox hitbox-dave" 
@@ -299,7 +376,9 @@
           title="Dave • Episodes"
           onmouseenter="setHover('dave', true)"
           onmouseleave="setHover('dave', false)"
-        ></div>
+        >
+          <div class="host-nav-label label-dave">Episodes</div>
+        </div>
 
         <div 
           class="host-hitbox hitbox-shane" 
@@ -307,7 +386,9 @@
           title="Shane • Contact Us"
           onmouseenter="setHover('shane', true)"
           onmouseleave="setHover('shane', false)"
-        ></div>
+        >
+          <div class="host-nav-label label-shane">Contact Us</div>
+        </div>
 
         <!-- Interaction Helper Pill -->
         <div class="cockpit-hint-pill">
@@ -444,6 +525,6 @@
 
   </div>
 
-  <script src="script.js?v=2.2.0"></script>
+  <script src="script.js?v=2.3.0"></script>
 </body>
 </html>
