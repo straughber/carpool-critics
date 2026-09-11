@@ -1,0 +1,25 @@
+{
+  "episodeId": "ep40",
+  "title": "Episode 40: Practical Horror vs Digital Noise",
+  "recordedLocation": "BMW X5 Studio • Overlooking Lady Bird Lake, Austin, TX",
+  "dialogue": [
+    {
+      "time": "00:00:10",
+      "speaker": "Shane",
+      "role": "Passenger",
+      "text": "Late-night horror dispatch. Tonight we're debating why 80s animatronics still look terrifying while 2026 CGI monsters often look like video game cutscenes."
+    },
+    {
+      "time": "00:00:30",
+      "speaker": "Dave",
+      "role": "Center Back",
+      "text": "It comes down to tactile light interaction. Foam latex and silicone physically absorb and reflect photons from practical lamps. CGI shaders are calculating approximations, and your eye knows the difference."
+    },
+    {
+      "time": "00:00:55",
+      "speaker": "Alex",
+      "role": "Driver",
+      "text": "And the actors behave differently when there's an actual seven-foot mechanical puppet in the room with them versus a tennis ball on a green broomstick."
+    }
+  ]
+}
