@@ -40,42 +40,54 @@
         <!-- Interactive Host Buttons Layer -->
         <div class="hosts-interactive-grid">
 
-          <!-- HOST 1: SHANE (DRIVER SEAT, LEFT) -> CONTACT US -->
-          <div class="host-anchor host-shane-anchor" id="btn-shane" onclick="switchSection('contact')">
-            <div class="spotlight-cone cone-shane"></div>
-            <div class="host-content-wrapper">
-              <img 
-                src="assets/shane.svg" 
-                alt="Shane - Contact Us Button" 
-                class="host-graphic"
-                onerror="this.onerror=null; this.src='assets/shane.png';"
-              />
-            </div>
-          </div>
-
-          <!-- HOST 2: ALEX (CENTER BACK SEAT, MIDDLE) -> ABOUT US -->
+          <!-- HOST 1: ALEX (LEFT / DRIVER SEAT) -> ABOUT US -->
           <div class="host-anchor host-alex-anchor" id="btn-alex" onclick="switchSection('about')">
             <div class="spotlight-cone cone-alex"></div>
             <div class="host-content-wrapper">
               <img 
-                src="assets/alex.svg" 
-                alt="Alex - About Us Button" 
+                src="Alex_CurbsideCritic.webp" 
+                alt="Alex - About Us" 
                 class="host-graphic"
-                onerror="this.onerror=null; this.src='assets/alex.png';"
+                onerror="this.onerror=null; this.src='assets/Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/alex.svg';};"
               />
+              <div class="whiteboard-pill pill-alex">
+                <span class="pill-action">ABOUT US</span>
+                <span class="pill-host">ALEX • DRIVER</span>
+              </div>
             </div>
           </div>
 
-          <!-- HOST 3: DAVE (PASSENGER SEAT, RIGHT) -> EPISODES -->
+          <!-- HOST 2: DAVE (MIDDLE / CENTER BACK SEAT) -> EPISODES -->
           <div class="host-anchor host-dave-anchor" id="btn-dave" onclick="switchSection('episodes')">
             <div class="spotlight-cone cone-dave"></div>
             <div class="host-content-wrapper">
               <img 
-                src="assets/dave.svg" 
-                alt="Dave - Episodes Button" 
+                src="Dave_CurbsideCritic.webp" 
+                alt="Dave - Episodes" 
                 class="host-graphic"
-                onerror="this.onerror=null; this.src='assets/dave.png';"
+                onerror="this.onerror=null; this.src='assets/Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/dave.svg';};"
               />
+              <div class="whiteboard-pill pill-dave">
+                <span class="pill-action">EPISODES</span>
+                <span class="pill-host">DAVE • BACK SEAT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- HOST 3: SHANE (RIGHT / PASSENGER SEAT) -> CONTACT US -->
+          <div class="host-anchor host-shane-anchor" id="btn-shane" onclick="switchSection('contact')">
+            <div class="spotlight-cone cone-shane"></div>
+            <div class="host-content-wrapper">
+              <img 
+                src="Shane_CurbsideCritic.webp" 
+                alt="Shane - Contact Us" 
+                class="host-graphic"
+                onerror="this.onerror=null; this.src='assets/Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/shane.svg';};"
+              />
+              <div class="whiteboard-pill pill-shane">
+                <span class="pill-action">CONTACT US</span>
+                <span class="pill-host">SHANE • PASSENGER</span>
+              </div>
             </div>
           </div>
 
@@ -102,19 +114,19 @@
         </p>
         <div class="hosts-bio-grid">
           <div class="bio-card">
-            <span class="seat-badge badge-shane">Driver Seat</span>
-            <h3 class="bio-name">Shane</h3>
-            <p class="bio-description">Behind the wheel in the Columbia blue fishing shirt. Breaks down cinematography, camera angles, pacing, and the mechanical execution of modern cinema.</p>
-          </div>
-          <div class="bio-card">
-            <span class="seat-badge badge-alex">Center Back Seat</span>
+            <span class="seat-badge badge-alex">Driver Seat</span>
             <h3 class="bio-name">Alex</h3>
-            <p class="bio-description">Holding court between the front seats in the maroon striped shirt. Dissects narrative structure, thematic depth, character dynamics, and psychological thrillers.</p>
+            <p class="bio-description">Behind the wheel in the maroon striped shirt. Dissects screenplay pacing, narrative arcs, and psychological thrillers with razor-sharp insight.</p>
           </div>
           <div class="bio-card">
-            <span class="seat-badge badge-dave">Passenger Seat</span>
+            <span class="seat-badge badge-dave">Center Back Seat</span>
             <h3 class="bio-name">Dave</h3>
-            <p class="bio-description">Riding shotgun in the graphic tee and black cap. Resident franchise historian and champion of practical monster effects with an encyclopedic memory of 80s and 90s cinema.</p>
+            <p class="bio-description">Holding court between the front seats in the white graphic tee and black cap. The resident franchise historian and creature feature champion with encyclopedic cinema memory.</p>
+          </div>
+          <div class="bio-card">
+            <span class="seat-badge badge-shane">Passenger Seat</span>
+            <h3 class="bio-name">Shane</h3>
+            <p class="bio-description">Riding shotgun in the Columbia blue fishing shirt. Breaks down cinematography, lighting choices, framing, and the technical mechanics of modern film.</p>
           </div>
         </div>
       </div>
@@ -193,7 +205,7 @@
             </div>
             <div class="input-group">
               <label class="input-label">Movie Review Request / Message</label>
-              <textarea rows="4" required class="textarea-input" placeholder="What movie should Shane, Alex, and Dave review next from the BMW?"></textarea>
+              <textarea rows="4" required class="textarea-input" placeholder="What movie should Alex, Dave, and Shane review next from the BMW?"></textarea>
             </div>
             <button type="submit" class="btn-send-dispatch">Transmit Dispatch</button>
             <div class="form-feedback-alert" id="form-feedback">✓ Transmitted directly to the BMW console!</div>
