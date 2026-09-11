@@ -54,7 +54,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.5.0" />
+  <link rel="stylesheet" href="style.css?v=3.6.0" />
 
   <style>
     /* Global Typography: Chivo for all Body, Teko for Headers */
@@ -618,6 +618,23 @@
       .subpage-scroll-container {
         padding: 30px 18px 25px !important;
       }
+
+      /* 4. Subpage navigation bar: Back to Home button above page title */
+      .subpage-nav-bar {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        padding-bottom: 14px !important;
+        margin-bottom: 20px !important;
+      }
+
+      .subpage-nav-bar .btn-back-car {
+        order: -1 !important;
+        align-self: flex-start !important;
+        white-space: nowrap !important;
+        padding: 8px 16px !important;
+        font-size: 11px !important;
+      }
     }
   </style>
 </head>
@@ -879,6 +896,6 @@
 
   </div>
 
-  <script src="script.js?v=3.5.0"></script>
+  <script src="script.js?v=3.6.0"></script>
 </body>
 </html>
