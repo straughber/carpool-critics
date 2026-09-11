@@ -6,7 +6,7 @@
   <title>Carpool Cinema Critics | Austin, TX</title>
   <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
   
-  <link rel="stylesheet" href="style.css?v=2.5.0" />
+  <link rel="stylesheet" href="style.css?v=2.6.0" />
 
   <style>
     /* Ensure host layers are 100% full-width and full-height overlays */
@@ -352,6 +352,143 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.75) !important;
     }
 
+    /* Episode Transcript Container (Accessibility & SEO) */
+    .transcript-container {
+      margin-top: 20px !important;
+      background: rgba(9, 13, 22, 0.92) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    .transcript-bar {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 12px 18px !important;
+      background: rgba(14, 20, 32, 0.95) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .transcript-badge-group {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+
+    .transcript-tag {
+      background: rgba(72, 202, 228, 0.15) !important;
+      color: #48cae4 !important;
+      font-size: 9px !important;
+      font-weight: 800 !important;
+      letter-spacing: 1.5px !important;
+      padding: 3px 8px !important;
+      border-radius: 4px !important;
+      text-transform: uppercase !important;
+    }
+
+    .transcript-heading-text {
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      letter-spacing: 1px !important;
+      color: #ffffff !important;
+      text-transform: uppercase !important;
+      margin: 0 !important;
+    }
+
+    .transcript-toggle {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      color: #94a3b8 !important;
+      padding: 5px 12px !important;
+      border-radius: 4px !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .transcript-toggle:hover {
+      background: rgba(255, 255, 255, 0.16) !important;
+      color: #ffffff !important;
+    }
+
+    .transcript-scroll-box {
+      max-height: 320px !important;
+      overflow-y: auto !important;
+      padding: 16px 18px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 14px !important;
+      transition: max-height 0.3s ease, padding 0.3s ease !important;
+    }
+
+    .transcript-scroll-box.collapsed {
+      max-height: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .transcript-entry {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 4px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+      padding-bottom: 10px !important;
+    }
+
+    .transcript-entry:last-child {
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+    }
+
+    .transcript-meta {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+
+    .transcript-time {
+      font-family: monospace !important;
+      font-size: 11px !important;
+      color: #64748b !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      padding: 2px 6px !important;
+      border-radius: 3px !important;
+    }
+
+    .speaker-pill {
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.5px !important;
+      padding: 2px 8px !important;
+      border-radius: 3px !important;
+      text-transform: uppercase !important;
+    }
+
+    .speaker-alex  { background: rgba(230, 57, 70, 0.2) !important; color: #e63946 !important; }
+    .speaker-dave  { background: rgba(244, 162, 97, 0.2) !important; color: #f4a261 !important; }
+    .speaker-shane { background: rgba(72, 202, 228, 0.2) !important; color: #48cae4 !important; }
+
+    .transcript-text {
+      font-size: 13px !important;
+      line-height: 1.65 !important;
+      color: #cbd5e1 !important;
+    }
+
+    .transcript-loading-msg {
+      font-size: 12px !important;
+      color: #94a3b8 !important;
+      font-style: italic !important;
+      text-align: center !important;
+      padding: 16px 0 !important;
+    }
+
     /* STRICT MOBILE-ONLY OVERRIDES */
     @media (max-width: 768px) {
       .brand-title, .brand-sub {
@@ -525,12 +662,12 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- VIEW 3: EPISODES SUB-PAGE (YOUTUBE EMBED) -->
+    <!-- VIEW 3: EPISODES SUB-PAGE (YOUTUBE EMBED + ON-DEMAND TRANSCRIPTS) -->
     <!-- ======================================================== -->
     <section class="view-panel" id="view-episodes">
       <div class="subpage-scroll-container">
         <div class="subpage-nav-bar">
-          <h2 class="subpage-heading">Episodes</h2>
+          <h2 class="subpage-heading">Episodes & Reviews</h2>
           <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
         </div>
         <div class="episodes-container-layout">
@@ -546,25 +683,43 @@
             </div>
             <div class="video-meta-box">
               <h3 id="current-video-title" class="video-title">Episode 42: Midnight In Austin • Post-Screening Dispatch</h3>
-              <p class="video-sub">Recorded live from the BMW X5 overlooking Lady Bird Lake right after a midnight premiere.</p>
+              <p class="video-sub" id="current-video-sub">Recorded live from the BMW X5 overlooking Lady Bird Lake right after a midnight premiere.</p>
             </div>
+
+            <!-- On-Demand Episode Transcript Section (Accessibility & SEO) -->
+            <section class="transcript-container" aria-labelledby="transcript-header">
+              <div class="transcript-bar">
+                <div class="transcript-badge-group">
+                  <span class="transcript-tag">ACCESSIBILITY &amp; SEO</span>
+                  <h4 id="transcript-header" class="transcript-heading-text">Episode Transcript</h4>
+                </div>
+                <button class="transcript-toggle" id="btn-toggle-transcript" onclick="toggleTranscript()" aria-expanded="true">
+                  <span id="txt-toggle-transcript">Hide Transcript</span>
+                  <span id="ico-toggle-transcript">▲</span>
+                </button>
+              </div>
+              <div class="transcript-scroll-box" id="transcript-body" role="region" aria-live="polite">
+                <!-- Populated on-demand from data/transcripts/ -->
+              </div>
+            </section>
           </div>
+
           <div class="episodes-playlist-stack">
-            <div class="playlist-card active" onclick="loadYouTubeVideo('dQw4w9WgXcQ', 'Episode 42: Midnight In Austin • Post-Screening Dispatch')">
+            <div class="playlist-card active" onclick="loadYouTubeVideo('dQw4w9WgXcQ', 'Episode 42: Midnight In Austin • Post-Screening Dispatch', 'ep42')">
               <div>
                 <div class="pl-ep-title">Ep. 42: Midnight In Austin</div>
                 <div class="pl-ep-meta">1h 12m • Released Yesterday</div>
               </div>
               <span class="pl-play-tag">▶ PLAY</span>
             </div>
-            <div class="playlist-card" onclick="loadYouTubeVideo('L_LUpnjgPso', 'Episode 41: Blockbuster Highs & Franchise Fatigue')">
+            <div class="playlist-card" onclick="loadYouTubeVideo('L_LUpnjgPso', 'Episode 41: Blockbuster Highs & Franchise Fatigue', 'ep41')">
               <div>
                 <div class="pl-ep-title">Ep. 41: Blockbuster Fatigue</div>
                 <div class="pl-ep-meta">58m • 1 week ago</div>
               </div>
               <span class="pl-play-tag">▶ PLAY</span>
             </div>
-            <div class="playlist-card" onclick="loadYouTubeVideo('fJ9rUzIMcZQ', 'Episode 40: Practical Horror vs Digital Noise')">
+            <div class="playlist-card" onclick="loadYouTubeVideo('fJ9rUzIMcZQ', 'Episode 40: Practical Horror vs Digital Noise', 'ep40')">
               <div>
                 <div class="pl-ep-title">Ep. 40: Practical Horror FX</div>
                 <div class="pl-ep-meta">1h 24m • 2 weeks ago</div>
@@ -620,6 +775,6 @@
 
   </div>
 
-  <script src="script.js?v=2.5.0"></script>
+  <script src="script.js?v=2.6.0"></script>
 </body>
 </html>
