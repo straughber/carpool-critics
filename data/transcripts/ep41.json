@@ -1,0 +1,25 @@
+{
+  "episodeId": "ep41",
+  "title": "Episode 41: Blockbuster Highs & Franchise Fatigue",
+  "recordedLocation": "BMW X5 Studio • Overlooking Lady Bird Lake, Austin, TX",
+  "dialogue": [
+    {
+      "time": "00:00:08",
+      "speaker": "Shane",
+      "role": "Passenger",
+      "text": "Welcome back inside the X5. Episode 41 is all about the summer blockbuster cycle and why so many two-hundred-million-dollar tentpoles look identical."
+    },
+    {
+      "time": "00:00:26",
+      "speaker": "Alex",
+      "role": "Driver",
+      "text": "When every sequence relies on pre-visualization software and grey color grading, the emotional stakes vanish. We just watched four consecutive explosions with zero geographic continuity."
+    },
+    {
+      "time": "00:00:48",
+      "speaker": "Dave",
+      "role": "Center Back",
+      "text": "That's why Mad Max: Fury Road or Top Gun: Maverick stood out so fiercely. When you put real stunt drivers on real tarmac, the human brain registers the physical danger."
+    }
+  ]
+}
