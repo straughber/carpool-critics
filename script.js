@@ -1,11 +1,15 @@
 /* ========================================================
-   CARPOOL CINEMA CRITICS - INTERACTION & LAZY LOAD LOGIC
+   CARPOOL CINEMA CRITICS - MASTER INTERACTION LOGIC
+   Version: 4.0.0 (MCP Optimized & Cleaned)
    ======================================================== */
 
-// Global transcript cache to minimize network requests
+// ========================================================
+// 1. IN-MEMORY CACHES & OFFLINE FALLBACK DATA
+// ========================================================
 const transcriptCache = {};
+let movieCatalogCache = null;
+let formFeedbackTimer = null;
 
-// Fallback transcript data for offline / direct file preview
 const fallbackTranscripts = {
   ep42: {
     dialogue: [
@@ -31,201 +35,6 @@ const fallbackTranscripts = {
     ]
   }
 };
-
-function switchSection(sectionId) {
-  const panels = document.querySelectorAll('.view-panel');
-  panels.forEach(panel => panel.classList.remove('active'));
-
-  const activePanel = document.getElementById('view-' + sectionId);
-  if (activePanel) {
-    activePanel.classList.add('active');
-  }
-
-  // Fade out and hide top title box when navigating away from home
-  const header = document.querySelector('.title-header');
-  if (header) {
-    if (sectionId === 'home') {
-      header.classList.remove('header-hidden');
-    } else {
-      header.classList.add('header-hidden');
-    }
-  }
-
-  // Ensure initial transcript is loaded when opening episodes
-  if (sectionId === 'episodes' && !transcriptCache['current']) {
-    loadEpisodeTranscript('ep42');
-  }
-}
-
-function setHover(hostKey, isHovered) {
-  const group = document.getElementById('group-' + hostKey);
-  if (group) {
-    if (isHovered) {
-      group.classList.add('is-hovered');
-    } else {
-      group.classList.remove('is-hovered');
-    }
-  }
-}
-
-function loadYouTubeVideo(youtubeId, title, epId) {
-  const player = document.getElementById('main-video-player');
-  const titleEl = document.getElementById('current-video-title');
-  
-  if (player && youtubeId) {
-    player.src = "https://www.youtube-nocookie.com/embed/" + youtubeId + "?autoplay=1";
-  }
-  if (titleEl && title) {
-    titleEl.innerText = title;
-  }
-
-  // Load the respective transcript and movie profile on-demand
-  if (epId) {
-    loadEpisodeTranscript(epId);
-    renderMovieProfile(epId);
-  }
-
-  const cards = document.querySelectorAll('.playlist-card');
-  cards.forEach(card => card.classList.remove('active'));
-  if (window.event && window.event.currentTarget) {
-    window.event.currentTarget.classList.add('active');
-  }
-}
-
-// On-demand lazy loader for transcripts
-function loadEpisodeTranscript(epId) {
-  const transcriptBody = document.getElementById('transcript-body');
-  if (!transcriptBody) return;
-
-  transcriptCache['current'] = epId;
-
-  // Check in-memory cache first
-  if (transcriptCache[epId]) {
-    renderTranscript(transcriptCache[epId]);
-    return;
-  }
-
-  // Show loading indicator
-  transcriptBody.innerHTML = '<div class="transcript-loading-msg">Fetching episode transcript on-demand...</div>';
-
-  // Fetch static JSON file on-demand
-  fetch('data/transcripts/' + epId + '.json')
-    .then(response => {
-      if (!response.ok) throw new Error('Network error');
-      return response.json();
-    })
-    .then(data => {
-      transcriptCache[epId] = data;
-      renderTranscript(data);
-    })
-    .catch(err => {
-      console.warn('Transcript fetch fallback:', err);
-      if (fallbackTranscripts[epId]) {
-        transcriptCache[epId] = fallbackTranscripts[epId];
-        renderTranscript(fallbackTranscripts[epId]);
-      } else {
-        transcriptBody.innerHTML = '<div class="transcript-loading-msg">Transcript coming soon for this episode.</div>';
-      }
-    });
-}
-
-function renderTranscript(data) {
-  const transcriptBody = document.getElementById('transcript-body');
-  if (!transcriptBody) return;
-
-  if (!data.dialogue || data.dialogue.length === 0) {
-    transcriptBody.innerHTML = '<div class="transcript-loading-msg">No transcript available.</div>';
-    return;
-  }
-
-  const html = data.dialogue.map(entry => {
-    const speakerKey = (entry.speaker || '').toLowerCase();
-    return `
-      <article class="transcript-entry">
-        <div class="transcript-meta">
-          <time class="transcript-time">${entry.time || '00:00:00'}</time>
-          <span class="speaker-pill speaker-${speakerKey}">${entry.speaker} (${entry.role || 'Host'})</span>
-        </div>
-        <p class="transcript-text">${entry.text}</p>
-      </article>
-    `;
-  }).join('');
-
-  transcriptBody.innerHTML = html;
-}
-
-function toggleTranscript() {
-  const body = document.getElementById('transcript-body');
-  const btn = document.getElementById('btn-toggle-transcript');
-  const text = document.getElementById('txt-toggle-transcript');
-  const icon = document.getElementById('ico-toggle-transcript');
-
-  if (!body) return;
-
-  const isCollapsed = body.classList.toggle('collapsed');
-  if (btn) btn.setAttribute('aria-expanded', !isCollapsed);
-  if (text) text.innerText = isCollapsed ? 'Show Transcript' : 'Hide Transcript';
-  if (icon) icon.innerText = isCollapsed ? '▼' : '▲';
-}
-
-// Web3Forms AJAX Form Submission Handler
-function handleFormSubmission(e) {
-  e.preventDefault();
-  const form = e.target;
-  const alert = document.getElementById('form-feedback');
-  const submitBtn = form.querySelector('.btn-send-dispatch');
-
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerText = 'Transmitting...';
-  }
-
-  const formData = new FormData(form);
-
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        if (alert) {
-          alert.innerText = '✓ Dispatch transmitted successfully! We received your message.';
-          alert.style.color = '#48cae4';
-          alert.style.display = 'block';
-        }
-        form.reset();
-      } else {
-        if (alert) {
-          alert.innerText = 'Error: ' + (data.message || 'Could not send message.');
-          alert.style.color = '#e63946';
-          alert.style.display = 'block';
-        }
-      }
-    })
-    .catch(err => {
-      console.error('Submission error:', err);
-      if (alert) {
-        alert.innerText = 'Network error. Please try again later.';
-        alert.style.color = '#e63946';
-        alert.style.display = 'block';
-      }
-    })
-    .finally(() => {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Send';
-      }
-      setTimeout(() => {
-        if (alert) alert.style.display = 'none';
-      }, 6000);
-    });
-}
-
-// ========================================================
-// MOVIE PROFILE LOGIC (ENRICHED FROM TMDB DATA)
-// ========================================================
-let movieCatalogCache = null;
 
 const fallbackMovies = {
   ep42: {
@@ -266,6 +75,155 @@ const fallbackMovies = {
   }
 };
 
+// ========================================================
+// 2. VIEW NAVIGATION & ROUTING
+// ========================================================
+function switchSection(sectionId) {
+  const panels = document.querySelectorAll('.view-panel');
+  panels.forEach(panel => panel.classList.remove('active'));
+
+  const activePanel = document.getElementById('view-' + sectionId);
+  if (activePanel) {
+    activePanel.classList.add('active');
+  }
+
+  // Fade out and hide title header when navigating away from home
+  const header = document.querySelector('.title-header');
+  if (header) {
+    if (sectionId === 'home') {
+      header.classList.remove('header-hidden');
+    } else {
+      header.classList.add('header-hidden');
+    }
+  }
+
+  // Ensure default episode data is loaded when navigating to episodes
+  if (sectionId === 'episodes') {
+    if (!transcriptCache['current']) {
+      loadEpisodeTranscript('ep42');
+    }
+    renderMovieProfile('ep42');
+  }
+}
+
+// Cockpit Spotlight Illumination
+function setHover(hostKey, isHovered) {
+  const group = document.getElementById('group-' + hostKey);
+  if (group) {
+    if (isHovered) {
+      group.classList.add('is-hovered');
+    } else {
+      group.classList.remove('is-hovered');
+    }
+  }
+}
+
+// ========================================================
+// 3. EPISODE PLAYER & PLAYLIST HANDLER
+// ========================================================
+function loadYouTubeVideo(youtubeId, title, epId) {
+  const player = document.getElementById('main-video-player');
+  const titleEl = document.getElementById('current-video-title');
+  
+  if (player && youtubeId) {
+    player.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(youtubeId)}?autoplay=1`;
+  }
+  if (titleEl && title) {
+    titleEl.innerText = title;
+  }
+
+  // Synchronize active playlist card styling without deprecated window.event
+  const cards = document.querySelectorAll('.playlist-card');
+  cards.forEach(card => {
+    if (epId && card.getAttribute('data-ep') === epId) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+
+  // Load transcript and movie profile asynchronously
+  if (epId) {
+    loadEpisodeTranscript(epId);
+    renderMovieProfile(epId);
+  }
+}
+
+// ========================================================
+// 4. ON-DEMAND TRANSCRIPT LOADER
+// ========================================================
+async function loadEpisodeTranscript(epId) {
+  const transcriptBody = document.getElementById('transcript-body');
+  if (!transcriptBody) return;
+
+  transcriptCache['current'] = epId;
+
+  if (transcriptCache[epId]) {
+    renderTranscript(transcriptCache[epId]);
+    return;
+  }
+
+  transcriptBody.innerHTML = '<div class="transcript-loading-msg">Fetching episode transcript on-demand...</div>';
+
+  try {
+    const response = await fetch(`data/transcripts/${encodeURIComponent(epId)}.json`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    transcriptCache[epId] = data;
+    renderTranscript(data);
+  } catch (err) {
+    console.warn('Transcript fetch fallback:', err);
+    if (fallbackTranscripts[epId]) {
+      transcriptCache[epId] = fallbackTranscripts[epId];
+      renderTranscript(fallbackTranscripts[epId]);
+    } else {
+      transcriptBody.innerHTML = '<div class="transcript-loading-msg">Transcript coming soon for this episode.</div>';
+    }
+  }
+}
+
+function renderTranscript(data) {
+  const transcriptBody = document.getElementById('transcript-body');
+  if (!transcriptBody) return;
+
+  if (!data.dialogue || data.dialogue.length === 0) {
+    transcriptBody.innerHTML = '<div class="transcript-loading-msg">No transcript available.</div>';
+    return;
+  }
+
+  const html = data.dialogue.map(entry => {
+    const speakerKey = (entry.speaker || '').toLowerCase();
+    return `
+      <article class="transcript-entry">
+        <div class="transcript-meta">
+          <time class="transcript-time">${escapeHtml(entry.time || '00:00:00')}</time>
+          <span class="speaker-pill speaker-${speakerKey}">${escapeHtml(entry.speaker)} (${escapeHtml(entry.role || 'Host')})</span>
+        </div>
+        <p class="transcript-text">${escapeHtml(entry.text)}</p>
+      </article>
+    `;
+  }).join('');
+
+  transcriptBody.innerHTML = html;
+}
+
+function toggleTranscript() {
+  const body = document.getElementById('transcript-body');
+  const btn = document.getElementById('btn-toggle-transcript');
+  const text = document.getElementById('txt-toggle-transcript');
+  const icon = document.getElementById('ico-toggle-transcript');
+
+  if (!body) return;
+
+  const isCollapsed = body.classList.toggle('collapsed');
+  if (btn) btn.setAttribute('aria-expanded', !isCollapsed);
+  if (text) text.innerText = isCollapsed ? 'Show Transcript' : 'Hide Transcript';
+  if (icon) icon.innerText = isCollapsed ? '▼' : '▲';
+}
+
+// ========================================================
+// 5. TMDB MOVIE PROFILE RENDERER
+// ========================================================
 async function getMovieCatalog() {
   if (movieCatalogCache) return movieCatalogCache;
   try {
@@ -288,6 +246,7 @@ async function renderMovieProfile(epId) {
   const catalog = await getMovieCatalog();
   const movie = catalog[epId];
 
+  // Silent fallback if no movie is linked to the episode
   if (!movie) {
     card.style.display = 'none';
     return;
@@ -303,7 +262,7 @@ async function renderMovieProfile(epId) {
 
   const titleEl = document.getElementById('movie-title');
   if (titleEl) {
-    titleEl.innerHTML = `${movie.title} <span class="movie-year">(${movie.year || ''})</span>`;
+    titleEl.innerHTML = `${escapeHtml(movie.title)} <span class="movie-year">(${escapeHtml(movie.year || '')})</span>`;
   }
 
   const ratingScore = document.getElementById('movie-rating-score');
@@ -314,11 +273,11 @@ async function renderMovieProfile(epId) {
   const pillsEl = document.getElementById('movie-meta-pills');
   if (pillsEl) {
     let html = '';
-    if (movie.runtime) html += `<span class="meta-pill pill-runtime">${movie.runtime}</span>`;
-    if (movie.certification) html += `<span class="meta-pill pill-cert">${movie.certification}</span>`;
+    if (movie.runtime) html += `<span class="meta-pill pill-runtime">${escapeHtml(movie.runtime)}</span>`;
+    if (movie.certification) html += `<span class="meta-pill pill-cert">${escapeHtml(movie.certification)}</span>`;
     if (movie.genres && Array.isArray(movie.genres)) {
       movie.genres.forEach(g => {
-        html += `<span class="meta-pill pill-genre">${g}</span>`;
+        html += `<span class="meta-pill pill-genre">${escapeHtml(g)}</span>`;
       });
     }
     pillsEl.innerHTML = html;
@@ -336,7 +295,76 @@ async function renderMovieProfile(epId) {
   }
 }
 
-// Pre-load default episode transcript and movie profile on initial visit
+// ========================================================
+// 6. CONTACT FORM AJAX HANDLER (WEB3FORMS)
+// ========================================================
+function handleFormSubmission(e) {
+  e.preventDefault();
+  const form = e.target;
+  const alert = document.getElementById('form-feedback');
+  const submitBtn = form.querySelector('.btn-send-dispatch');
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Transmitting...';
+  }
+
+  const formData = new FormData(form);
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        if (alert) {
+          alert.innerText = '✓ Dispatch transmitted successfully! We received your message.';
+          alert.style.color = 'var(--bmw-blue)';
+          alert.style.display = 'block';
+        }
+        form.reset();
+      } else {
+        if (alert) {
+          alert.innerText = 'Error: ' + (data.message || 'Could not send message.');
+          alert.style.color = 'var(--bmw-red)';
+          alert.style.display = 'block';
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Submission error:', err);
+      if (alert) {
+        alert.innerText = 'Network error. Please try again later.';
+        alert.style.color = 'var(--bmw-red)';
+        alert.style.display = 'block';
+      }
+    })
+    .finally(() => {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Send';
+      }
+      if (formFeedbackTimer) clearTimeout(formFeedbackTimer);
+      formFeedbackTimer = setTimeout(() => {
+        if (alert) alert.style.display = 'none';
+      }, 6000);
+    });
+}
+
+// ========================================================
+// 7. UTILITIES & INITIALIZATION
+// ========================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadEpisodeTranscript('ep42');
   renderMovieProfile('ep42');

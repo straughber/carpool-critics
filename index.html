@@ -3,29 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carpool Cinema Critics | Austin, TX</title>
-  <meta name="description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline." />
   
-  <!-- Canonical & Social SEO Metadata -->
-  <link rel="canonical" href="https://straughber.github.io/curbside-cinema/" />
+  <!-- Primary SEO Meta Tags -->
+  <title>Carpool Cinema Critics | Austin, TX Film Review Podcast</title>
+  <meta name="description" content="Raw, unfiltered film review dispatches recorded live inside a BMW X5 overlooking the Austin night skyline with hosts Alex, Dave, and Shane." />
+  <meta name="keywords" content="Carpool Cinema Critics, Austin film reviews, movie podcast, BMW X5 cinema review, practical horror, blockbuster critique, Alex Dave Shane" />
+  <meta name="author" content="Carpool Cinema Critics" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://straughber.github.io/carpool-cinema-critics/" />
+
+  <!-- Open Graph / Facebook / LinkedIn -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Carpool Cinema Critics | Austin, TX" />
-  <meta property="og:description" content="A film review dispatch recorded live inside a BMW X5 overlooking the Austin night skyline with hosts Alex, Dave, and Shane." />
-  <meta property="og:image" content="CurbsideCinema_Background.jpeg" />
-  <meta property="og:url" content="https://straughber.github.io/curbside-cinema/" />
+  <meta property="og:title" content="Carpool Cinema Critics | Austin, TX Film Review Podcast" />
+  <meta property="og:description" content="Film review debriefs recorded live inside a BMW X5 overlooking the Austin, Texas skyline the moment the credits roll." />
+  <meta property="og:image" content="https://straughber.github.io/carpool-cinema-critics/assets/images/cockpit/CurbsideCinema_Background.jpeg" />
+  <meta property="og:url" content="https://straughber.github.io/carpool-cinema-critics/" />
+  <meta property="og:site_name" content="Carpool Cinema Critics" />
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Carpool Cinema Critics" />
   <meta name="twitter:description" content="Fresh Out the Doors, Straight to the Dash - Austin, TX" />
-  <meta name="twitter:image" content="CurbsideCinema_Background.jpeg" />
+  <meta name="twitter:image" content="https://straughber.github.io/carpool-cinema-critics/assets/images/cockpit/CurbsideCinema_Background.jpeg" />
 
-  <!-- Schema.org JSON-LD Structured Data for Podcast & WebSite -->
+  <!-- Schema.org JSON-LD Structured Data for PodcastSeries & WebSite -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "PodcastSeries",
     "name": "Carpool Cinema Critics",
     "description": "Film review debriefs recorded live inside a BMW X5 overlooking the Austin, Texas skyline the moment the credits roll.",
-    "url": "https://straughber.github.io/curbside-cinema/",
+    "url": "https://straughber.github.io/carpool-cinema-critics/",
     "locationCreated": {
       "@type": "Place",
       "name": "Austin, Texas"
@@ -50,786 +58,22 @@
   }
   </script>
 
-  <!-- Google Fonts: Teko (Headers) & Chivo (Body) -->
+  <!-- Google Fonts: Teko (Headers) & Chivo (Body) Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.8.0" />
 
+  <!-- Production Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=4.0.0" />
+
+  <!-- Critical Above-the-Fold Styling (Prevents FOUC) -->
   <style>
-    /* Global Typography: Chivo for all Body, Teko for Headers */
-    :root {
-      --font-header: 'Teko', sans-serif;
-      --font-body: 'Chivo', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    * {
-      font-family: var(--font-body) !important;
-    }
-
-    h1, h2, h3, h4, h5, h6,
-    .brand-title,
-    .subpage-heading,
-    .video-title,
-    .transcript-heading-text,
-    .info-panel-title,
-    .bio-name {
-      font-family: var(--font-header) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 1.5px !important;
-    }
-
-    .brand-title {
-      font-size: clamp(26px, 3.2vw, 42px) !important;
-      font-weight: 700 !important;
-      letter-spacing: 3.5px !important;
-      line-height: 1.05 !important;
-    }
-
-    .brand-sub {
-      font-family: var(--font-body) !important;
-      font-weight: 700 !important;
-    }
-
-    .subpage-heading {
-      font-size: 34px !important;
-      letter-spacing: 1.5px !important;
-    }
-
-    .video-title {
-      font-size: 24px !important;
-      letter-spacing: 1px !important;
-    }
-
-    .bio-name {
-      font-size: 28px !important;
-      letter-spacing: 1px !important;
-    }
-
-    .transcript-heading-text {
-      font-size: 18px !important;
-      letter-spacing: 1px !important;
-    }
-
-    /* Ensure host layers are 100% full-width and full-height overlays */
-    .cockpit-stage {
-      width: 100% !important;
-      height: 100% !important;
-      position: relative !important;
-      background-color: #000000 !important;
-      overflow: hidden !important;
-    }
-
-    .stage-layer {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-      object-position: center !important;
-      display: block !important;
-      pointer-events: none !important;
-    }
-
-    .bg-car-image {
-      z-index: 1 !important;
-    }
-
-    .host-group {
-      position: absolute !important;
-      inset: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .group-dave  { z-index: 5 !important; }
-    .group-alex  { z-index: 10 !important; }
-    .group-shane { z-index: 10 !important; }
-
-    .host-cutout-img {
-      pointer-events: none !important;
-      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease !important;
-      will-change: transform, filter !important;
-    }
-
-    /* Transform origins centered on each person in the reference image */
-    .img-alex {
-      transform-origin: 30% 50% !important;
-    }
-
-    .img-dave {
-      transform-origin: 50% 45% !important;
-    }
-
-    .img-shane {
-      transform-origin: 71% 50% !important;
-    }
-
-    /* Hover State: 10% scale up & spotlight brightens */
-    .host-group.is-hovered .host-cutout-img {
-      transform: scale(1.10) !important;
-      filter: brightness(1.25) drop-shadow(0 20px 40px rgba(0, 0, 0, 0.95)) !important;
-    }
-
-    .host-group.is-hovered .spotlight-cone {
-      opacity: 1.0 !important;
-      filter: brightness(1.6) !important;
-    }
-
-    /* Life-size Clickable Hotspots Matching Reference Image */
-    .host-hitbox {
-      position: absolute !important;
-      cursor: pointer !important;
-      z-index: 30 !important;
-      border-radius: 20px !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: flex-end !important;
-      align-items: center !important;
-      padding-bottom: 22px !important;
-    }
-
-    .hitbox-alex {
-      left: 14% !important;
-      top: 20% !important;
-      width: 33% !important;
-      height: 65% !important;
-    }
-
-    .hitbox-dave {
-      left: 42% !important;
-      top: 25% !important;
-      width: 16% !important;
-      height: 44% !important;
-      padding-bottom: 12px !important;
-    }
-
-    .hitbox-shane {
-      left: 55% !important;
-      top: 20% !important;
-      width: 33% !important;
-      height: 65% !important;
-    }
-
-    /* Desktop Host Navigation Button Labels in Front of Each Host */
-    .host-nav-label {
-      background: rgba(8, 11, 18, 0.88) !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.18) !important;
-      color: #ffffff !important;
-      padding: 9px 26px !important;
-      border-radius: 30px !important;
-      font-size: clamp(12px, 1.1vw, 15px) !important;
-      font-weight: 800 !important;
-      letter-spacing: 2px !important;
-      text-transform: uppercase !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85) !important;
-      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
-      pointer-events: auto !important;
-      user-select: none !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-      white-space: nowrap !important;
-      z-index: 35 !important;
-    }
-
-    .label-alex {
-      border-color: rgba(230, 57, 70, 0.45) !important;
-    }
-    .label-alex::before {
-      content: '';
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #e63946;
-    }
-
-    .label-dave {
-      border-color: rgba(244, 162, 97, 0.45) !important;
-    }
-    .label-dave::before {
-      content: '';
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #f4a261;
-    }
-
-    .label-shane {
-      border-color: rgba(72, 202, 228, 0.45) !important;
-    }
-    .label-shane::before {
-      content: '';
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #48cae4;
-    }
-
-    .host-hitbox:hover .host-nav-label {
-      background: #ffffff !important;
-      color: #080b12 !important;
-      border-color: #ffffff !important;
-      transform: translateY(-4px) scale(1.05) !important;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 255, 255, 0.35) !important;
-    }
-
-    /* Centered Header Badge without awkward line-breaks */
-    .title-header {
-      position: absolute !important;
-      top: 26px !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
-      width: 100% !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: center !important;
-      align-items: center !important;
-      pointer-events: none !important;
-      z-index: 45 !important;
-      transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.35s !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-
-    .title-header.header-hidden {
-      opacity: 0 !important;
-      transform: translate(-50%, -14px) !important;
-      pointer-events: none !important;
-      visibility: hidden !important;
-    }
-
-    .title-badge {
-      background: rgba(8, 11, 18, 0.88) !important;
-      backdrop-filter: blur(14px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.12) !important;
-      padding: 10px 32px !important;
-      border-radius: 8px !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9) !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      text-align: center !important;
-      max-width: 90vw !important;
-      pointer-events: auto !important;
-    }
-
-    .brand-title {
-      font-size: clamp(18px, 2.2vw, 28px) !important;
-      font-weight: 900 !important;
-      letter-spacing: 3px !important;
-      color: #ffffff !important;
-      text-transform: uppercase !important;
-      text-align: center !important;
-      margin: 0 !important;
-      line-height: 1.2 !important;
-      white-space: nowrap !important;
-    }
-
-    .brand-sub {
-      font-size: clamp(9px, 1.05vw, 12px) !important;
-      font-weight: 700 !important;
-      letter-spacing: 1.8px !important;
-      color: #f4a261 !important;
-      margin-top: 4px !important;
-      text-transform: uppercase !important;
-      text-align: center !important;
-      line-height: 1.3 !important;
-      white-space: nowrap !important;
-    }
-
-    /* Mobile Navigation Buttons Underneath Title Box (Alphabetical Order) */
-    .mobile-nav-bar {
-      display: none !important;
-      pointer-events: auto !important;
-      margin-top: 10px !important;
-      gap: 8px !important;
-      justify-content: center !important;
-      align-items: center !important;
-      flex-wrap: wrap !important;
-      max-width: 92vw !important;
-    }
-
-    .mobile-btn {
-      background: rgba(10, 14, 24, 0.90) !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.18) !important;
-      color: #ffffff !important;
-      padding: 7px 14px !important;
-      border-radius: 24px !important;
-      font-size: 11px !important;
-      font-weight: 800 !important;
-      letter-spacing: 1px !important;
-      text-transform: uppercase !important;
-      cursor: pointer !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 6px !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.75) !important;
-      transition: all 0.2s ease !important;
-      white-space: nowrap !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-
-    .mobile-btn-about {
-      border-color: rgba(230, 57, 70, 0.45) !important;
-    }
-    .mobile-btn-about::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #e63946;
-    }
-
-    .mobile-btn-contact {
-      border-color: rgba(72, 202, 228, 0.45) !important;
-    }
-    .mobile-btn-contact::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #48cae4;
-    }
-
-    .mobile-btn-episodes {
-      border-color: rgba(244, 162, 97, 0.45) !important;
-    }
-    .mobile-btn-episodes::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #f4a261;
-    }
-
-    .mobile-btn:active {
-      background: #ffffff !important;
-      color: #000000 !important;
-      transform: scale(0.96) !important;
-    }
-
-    /* Subpage container without top cramping */
-    .subpage-scroll-container {
-      padding: 44px 60px 45px !important;
-      position: relative !important;
-      z-index: 40 !important;
-    }
-
-    /* Guaranteed Center-Aligned Hint Pill on all Viewports */
-    .cockpit-hint-pill {
-      position: absolute !important;
-      bottom: 22px !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
-      z-index: 36 !important;
-      background: rgba(10, 14, 24, 0.88) !important;
-      backdrop-filter: blur(10px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.12) !important;
-      padding: 8px 24px !important;
-      border-radius: 30px !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      letter-spacing: 1.5px !important;
-      color: #94a3b8 !important;
-      text-transform: uppercase !important;
-      pointer-events: none !important;
-      text-align: center !important;
-      display: inline-flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      line-height: 1.4 !important;
-      white-space: nowrap !important;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.75) !important;
-    }
-
-    /* ========================================================
-       MOVIE PROFILE CARD (DARK MODE AESTHETIC)
-       ======================================================== */
-    .movie-profile-card {
-      margin-top: 18px !important;
-      margin-bottom: 22px !important;
-      background: rgba(13, 17, 23, 0.94) !important;
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      border-radius: 10px !important;
-      padding: 16px 20px !important;
-      display: flex !important;
-      gap: 18px !important;
-      align-items: flex-start !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55) !important;
-      transition: border-color 0.25s ease, transform 0.25s ease !important;
-    }
-
-    .movie-profile-card:hover {
-      border-color: rgba(72, 202, 228, 0.3) !important;
-    }
-
-    .movie-poster-wrap {
-      flex-shrink: 0 !important;
-      width: 100px !important;
-      aspect-ratio: 2 / 3 !important;
-      border-radius: 6px !important;
-      overflow: hidden !important;
-      background: #0e1420 !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7) !important;
-    }
-
-    .movie-poster-img {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-      display: block !important;
-    }
-
-    .movie-profile-details {
-      flex: 1 !important;
-      min-width: 0 !important;
-      display: flex !important;
-      flex-direction: column !important;
-    }
-
-    .movie-header-row {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: baseline !important;
-      gap: 12px !important;
-    }
-
-    .movie-title {
-      font-family: var(--font-header, 'Teko', sans-serif) !important;
-      font-size: 24px !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 1px !important;
-      color: #ffffff !important;
-      margin: 0 !important;
-      line-height: 1.1 !important;
-    }
-
-    .movie-year {
-      font-family: var(--font-body, 'Chivo', sans-serif) !important;
-      font-size: 14px !important;
-      font-weight: 400 !important;
-      color: #94a3b8 !important;
-      margin-left: 6px !important;
-      text-transform: none !important;
-      vertical-align: middle !important;
-    }
-
-    .movie-rating-badge {
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 5px !important;
-      background: rgba(244, 162, 97, 0.15) !important;
-      border: 1px solid rgba(244, 162, 97, 0.35) !important;
-      padding: 3px 8px !important;
-      border-radius: 4px !important;
-      flex-shrink: 0 !important;
-    }
-
-    .movie-rating-badge .star-icon {
-      width: 13px !important;
-      height: 13px !important;
-      fill: #f4a261 !important;
-    }
-
-    .movie-rating-badge .rating-score {
-      font-size: 12px !important;
-      font-weight: 800 !important;
-      color: #f4a261 !important;
-    }
-
-    .movie-rating-badge .rating-max {
-      font-size: 10px !important;
-      color: rgba(244, 162, 97, 0.7) !important;
-      font-weight: 600 !important;
-    }
-
-    .movie-meta-pills {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      gap: 6px !important;
-      margin: 8px 0 10px !important;
-    }
-
-    .meta-pill {
-      padding: 2px 7px !important;
-      border-radius: 4px !important;
-      font-size: 10px !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.6px !important;
-    }
-
-    .pill-runtime {
-      background: rgba(255, 255, 255, 0.06) !important;
-      color: #cbd5e1 !important;
-      border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    }
-
-    .pill-cert {
-      background: rgba(230, 57, 70, 0.18) !important;
-      color: #e63946 !important;
-      border: 1px solid rgba(230, 57, 70, 0.32) !important;
-    }
-
-    .pill-genre {
-      background: rgba(72, 202, 228, 0.12) !important;
-      color: #48cae4 !important;
-      border: 1px solid rgba(72, 202, 228, 0.28) !important;
-    }
-
-    .movie-synopsis {
-      font-size: 13px !important;
-      line-height: 1.55 !important;
-      color: #cbd5e1 !important;
-      margin: 0 0 10px 0 !important;
-      display: -webkit-box !important;
-      -webkit-line-clamp: 3 !important;
-      -webkit-box-orient: vertical !important;
-      overflow: hidden !important;
-    }
-
-    .movie-card-footer {
-      margin-top: auto !important;
-    }
-
-    .tmdb-quick-link {
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      color: #48cae4 !important;
-      text-decoration: none !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.8px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 4px !important;
-      transition: color 0.2s ease !important;
-    }
-
-    .tmdb-quick-link:hover {
-      color: #ffffff !important;
-      text-decoration: underline !important;
-    }
-
-    /* Episode Transcript Container (Accessibility & SEO) */
-    .transcript-container {
-      margin-top: 20px !important;
-      background: rgba(9, 13, 22, 0.92) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 8px !important;
-      overflow: hidden !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
-    }
-
-    .transcript-bar {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      padding: 12px 18px !important;
-      background: rgba(14, 20, 32, 0.95) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-
-    .transcript-badge-group {
-      display: flex !important;
-      align-items: center !gap: 10px !important;
-    }
-
-    .transcript-tag {
-      background: rgba(72, 202, 228, 0.15) !important;
-      color: #48cae4 !important;
-      font-size: 9px !important;
-      font-weight: 800 !important;
-      letter-spacing: 1.5px !important;
-      padding: 3px 8px !important;
-      border-radius: 4px !important;
-      text-transform: uppercase !important;
-    }
-
-    .transcript-heading-text {
-      font-size: 13px !important;
-      font-weight: 800 !important;
-      letter-spacing: 1px !important;
-      color: #ffffff !important;
-      text-transform: uppercase !important;
-      margin: 0 !important;
-    }
-
-    .transcript-toggle {
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.16) !important;
-      color: #94a3b8 !important;
-      padding: 5px 12px !important;
-      border-radius: 4px !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      cursor: pointer !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 6px !important;
-      transition: all 0.2s ease !important;
-    }
-
-    .transcript-toggle:hover {
-      background: rgba(255, 255, 255, 0.16) !important;
-      color: #ffffff !important;
-    }
-
-    .transcript-scroll-box {
-      max-height: 320px !important;
-      overflow-y: auto !important;
-      padding: 16px 18px !important;
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 14px !important;
-      transition: max-height 0.3s ease, padding 0.3s ease !important;
-    }
-
-    .transcript-scroll-box.collapsed {
-      max-height: 0 !important;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .transcript-entry {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 4px !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-      padding-bottom: 10px !important;
-    }
-
-    .transcript-entry:last-child {
-      border-bottom: none !important;
-      padding-bottom: 0 !important;
-    }
-
-    .transcript-meta {
-      display: flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-    }
-
-    .transcript-time {
-      font-family: monospace !important;
-      font-size: 11px !important;
-      color: #64748b !important;
-      background: rgba(255, 255, 255, 0.05) !important;
-      padding: 2px 6px !important;
-      border-radius: 3px !important;
-    }
-
-    .speaker-pill {
-      font-size: 11px !important;
-      font-weight: 800 !important;
-      letter-spacing: 0.5px !important;
-      padding: 2px 8px !important;
-      border-radius: 3px !important;
-      text-transform: uppercase !important;
-    }
-
-    .speaker-alex  { background: rgba(230, 57, 70, 0.2) !important; color: #e63946 !important; }
-    .speaker-dave  { background: rgba(244, 162, 97, 0.2) !important; color: #f4a261 !important; }
-    .speaker-shane { background: rgba(72, 202, 228, 0.2) !important; color: #48cae4 !important; }
-
-    .transcript-text {
-      font-size: 13px !important;
-      line-height: 1.65 !important;
-      color: #cbd5e1 !important;
-    }
-
-    .transcript-loading-msg {
-      font-size: 12px !important;
-      color: #94a3b8 !important;
-      font-style: italic !important;
-      text-align: center !important;
-      padding: 16px 0 !important;
-    }
-
-    /* STRICT MOBILE-ONLY OVERRIDES */
-    @media (max-width: 768px) {
-      .brand-title, .brand-sub {
-        white-space: normal !important;
-      }
-      
-      /* 1. Show mobile buttons underneath title box in alphabetical order */
-      .mobile-nav-bar {
-        display: flex !important;
-      }
-
-      /* 2. Hide desktop host labels over the car cockpit on mobile */
-      .host-nav-label {
-        display: none !important;
-      }
-
-      /* 3. Adjust mobile hitboxes and hint pill */
-      .cockpit-hint-pill {
-        bottom: 12px !important;
-        white-space: normal !important;
-        max-width: 88vw !important;
-        padding: 5px 14px !important;
-        font-size: 9px !important;
-      }
-
-      .subpage-scroll-container {
-        padding: 30px 18px 25px !important;
-      }
-
-      /* 5. Movie Profile Card Responsive */
-      .movie-profile-card {
-        padding: 14px 14px !important;
-        gap: 12px !important;
-      }
-
-      .movie-poster-wrap {
-        width: 80px !important;
-        min-width: 80px !important;
-      }
-
-      .movie-title {
-        font-size: 20px !important;
-      }
-
-      .movie-synopsis {
-        -webkit-line-clamp: 2 !important;
-        font-size: 12px !important;
-        line-height: 1.45 !important;
-      }
-
-      /* 4. Subpage navigation bar: Back to Home button above page title */
-      .subpage-nav-bar {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 12px !important;
-        padding-bottom: 14px !important;
-        margin-bottom: 20px !important;
-      }
-
-      .subpage-nav-bar .btn-back-car {
-        order: -1 !important;
-        align-self: center !important;
-        margin: 0 auto !important;
-        text-align: center !important;
-        white-space: nowrap !important;
-        padding: 8px 16px !important;
-        font-size: 11px !important;
-      }
-    }
+    body { background-color: #000000; color: #ffffff; margin: 0; }
+    .cinema-viewport { width: 100vw; max-width: 1600px; height: 100vh; margin: 0 auto; position: relative; background-color: #000000; overflow: hidden; }
   </style>
+
+  <!-- Defer Script Execution for Non-Blocking Initial Paint -->
+  <script src="script.js?v=4.0.0" defer></script>
 </head>
 <body>
 
@@ -862,6 +106,10 @@
           src="assets/images/cockpit/CurbsideCinema_Background.jpeg" 
           alt="Carpool Cinema Critics mobile studio inside a BMW X5 overlooking the Austin, Texas night skyline" 
           class="stage-layer bg-car-image" 
+          width="1600"
+          height="900"
+          loading="eager"
+          fetchpriority="high"
           onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpeg'; this.onerror=function(){this.src='CurbsideCinema_Background.jpg';};"
         />
 
@@ -876,6 +124,8 @@
             src="assets/images/hosts/Dave_CurbsideCritic.webp" 
             alt="Dave, center back row host and creature feature historian on Carpool Cinema Critics" 
             class="stage-layer host-cutout-img img-dave" 
+            width="500"
+            height="700"
             onerror="this.onerror=null; this.src='Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/dave.svg';};"
           />
         </div>
@@ -887,6 +137,8 @@
             src="assets/images/hosts/Alex_CurbsideCritic.webp" 
             alt="Alex, driver and host analyzing screenplay pacing and narrative arcs on Carpool Cinema Critics" 
             class="stage-layer host-cutout-img img-alex" 
+            width="500"
+            height="700"
             onerror="this.onerror=null; this.src='Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/alex.svg';};"
           />
         </div>
@@ -898,6 +150,8 @@
             src="assets/images/hosts/Shane_CurbsideCritic.webp" 
             alt="Shane, passenger host analyzing camera movement and cinematography on Carpool Cinema Critics" 
             class="stage-layer host-cutout-img img-shane" 
+            width="500"
+            height="700"
             onerror="this.onerror=null; this.src='Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/shane.svg';};"
           />
         </div>
@@ -973,7 +227,7 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- VIEW 3: EPISODES SUB-PAGE (YOUTUBE EMBED) -->
+    <!-- VIEW 3: EPISODES & REVIEWS SUB-PAGE -->
     <!-- ======================================================== -->
     <section class="view-panel" id="view-episodes">
       <div class="subpage-scroll-container">
@@ -987,7 +241,7 @@
               <iframe 
                 id="main-video-player" 
                 src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" 
-                title="Carpool Cinema Critics Episode" 
+                title="Carpool Cinema Critics Episode Player" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowfullscreen
               ></iframe>
@@ -1064,22 +318,23 @@
               </div>
             </section>
           </div>
+          
           <div class="episodes-playlist-stack">
-            <div class="playlist-card active" onclick="loadYouTubeVideo('dQw4w9WgXcQ', 'Episode 42: Midnight In Austin • Post-Screening Dispatch', 'ep42')">
+            <div class="playlist-card active" data-ep="ep42" onclick="loadYouTubeVideo('dQw4w9WgXcQ', 'Episode 42: Midnight In Austin • Post-Screening Dispatch', 'ep42')">
               <div>
                 <div class="pl-ep-title">Ep. 42: Midnight In Austin</div>
                 <div class="pl-ep-meta">1h 12m • Released Yesterday</div>
               </div>
               <span class="pl-play-tag">▶ PLAY</span>
             </div>
-            <div class="playlist-card" onclick="loadYouTubeVideo('L_LUpnjgPso', 'Episode 41: Blockbuster Highs & Franchise Fatigue', 'ep41')">
+            <div class="playlist-card" data-ep="ep41" onclick="loadYouTubeVideo('L_LUpnjgPso', 'Episode 41: Blockbuster Highs & Franchise Fatigue', 'ep41')">
               <div>
                 <div class="pl-ep-title">Ep. 41: Blockbuster Fatigue</div>
                 <div class="pl-ep-meta">58m • 1 week ago</div>
               </div>
               <span class="pl-play-tag">▶ PLAY</span>
             </div>
-            <div class="playlist-card" onclick="loadYouTubeVideo('fJ9rUzIMcZQ', 'Episode 40: Practical Horror vs Digital Noise', 'ep40')">
+            <div class="playlist-card" data-ep="ep40" onclick="loadYouTubeVideo('fJ9rUzIMcZQ', 'Episode 40: Practical Horror vs Digital Noise', 'ep40')">
               <div>
                 <div class="pl-ep-title">Ep. 40: Practical Horror FX</div>
                 <div class="pl-ep-meta">1h 24m • 2 weeks ago</div>
@@ -1101,29 +356,29 @@
           <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
         </div>
         <div class="contact-grid-layout">
-          <form onsubmit="handleFormSubmission(event)">
+          <form onsubmit="handleFormSubmission(event)" aria-label="Movie Review Request Form">
             <!-- Web3Forms Access Key & Settings -->
             <input type="hidden" name="access_key" value="5825a14d-1c16-4eff-958a-0ef98cb9e896" />
             <input type="hidden" name="subject" value="New Dispatch from Carpool Cinema Critics" />
             <input type="hidden" name="from_name" value="Carpool Cinema Critics Website" />
 
             <div class="input-group">
-              <label class="input-label">Your Name</label>
-              <input type="text" name="name" required class="text-input" placeholder="e.g. Christopher Nolan" />
+              <label class="input-label" for="contact-name">Your Name</label>
+              <input type="text" id="contact-name" name="name" required class="text-input" placeholder="e.g. Christopher Nolan" autocomplete="name" />
             </div>
             <div class="input-group">
-              <label class="input-label">Email Address</label>
-              <input type="email" name="email" required class="text-input" placeholder="director@studio.com" />
+              <label class="input-label" for="contact-email">Email Address</label>
+              <input type="email" id="contact-email" name="email" required class="text-input" placeholder="director@studio.com" autocomplete="email" />
             </div>
             <div class="input-group">
-              <label class="input-label">Movie Review Request / Message</label>
-              <textarea rows="4" name="message" required class="textarea-input" placeholder="What movie should the S.A.D. Boys review next?"></textarea>
+              <label class="input-label" for="contact-message">Movie Review Request / Message</label>
+              <textarea rows="4" id="contact-message" name="message" required class="textarea-input" placeholder="What movie should the S.A.D. Boys review next?"></textarea>
             </div>
             <button type="submit" class="btn-send-dispatch">Send</button>
-            <div class="form-feedback-alert" id="form-feedback">✓ Transmitted directly to the BMW console!</div>
+            <div class="form-feedback-alert" id="form-feedback" role="alert">✓ Transmitted directly to the BMW console!</div>
           </form>
           <div class="contact-info-panel">
-            <h4 class="info-panel-title">Business Inquiries</h4>
+            <h3 class="info-panel-title">Business Inquiries</h3>
             <p class="info-panel-text">
               For Austin theatrical invites, sponsorships, guest appearances, and other business inquiries, contact our agent directly.
             </p>
@@ -1140,6 +395,5 @@
 
   </div>
 
-  <script src="script.js?v=3.8.0"></script>
 </body>
 </html>
