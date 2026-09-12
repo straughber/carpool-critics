@@ -2,7 +2,7 @@
 
 /* ========================================================
    CARPOOL CINEMA CRITICS - PRODUCTION STYLESHEET
-   Version: 4.0.0 (MCP Optimized & Cleaned)
+   Version: 4.1.0 (MCP Optimized & Cleaned)
    ======================================================== */
 
 /* ========================================================
@@ -279,7 +279,7 @@ h1, h2, h3, h4, h5, h6,
   mix-blend-mode: screen;
 }
 
-/* Cutout Groups & Spotlights */
+/* Cutout Groups */
 .host-group {
   position: absolute;
   inset: 0;
@@ -300,36 +300,15 @@ h1, h2, h3, h4, h5, h6,
 .img-dave  { transform-origin: 50% 45%; }
 .img-shane { transform-origin: 71% 50%; }
 
+/* Host Hover: Subtle scale (1.05) and compact dropshadow */
 .host-group.is-hovered .host-cutout-img {
-  transform: scale(1.10);
-  filter: brightness(1.25) drop-shadow(0 20px 40px rgba(0, 0, 0, 0.95));
+  transform: scale(1.05);
+  filter: brightness(1.12) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.75));
 }
 
+/* Big White Spotlight Glow Removed */
 .spotlight-cone {
-  position: absolute;
-  inset: -15%;
-  pointer-events: none;
-  border-radius: 50%;
-  mix-blend-mode: screen;
-  opacity: 0.45;
-  transition: opacity var(--anim-timing), filter var(--anim-timing);
-}
-
-.cone-shane {
-  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(72, 202, 228, 0.15) 50%, transparent 80%);
-}
-
-.cone-alex {
-  background: radial-gradient(ellipse at 50% 25%, rgba(255, 245, 240, 0.40) 0%, rgba(230, 57, 70, 0.15) 50%, transparent 80%);
-}
-
-.cone-dave {
-  background: radial-gradient(ellipse at 50% 30%, rgba(240, 248, 255, 0.35) 0%, rgba(244, 162, 97, 0.15) 50%, transparent 80%);
-}
-
-.host-group.is-hovered .spotlight-cone {
-  opacity: 1.0;
-  filter: brightness(1.6);
+  display: none;
 }
 
 /* Host Clickable Hotspots */
@@ -407,8 +386,8 @@ h1, h2, h3, h4, h5, h6,
   background: #ffffff;
   color: #080b12;
   border-color: #ffffff;
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.85);
 }
 
 /* Cockpit Hint Pill */
