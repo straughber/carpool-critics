@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap');
 
 /* ========================================================
-   CARPOOL CINEMA CRITICS - PRODUCTION STYLESHEET
-   Version: 4.1.0 (MCP Optimized & Cleaned)
+   CARPOOL CRITICS - PRODUCTION STYLESHEET
+   Version: 4.2.0 (MCP Optimized & Cleaned)
    ======================================================== */
 
 /* ========================================================
@@ -150,15 +150,16 @@ h1, h2, h3, h4, h5, h6,
   pointer-events: auto;
 }
 
+h1,
 .brand-title {
-  font-size: clamp(18px, 2.2vw, 28px);
+  font-size: 48px;
   font-weight: 900;
   letter-spacing: 3px;
   color: #ffffff;
   text-transform: uppercase;
   text-align: center;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.1;
   white-space: nowrap;
 }
 
@@ -1046,7 +1047,11 @@ h1, h2, h3, h4, h5, h6,
     max-height: none;
   }
 
-  .brand-title,
+  .brand-title {
+    font-size: clamp(28px, 7vw, 42px);
+    white-space: normal;
+  }
+
   .brand-sub {
     white-space: normal;
   }

@@ -1,6 +1,6 @@
 /* ========================================================
-   CARPOOL CINEMA CRITICS - MASTER INTERACTION LOGIC
-   Version: 4.0.0 (MCP Optimized & Cleaned)
+   CARPOOL CRITICS - MASTER INTERACTION LOGIC
+   Version: 4.2.0 (MCP Optimized & Cleaned)
    ======================================================== */
 
 // ========================================================

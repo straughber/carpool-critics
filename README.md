@@ -1,4 +1,4 @@
-# Carpool Cinema Critics
+# Carpool Critics
 
 An interactive film review dispatch recorded live inside a BMW X5 overlooking the Austin, Texas night skyline. Hosts Alex (Driver), Dave (Back Seat), and Shane (Passenger) debrief hot takes, cinematic pacing, creature effects, and coming-of-age films the moment the credits roll.
 
