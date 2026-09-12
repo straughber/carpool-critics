@@ -79,9 +79,10 @@ function loadYouTubeVideo(youtubeId, title, epId) {
     titleEl.innerText = title;
   }
 
-  // Load the respective transcript on-demand
+  // Load the respective transcript and movie profile on-demand
   if (epId) {
     loadEpisodeTranscript(epId);
+    renderMovieProfile(epId);
   }
 
   const cards = document.querySelectorAll('.playlist-card');
@@ -221,7 +222,122 @@ function handleFormSubmission(e) {
     });
 }
 
-// Pre-load default episode transcript on initial visit
+// ========================================================
+// MOVIE PROFILE LOGIC (ENRICHED FROM TMDB DATA)
+// ========================================================
+let movieCatalogCache = null;
+
+const fallbackMovies = {
+  ep42: {
+    id: 348,
+    title: "Alien",
+    year: "1979",
+    rating: "8.1",
+    runtime: "1h 57m",
+    certification: "R",
+    genres: ["Horror", "Science Fiction"],
+    overview: "During its return to the earth, commercial spaceship Nostromo intercepts a distress signal from a distant planet. When a three-member team of the crew investigates the source of the signal, they uncover a horrific extraterrestrial lifeform.",
+    posterPath: "https://image.tmdb.org/t/p/w300/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",
+    tmdbUrl: "https://www.themoviedb.org/movie/348-alien"
+  },
+  ep41: {
+    id: 361743,
+    title: "Top Gun: Maverick",
+    year: "2022",
+    rating: "8.2",
+    runtime: "2h 11m",
+    certification: "PG-13",
+    genres: ["Action", "Drama"],
+    overview: "After more than thirty years of service as one of the Navy's top aviators, Pete 'Maverick' Mitchell is where he belongs, pushing the envelope as a courageous test pilot and dodging the advancement in rank that would ground him.",
+    posterPath: "https://image.tmdb.org/t/p/w300/62HCnUTziyWcpDaBO2i1DX17ljH.jpg",
+    tmdbUrl: "https://www.themoviedb.org/movie/361743-top-gun-maverick"
+  },
+  ep40: {
+    id: 1091,
+    title: "The Thing",
+    year: "1982",
+    rating: "8.0",
+    runtime: "1h 49m",
+    certification: "R",
+    genres: ["Horror", "Mystery", "Science Fiction"],
+    overview: "A team of American scientists investigating an outbreak at a Norwegian research base in Antarctica discover that a parasitic alien organism capable of imitating its victims is on the loose.",
+    posterPath: "https://image.tmdb.org/t/p/w300/tzGY49kseSE9QAKxRjJIPAgL8Wd.jpg",
+    tmdbUrl: "https://www.themoviedb.org/movie/1091-the-thing"
+  }
+};
+
+async function getMovieCatalog() {
+  if (movieCatalogCache) return movieCatalogCache;
+  try {
+    const res = await fetch('data/movies.json');
+    if (res.ok) {
+      movieCatalogCache = await res.json();
+      return movieCatalogCache;
+    }
+  } catch (err) {
+    console.warn('Could not load data/movies.json, using fallback.', err);
+  }
+  movieCatalogCache = fallbackMovies;
+  return movieCatalogCache;
+}
+
+async function renderMovieProfile(epId) {
+  const card = document.getElementById('movie-profile-card');
+  if (!card) return;
+
+  const catalog = await getMovieCatalog();
+  const movie = catalog[epId];
+
+  if (!movie) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'flex';
+
+  const posterImg = document.getElementById('movie-poster-img');
+  if (posterImg) {
+    posterImg.src = movie.posterPath || '';
+    posterImg.alt = `${movie.title} (${movie.year || ''}) Poster`;
+  }
+
+  const titleEl = document.getElementById('movie-title');
+  if (titleEl) {
+    titleEl.innerHTML = `${movie.title} <span class="movie-year">(${movie.year || ''})</span>`;
+  }
+
+  const ratingScore = document.getElementById('movie-rating-score');
+  if (ratingScore) {
+    ratingScore.innerText = movie.rating || 'N/A';
+  }
+
+  const pillsEl = document.getElementById('movie-meta-pills');
+  if (pillsEl) {
+    let html = '';
+    if (movie.runtime) html += `<span class="meta-pill pill-runtime">${movie.runtime}</span>`;
+    if (movie.certification) html += `<span class="meta-pill pill-cert">${movie.certification}</span>`;
+    if (movie.genres && Array.isArray(movie.genres)) {
+      movie.genres.forEach(g => {
+        html += `<span class="meta-pill pill-genre">${g}</span>`;
+      });
+    }
+    pillsEl.innerHTML = html;
+  }
+
+  const synopsisEl = document.getElementById('movie-synopsis');
+  if (synopsisEl) {
+    synopsisEl.innerText = movie.overview || '';
+  }
+
+  const linkEl = document.getElementById('movie-tmdb-link');
+  if (linkEl) {
+    linkEl.href = movie.tmdbUrl || '#';
+    linkEl.style.display = movie.tmdbUrl ? 'inline-flex' : 'none';
+  }
+}
+
+// Pre-load default episode transcript and movie profile on initial visit
 document.addEventListener('DOMContentLoaded', () => {
   loadEpisodeTranscript('ep42');
+  renderMovieProfile('ep42');
 });
