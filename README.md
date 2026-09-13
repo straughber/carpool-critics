@@ -1,8 +1,8 @@
 # Carpool Critics
 
-An interactive film review dispatch recorded live inside a BMW X5 overlooking the Austin, Texas night skyline. Hosts Alex (Driver), Dave (Back Seat), and Shane (Passenger) debrief hot takes, cinematic pacing, creature effects, and coming-of-age films the moment the credits roll.
+An interactive film review dispatch recorded inside a car after watching a movie. Hosts Alex (Driver), Dave (Back Seat), and Shane (Passenger) debrief hot takes, cinematic pacing, creature effects, and coming-of-age films the moment the credits roll.
 
-* **Live Site**: [https://straughber.github.io/carpool-cinema-critics/](https://straughber.github.io/carpool-cinema-critics/)
+* **Live Site**: [https://straughber.github.io/carpool-critics/](https://straughber.github.io/carpool-critics/)
 * **Format**: Interactive Single-Page Web App (SPA) with On-Demand Transcripts and TMDb Movie Profiles
 
 ---
