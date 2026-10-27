@@ -3,10 +3,12 @@
  * Build-time script to build data/episodes.json from the Carpool Critics channel.
  * Usage: node scripts/fetch-youtube.js
  *
- * Strategy (zero API key, zero quota):
- *   1. YouTube channel RSS feed  -> video ids, titles, publish dates
- *   2. Channel /videos page      -> fallback for when RSS has not refreshed yet
- *   3. Per-video watch page      -> real duration + full description + chapters
+ * Strategy:
+ *   1. YouTube Data API -> exact ids, titles, durations, descriptions (when
+ *      YOUTUBE_API_KEY is set)
+ *   2. Channel RSS feed  -> keyless fallback for ids/titles/dates
+ *   3. Channel /videos page -> fallback when RSS has not refreshed
+ *   4. Per-video watch page -> fallback for duration + description + chapters
  *
  * No network calls happen in the browser and no key is ever exposed to a visitor.
  */
@@ -14,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CHANNEL_ID = process.env.YT_CHANNEL_ID || 'UCqd2FV1LVePtMzLAUEtaWOQ';
+const API_KEY = process.env.YOUTUBE_API_KEY || '';
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15';
 const BOT_UA = 'Mozilla/5.0 (compatible; CarpoolCriticsBuild/1.0; +https://carpoolcritics.com/)';
 
@@ -70,6 +73,75 @@ async function fetchVideoDetails(videoId) {
     publishedAt: uploadDate || null,
     description: description ? decode(description) : ''
   };
+}
+
+// ========================================================
+// 1b. YOUTUBE DATA API (when YOUTUBE_API_KEY is present)
+// ========================================================
+// The API is exact: title, description, duration and upload date in one pass,
+// with no watch-page scraping. If it fails or the key is absent, the scrapers
+// below remain the fallback and the build still works with zero credentials.
+function parseISODuration(value) {
+  const match = String(value || '').match(/^P(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/);
+  if (!match) return null;
+  const [, days, hours, minutes, seconds] = match;
+  return Math.round(
+    parseInt(days || '0', 10) * 86400
+    + parseInt(hours || '0', 10) * 3600
+    + parseInt(minutes || '0', 10) * 60
+    + parseFloat(seconds || '0')
+  );
+}
+
+async function apiJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Data API HTTP ${res.status} for ${url}`);
+  return res.json();
+}
+
+async function fetchApiCatalog() {
+  const channel = await apiJson(
+    `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${encodeURIComponent(CHANNEL_ID)}&key=${encodeURIComponent(API_KEY)}`
+  );
+  const uploads = channel.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+  if (!uploads) throw new Error('channel has no uploads playlist');
+
+  const ids = [];
+  let pageToken = '';
+  do {
+    const page = await apiJson(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=${encodeURIComponent(uploads)}&key=${encodeURIComponent(API_KEY)}${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`
+    );
+    for (const item of page.items || []) {
+      const id = item.contentDetails?.videoId;
+      if (id) ids.push(id);
+    }
+    pageToken = page.nextPageToken || '';
+  } while (pageToken);
+
+  const entries = [];
+  for (let i = 0; i < ids.length; i += 50) {
+    const batch = ids.slice(i, i + 50);
+    const data = await apiJson(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${batch.join(',')}&maxResults=50&key=${encodeURIComponent(API_KEY)}`
+    );
+    for (const item of data.items || []) {
+      const videoId = item.id;
+      const snippet = item.snippet || {};
+      entries.push({
+        videoId,
+        title: snippet.title || null,
+        publishedAt: snippet.publishedAt || null,
+        details: {
+          title: snippet.title || null,
+          lengthSeconds: parseISODuration(item.contentDetails?.duration),
+          publishedAt: snippet.publishedAt || null,
+          description: snippet.description || ''
+        }
+      });
+    }
+  }
+  return entries;
 }
 
 // ========================================================
@@ -267,12 +339,23 @@ async function run() {
 
   console.log(`[YouTube] Reading channel ${CHANNEL_ID}...`);
   let entries = [];
-  try {
-    entries = await fetchFeedEntries();
-    console.log(`[YouTube] RSS feed returned ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}.`);
-  } catch (err) {
-    // YouTube serves this feed inconsistently for new/small channels; not fatal.
-    console.log('[YouTube] RSS feed unavailable, using channel page instead.');
+  if (API_KEY) {
+    try {
+      entries = await fetchApiCatalog();
+      console.log(`[YouTube] Data API returned ${entries.length} video(s).`);
+    } catch (err) {
+      console.warn(`[YouTube] Data API failed (${err.message}); falling back to scrape.`);
+    }
+  }
+
+  if (entries.length === 0) {
+    try {
+      entries = await fetchFeedEntries();
+      console.log(`[YouTube] RSS feed returned ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}.`);
+    } catch (err) {
+      // YouTube serves this feed inconsistently for new/small channels; not fatal.
+      console.log('[YouTube] RSS feed unavailable, using channel page instead.');
+    }
   }
 
   if (entries.length === 0) {
@@ -303,11 +386,15 @@ async function run() {
   for (const entry of entries) {
     const payload = pipelineByVideoId.get(entry.videoId) || null;
     let details;
-    try {
-      details = await fetchVideoDetails(entry.videoId);
-    } catch (err) {
-      console.warn(`[YouTube] Could not read ${entry.videoId}: ${err.message}`);
-      details = { title: entry.title, lengthSeconds: null, publishedAt: entry.publishedAt, description: '' };
+    if (entry.details) {
+      details = entry.details;
+    } else {
+      try {
+        details = await fetchVideoDetails(entry.videoId);
+      } catch (err) {
+        console.warn(`[YouTube] Could not read ${entry.videoId}: ${err.message}`);
+        details = { title: entry.title, lengthSeconds: null, publishedAt: entry.publishedAt, description: '' };
+      }
     }
 
     const prior = previousByVideoId.get(entry.videoId) || {};
