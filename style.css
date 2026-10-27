@@ -438,6 +438,50 @@ button {
   color: var(--accent-amber);
 }
 
+/* Ground-loop signal surge: one 1px amber band, stepped 24 times over 2s.
+   It runs only through the top HUD strip, never across faces. */
+.signal-interference {
+  position: absolute;
+  top: 18px;
+  left: 14px;
+  right: 14px;
+  height: 104px;
+  z-index: 37;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.signal-interference::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--accent-amber);
+  box-shadow: 0 2px 0 rgba(255, 176, 0, 0.14);
+}
+
+.signal-interference.is-surging {
+  opacity: 1;
+}
+
+.signal-interference.is-surging::before {
+  animation: signal-roll 2s steps(24, end) 1;
+}
+
+@keyframes signal-roll {
+  0% { transform: translateY(0); opacity: 0; }
+  4% { opacity: 0.9; }
+  92% { opacity: 0.9; }
+  100% { transform: translateY(104px); opacity: 0; }
+}
+
+.stage-hud.is-rgb-split span {
+  text-shadow: 2px 0 0 var(--accent-brake), -2px 0 0 var(--accent-hov);
+}
+
 .stage-frame {
   position: absolute;
   inset: 14px;
@@ -1431,6 +1475,11 @@ button {
     display: none;
   }
 
+  .signal-interference {
+    top: 14px;
+    height: 54px;
+  }
+
   .host-nav-label {
     display: none;
   }
@@ -1511,7 +1560,15 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .rec-dot,
-  .brand-sub::after {
+  .stage-tagline::after {
     animation: none;
+  }
+
+  .signal-interference {
+    display: none;
+  }
+
+  .stage-hud.is-rgb-split span {
+    text-shadow: 2px 2px 0 var(--bg-asphalt);
   }
 }

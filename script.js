@@ -11,6 +11,8 @@ const transcriptCache = {};
 let movieCatalogCache = null;
 let contactFeedbackTimer = null;
 let hudClockTimer = null;
+let signalRollTimer = null;
+let signalGlitchTimer = null;
 const bootTime = Date.now();
 
 // Template placeholder episodes were removed; the live catalog is generated
@@ -72,6 +74,11 @@ function switchSection(sectionId, options = {}) {
   // so the home cockpit keeps its fast first paint.
   if (sectionId === 'episodes') {
     initEpisodesView();
+  }
+
+  // Ground-loop accent on entering the cockpit. Initial load is handled below.
+  if (sectionId === 'home') {
+    triggerSignalSurge();
   }
 }
 
@@ -152,7 +159,38 @@ function initClock() {
 }
 
 // ========================================================
-// 5. EPISODE CATALOG, PLAYLIST & CLICK-TO-LOAD VIDEO FACADE
+// 5. STEPPED GROUND-LOOP SURGE
+// ========================================================
+// One 1px amber band rolls through the top HUD strip over 2s at 12fps.
+// A 2-frame RGB split lands with it, then everything stops. No continuous
+// interference, no easing, and never over the center cabin or faces.
+function triggerSignalSurge() {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+  const roll = document.getElementById('signal-interference');
+  if (!roll) return;
+
+  const huds = document.querySelectorAll('.stage-hud-tl, .stage-hud-tc, .stage-hud-tr');
+
+  roll.classList.remove('is-surging');
+  void roll.offsetWidth;
+  roll.classList.add('is-surging');
+
+  huds.forEach(el => el.classList.add('is-rgb-split'));
+
+  if (signalGlitchTimer) clearTimeout(signalGlitchTimer);
+  signalGlitchTimer = setTimeout(() => {
+    huds.forEach(el => el.classList.remove('is-rgb-split'));
+  }, 167);
+
+  if (signalRollTimer) clearTimeout(signalRollTimer);
+  signalRollTimer = setTimeout(() => {
+    roll.classList.remove('is-surging');
+  }, 2100);
+}
+
+// ========================================================
+// 6. EPISODE CATALOG, PLAYLIST & CLICK-TO-LOAD VIDEO FACADE
 // ========================================================
 let episodeCatalogCache = null;
 let episodesViewReady = false;
@@ -352,7 +390,7 @@ function activateVideoPlayer() {
 }
 
 // ========================================================
-// 6. ON-DEMAND TRANSCRIPT LOADER
+// 7. ON-DEMAND TRANSCRIPT LOADER
 // ========================================================
 async function loadEpisodeTranscript(epId) {
   const transcriptBody = document.getElementById('transcript-body');
@@ -424,7 +462,7 @@ function toggleTranscript() {
 }
 
 // ========================================================
-// 7. TMDB MOVIE PROFILE RENDERER
+// 8. TMDB MOVIE PROFILE RENDERER
 // ========================================================
 async function getMovieCatalog() {
   if (movieCatalogCache) return movieCatalogCache;
@@ -506,7 +544,7 @@ async function renderMovieProfile(epId) {
 }
 
 // ========================================================
-// 8. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
+// 9. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
 // ========================================================
 // There is no form and no third-party submit endpoint, so there is nothing for
 // bots to POST to. The address is assembled at runtime from data attributes so
@@ -576,7 +614,7 @@ function copyContactEmailFallback(address, onCopied) {
 }
 
 // ========================================================
-// 9. UTILITIES & INITIALIZATION
+// 10. UTILITIES & INITIALIZATION
 // ========================================================
 function escapeHtml(str) {
   if (!str) return '';
@@ -597,6 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const initial = sectionFromLocation();
   syncDeckNav(initial);
   if (initial !== 'home') switchSection(initial, { updateHistory: false });
+  else setTimeout(triggerSignalSurge, 650);
 
   window.addEventListener('popstate', () => {
     const section = sectionFromLocation();
