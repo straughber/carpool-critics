@@ -1,35 +1,45 @@
 [
   {
-    "id": "ep42",
-    "number": 42,
-    "title": "Episode 42: Midnight In Austin • Post-Screening Dispatch",
-    "shortTitle": "Ep. 42: Midnight In Austin",
-    "youtubeId": "dQw4w9WgXcQ",
-    "duration": "1h 12m",
-    "date": "Released Yesterday",
-    "description": "Recorded live from the BMW X5 overlooking Lady Bird Lake right after a midnight premiere. Full spoiler breakdown on cinematography, pacing, and third-act revelations.",
-    "transcriptFile": "data/transcripts/ep42.json"
-  },
-  {
-    "id": "ep41",
-    "number": 41,
-    "title": "Episode 41: Blockbuster Highs & Franchise Fatigue",
-    "shortTitle": "Ep. 41: Blockbuster Fatigue",
-    "youtubeId": "L_LUpnjgPso",
-    "duration": "58m",
-    "date": "1 week ago",
-    "description": "Debriefing summer blockbuster trends from the car. Alex, Dave, and Shane debate whether practical stunt work can save generic franchise writing.",
-    "transcriptFile": "data/transcripts/ep41.json"
-  },
-  {
-    "id": "ep40",
-    "number": 40,
-    "title": "Episode 40: Practical Horror vs Digital Noise",
-    "shortTitle": "Ep. 40: Practical Horror FX",
-    "youtubeId": "fJ9rUzIMcZQ",
-    "duration": "1h 24m",
-    "date": "2 weeks ago",
-    "description": "A deep dive into retro practical monster effects vs modern CGI mud. Dave champions 80s animatronics while Alex and Shane analyze atmospheric sound design.",
-    "transcriptFile": "data/transcripts/ep40.json"
+    "id": "ep1",
+    "number": 1,
+    "title": "Whalefall: An Extremely Aggressive Way to Avoid Your Problems",
+    "shortTitle": "Ep. 1: Whalefall",
+    "youtubeId": "BpmHfoLEf70",
+    "duration": "20m",
+    "durationSeconds": 1256,
+    "publishedAt": "2026-10-26T17:38:52-07:00",
+    "date": null,
+    "description": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.",
+    "descriptionOverride": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.",
+    "thumbnail": "https://i.ytimg.com/vi/BpmHfoLEf70/hqdefault.jpg",
+    "chapters": [
+      {
+        "time": "00:00",
+        "label": "Will He Get Pooped Out? (Whalefall Cold Open)"
+      },
+      {
+        "time": "00:20",
+        "label": "Alex Reads Whalefall's Absurd IMDb Premise (Movie Setup)"
+      },
+      {
+        "time": "01:34",
+        "label": "Predicting Whalefall's Rotten Tomatoes Score (Cabin Chaos)"
+      },
+      {
+        "time": "10:51",
+        "label": "Full Spoiler Review & Dave's 30-Year Ribcage Theory (Ending Breakdown)"
+      },
+      {
+        "time": "18:03",
+        "label": "Final Scorecards: \"He Should've Just Gone to Therapy\" (Review Verdicts)"
+      },
+      {
+        "time": "20:50",
+        "label": "Outro: Surviving the Whale (And the Car Ride)"
+      }
+    ],
+    "movieQuery": "Whalefall",
+    "movieYear": 2026,
+    "transcriptFile": "data/transcripts/ep1.json"
   }
 ]
