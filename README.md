@@ -273,6 +273,17 @@ A `mkdir`-based lock in `.git/` prevents overlapping runs.
 
 ### Scheduled publish (daily, 09:15)
 
+Two equivalent options. The GitHub Action is preferred because it runs even
+when the Mac is asleep:
+
+**GitHub Action** — `.github/workflows/publish.yml` runs
+`./scripts/publish.sh --auto` daily at 14:15 UTC (09:15 CDT) and on manual
+dispatch. It needs `contents: write` (already set) and, optionally, a
+`TMDB_READ_TOKEN` repository secret. This is also what promotes a scheduled
+episode to indexable once YouTube makes its video public.
+
+**Local launchd job** — the original timer, for a machine that is always awake:
+
 ```bash
 cp scripts/deploy/com.carpoolcritics.publish.plist ~/Library/LaunchAgents/
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.carpoolcritics.publish.plist

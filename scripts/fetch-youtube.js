@@ -200,8 +200,10 @@ function applyPipelinePayload(episode, payload) {
     slug: first(payload.slug, episode.slug),
     title: first(payload.title, episode.title),
     shortTitle: first(payload.shortTitle, episode.shortTitle),
-    duration: first(payload.duration, episode.duration),
-    durationSeconds: first(payload.durationSeconds, episode.durationSeconds),
+    // YouTube's own duration wins for a public video; the pipeline's master
+    // duration is the fallback for scheduled/draft episodes.
+    duration: first(episode.duration, payload.duration),
+    durationSeconds: first(episode.durationSeconds, payload.durationSeconds),
     publishedAt: first(episode.publishedAt, payload.publishedAt),
     description: first(payload.descriptionOverride, payload.description, episode.description),
     descriptionOverride: first(payload.descriptionOverride, episode.descriptionOverride),

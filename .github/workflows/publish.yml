@@ -1,0 +1,45 @@
+name: Publish site
+
+# GitHub Pages builds from main, so publishing is pushing. This workflow is the
+# machine-independent backstop: it rebuilds the catalog/pages daily, which is
+# what promotes a scheduled episode to indexable once YouTube makes it public.
+#
+# The production pipeline also publishes immediately after an upload (via
+# tools/run_episode_pipeline.py --upload). This cron covers the release-time
+# flip and any metadata drift edited directly in YouTube Studio.
+
+on:
+  schedule:
+    # 09:15 America/Chicago (CDT). GitHub cron is UTC.
+    - cron: "15 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Build, commit, push, verify
+        env:
+          # Optional. Without it the build reuses the committed data/movies.json.
+          TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+        run: ./scripts/publish.sh --auto
