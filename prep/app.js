@@ -719,6 +719,9 @@ function animateTimer() {
   timeEl.textContent = fmtClock(seconds + (running ? 1 : 0));
   stateEl.textContent = running ? 'pause' : (seconds ? 'resume' : 'start');
 
+  const resetEl = $('#timer-reset');
+  if (resetEl) resetEl.hidden = seconds === 0 && !running;
+
   clockEl.classList.toggle('is-running', running && seconds < 1680);
   clockEl.classList.toggle('is-over', seconds >= 1680);
 
@@ -745,18 +748,61 @@ function updateSegments() {
   loop();
 }
 
-function startTimer() { $('#timer-clock')?.addEventListener('click', () => {
-  if (!state) return;
-  const t = state.timer || (state.timer = { elapsedMs: 0, runningSince: null });
-  if (t.runningSince) {
-    t.elapsedMs = (t.elapsedMs || 0) + (Date.now() - t.runningSince);
-    t.runningSince = null;
-  } else {
-    t.runningSince = Date.now();
+function startTimer() {
+  const clock = $('#timer-clock');
+  if (clock) clock.addEventListener('click', () => {
+    if (!state) return;
+    const t = state.timer || (state.timer = { elapsedMs: 0, runningSince: null });
+    if (t.runningSince) {
+      t.elapsedMs = (t.elapsedMs || 0) + (Date.now() - t.runningSince);
+      t.runningSince = null;
+    } else {
+      t.runningSince = Date.now();
+    }
+    saveState();
+    animateTimer();
+  });
+
+  // Reset is a two-tap action: an accidental tap of a full 26-minute take is
+  // the one mistake this bar must not allow.
+  const resetBtn = $('#timer-reset');
+  if (!resetBtn) return;
+
+  resetBtn.addEventListener('click', () => {
+    if (!state) return;
+    if (!resetArmed) {
+      resetArmed = true;
+      resetBtn.classList.add('is-armed');
+      resetBtn.textContent = 'Confirm';
+      resetArmTimeout = setTimeout(disarmReset, 3500);
+      return;
+    }
+    resetClock();
+  });
+}
+
+let resetArmed = false;
+let resetArmTimeout = null;
+
+function disarmReset() {
+  resetArmed = false;
+  if (resetArmTimeout) clearTimeout(resetArmTimeout);
+  resetArmTimeout = null;
+  const btn = $('#timer-reset');
+  if (btn) {
+    btn.classList.remove('is-armed');
+    btn.textContent = 'Reset';
   }
+}
+
+function resetClock() {
+  if (!state) return;
+  state.timer = { elapsedMs: 0, runningSince: null };
   saveState();
+  disarmReset();
   animateTimer();
-}); }
+  toast('Timer reset — checks and scores kept');
+}
 
 /* ============================================================
    Packs: index, load, render
