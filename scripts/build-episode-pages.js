@@ -76,8 +76,12 @@ function isLiveEpisode(episode) {
 function mergeCatalogs(catalog, payloads) {
   const byVideoId = new Map();
   const byId = new Map();
+  const catalogVideoIds = new Set();
   for (const episode of catalog) {
-    if (episode.youtubeId) byVideoId.set(episode.youtubeId, episode);
+    if (episode.youtubeId) {
+      byVideoId.set(episode.youtubeId, episode);
+      catalogVideoIds.add(episode.youtubeId);
+    }
     if (episode.id) byId.set(episode.id, episode);
   }
 
@@ -87,12 +91,24 @@ function mergeCatalogs(catalog, payloads) {
     const base = (payload.youtubeId && byVideoId.get(payload.youtubeId))
       || byId.get(payload.siteId)
       || {};
+    // The public catalog is the API-free proof that a video is live. A payload
+    // that claims live but is absent from a non-empty catalog is still a
+    // private draft, so never let it become indexable by accident.
+    let status = base.status || payload.status || 'live';
+    if (
+      status === 'live'
+      && payload.youtubeId
+      && catalogVideoIds.size > 0
+      && !catalogVideoIds.has(payload.youtubeId)
+    ) {
+      status = payload.publishAt ? 'scheduled' : 'draft';
+    }
     const episode = {
       ...base,
       ...payload,
       id: payload.siteId || base.id,
       youtubeId: payload.youtubeId || base.youtubeId || null,
-      status: base.status || payload.status || 'live',
+      status,
       title: payload.title || base.title,
       shortTitle: payload.shortTitle || base.shortTitle,
       description: payload.descriptionOverride || base.descriptionOverride || payload.description || base.description || '',
@@ -296,11 +312,14 @@ function filmCard(movie) {
       </section>`;
 }
 
-function chapterSection(episode) {
+function chapterSection(episode, isLive) {
   const chapters = (episode.chapters || []).filter(c => c && c.time);
   if (!chapters.length) return '';
   const items = chapters.map(chapter => {
     const seconds = parseTimeToSeconds(chapter.time);
+    if (!isLive) {
+      return `        <li><span class="chapter-time">${escapeHtml(chapter.time)}</span><span>${escapeHtml(chapter.label)}</span></li>`;
+    }
     const href = seconds != null ? watchUrl(episode.youtubeId, seconds) : watchUrl(episode.youtubeId);
     return `        <li><a href="${escapeAttr(href)}" rel="noopener"><span class="chapter-time">${escapeHtml(chapter.time)}</span><span>${escapeHtml(chapter.label)}</span></a></li>`;
   }).join('\n');
@@ -312,6 +331,66 @@ function chapterSection(episode) {
 ${items}
         </ol>
       </section>`;
+}
+
+function scorecardSection(episode) {
+  const scores = episode.scorecards || {};
+  const names = Object.keys(scores);
+  if (!names.length) return '';
+  const pills = names.map(name =>
+    `<span class="pill"><strong>${escapeHtml(name)}</strong> ${escapeHtml(String(scores[name]))}/10</span>`
+  ).join('\n          ');
+  return `
+      <section class="section" aria-labelledby="scores-heading">
+        <h2 class="section-title" id="scores-heading">Final Scorecards</h2>
+        <div class="pills">
+          ${pills}
+        </div>
+      </section>`;
+}
+
+function bestMomentSection(episode, isLive) {
+  const moment = episode.bestMoment;
+  if (!moment || !moment.quote) return '';
+  const href = isLive && episode.youtubeId
+    ? watchUrl(episode.youtubeId, moment.seconds || 0)
+    : null;
+  return `
+      <section class="section" aria-labelledby="moment-heading">
+        <h2 class="section-title" id="moment-heading">Best Moment</h2>
+        <blockquote class="best-moment">
+          <p>“${escapeHtml(moment.quote)}”</p>
+          <footer>${escapeHtml(moment.label || 'Highlight')}${href ? ` · <a href="${escapeAttr(href)}" rel="noopener">Jump to ${escapeHtml(moment.time || '')} ↗</a>` : ''}</footer>
+        </blockquote>
+      </section>`;
+}
+
+function formatClock(seconds) {
+  const total = Math.max(0, Math.round(Number(seconds) || 0));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
+function shortsSection(episode) {
+  const shorts = (episode.shorts || []).filter(short => short && short.url);
+  if (!shorts.length) return '';
+  const items = shorts.map(short => `        <li><a href="${escapeAttr(short.url)}" rel="noopener"><span class="chapter-time">${escapeHtml(short.duration ? formatClock(short.duration) : '')}</span><span>${escapeHtml(short.title || 'Short')}</span></a></li>`).join('\n');
+  return `
+      <section class="section" aria-labelledby="shorts-heading">
+        <h2 class="section-title" id="shorts-heading">Clips from This Episode</h2>
+        <ol class="chapter-list">
+${items}
+        </ol>
+      </section>`;
+}
+
+function hostsByline(episode) {
+  const hosts = (episode.hosts || []).filter(host => host && host.name);
+  if (!hosts.length) return 'Hosts: Alex, Shane &amp; Dave';
+  const names = hosts.map(host => escapeHtml(host.name));
+  const joined = names.length > 1
+    ? `${names.slice(0, -1).join(', ')} &amp; ${names[names.length - 1]}`
+    : names[0];
+  return `Hosts: ${joined}`;
 }
 
 function transcriptSection(transcript) {
@@ -336,12 +415,21 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   const depth = 2; // episodes/<slug>/index.html
   const canonical = siteUrl(`/episodes/${slug}/`);
   const title = episode.title || episode.shortTitle;
+  const isLive = isLiveEpisode(episode);
+  const publishLabel = episode.publishAt ? formatLongDate(episode.publishAt) : 'date to be announced';
 
-  // Prefer the 1280x720 still for social cards and the hero, but only if it
-  // really exists (YouTube leaves maxresdefault absent on some uploads).
-  const maxres = `https://i.ytimg.com/vi/${episode.youtubeId}/maxresdefault.jpg`;
-  const ogImage = (await headOk(maxres)) ? maxres : pickSocialImage(episode.youtubeId, episode.thumbnail);
-  const heroImage = ogImage !== OG_IMAGE_FALLBACK ? ogImage : pickSocialImage(episode.youtubeId, episode.thumbnail);
+  // Live pages use YouTube's best still. Pre-release pages use the custom 4K
+  // thumbnail copied into the site repo by export_website_payload.py.
+  const localThumb = episode.thumbnail && !/^https?:/.test(episode.thumbnail)
+    ? pageAsset(episode.thumbnail, depth)
+    : episode.thumbnail;
+  let ogImage = episode.ogImage || null;
+  if (!ogImage && isLive && episode.youtubeId) {
+    const maxres = `https://i.ytimg.com/vi/${episode.youtubeId}/maxresdefault.jpg`;
+    ogImage = (await headOk(maxres)) ? maxres : `https://i.ytimg.com/vi/${episode.youtubeId}/hqdefault.jpg`;
+  }
+  if (!ogImage) ogImage = OG_IMAGE_FALLBACK;
+  const heroImage = isLive ? ogImage : (localThumb || ogImage);
 
   const metaDescription = truncate(episode.description || `${title} — a ${episode.duration || ''} film review recorded live from the car.`, 155);
 
@@ -350,9 +438,10 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
 
   const byline = [
     episode.number ? `<span>Episode ${episode.number}</span>` : '',
-    episode.duration ? `<span>${escapeHtml(episode.duration)}</span>` : '',
-    episode.publishedAt ? `<span>${escapeHtml(formatLongDate(episode.publishedAt))}</span>` : '',
-    `<span>Hosts: Alex, Shane &amp; Dave</span>`
+    isLive && episode.duration ? `<span>${escapeHtml(episode.duration)}</span>` : '',
+    isLive && episode.publishedAt ? `<span>${escapeHtml(formatLongDate(episode.publishedAt))}</span>` : '',
+    !isLive ? `<span class="pill pill-rating">Premieres ${escapeHtml(publishLabel)}</span>` : '',
+    `<span>${hostsByline(episode)}</span>`
   ].filter(Boolean).join('\n        ');
 
   const index = siblings.findIndex(s => s.slug === slug);
@@ -364,6 +453,18 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
         ${next ? `<a class="next" href="../${escapeAttr(next.slug)}/"><span class="pager-label">Older →</span><span class="pager-title">${escapeHtml(next.shortTitle || next.title)}</span></a>` : '<span></span>'}
       </nav>`;
 
+  const poster = isLive
+    ? `<a class="poster-link" href="${escapeAttr(watchUrl(episode.youtubeId))}" rel="noopener" aria-label="Watch ${escapeAttr(title)} on YouTube">
+        <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} video thumbnail`)}" width="1280" height="720" decoding="async" />
+        <span class="play-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      </a>
+      <p class="poster-note">Full episode on YouTube · ${escapeHtml(episode.duration || '')}</p>`
+    : `<div class="poster-link is-preview">
+        <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} preview thumbnail`)}" width="1280" height="720" decoding="async" />
+        <span class="premiere-badge">Premieres</span>
+      </div>
+      <p class="poster-note">Premieres ${escapeHtml(publishLabel)} · Full episode drops on YouTube</p>`;
+
   const body = `
     <article>
       <header class="ep-head">
@@ -374,44 +475,47 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
         </div>
       </header>
 
-      <a class="poster-link" href="${escapeAttr(watchUrl(episode.youtubeId))}" rel="noopener" aria-label="Watch ${escapeAttr(title)} on YouTube">
-        <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} video thumbnail`)}" width="1280" height="720" decoding="async" />
-        <span class="play-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-      </a>
-      <p class="poster-note">Full episode on YouTube · ${escapeHtml(episode.duration || '')}</p>
+      ${poster}
 
       ${episode.description ? `<section class="section"><p class="ep-description">${escapeHtml(episode.description)}</p></section>` : ''}
       ${filmCard(movie)}
-      ${chapterSection(episode)}
+      ${scorecardSection(episode)}
+      ${bestMomentSection(episode, isLive)}
+      ${chapterSection(episode, isLive)}
+      ${shortsSection(episode)}
       ${transcriptSection(transcript)}
       ${pager}
     </article>`;
 
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'PodcastEpisode',
-      url: canonical,
+  const podcastEpisode = {
+    '@context': 'https://schema.org',
+    '@type': 'PodcastEpisode',
+    url: canonical,
+    name: title,
+    episodeNumber: episode.number || undefined,
+    datePublished: episode.publishAt || episode.publishedAt || undefined,
+    description: episode.description || metaDescription,
+    partOfSeries: {
+      '@type': 'PodcastSeries',
+      name: SITE_NAME,
+      url: siteUrl('/')
+    }
+  };
+  if (isLive) {
+    podcastEpisode.associatedMedia = {
+      '@type': 'VideoObject',
       name: title,
-      episodeNumber: episode.number || undefined,
-      datePublished: episode.publishedAt || undefined,
       description: episode.description || metaDescription,
-      partOfSeries: {
-        '@type': 'PodcastSeries',
-        name: SITE_NAME,
-        url: siteUrl('/')
-      },
-      associatedMedia: {
-        '@type': 'VideoObject',
-        name: title,
-        description: episode.description || metaDescription,
-        thumbnailUrl: [ogImage],
-        uploadDate: episode.publishedAt || undefined,
-        duration: isoDuration(episode.durationSeconds) || undefined,
-        contentUrl: watchUrl(episode.youtubeId),
-        embedUrl: `https://www.youtube-nocookie.com/embed/${episode.youtubeId}`
-      }
-    },
+      thumbnailUrl: [ogImage],
+      uploadDate: episode.publishedAt || undefined,
+      duration: isoDuration(episode.durationSeconds) || undefined,
+      contentUrl: watchUrl(episode.youtubeId),
+      embedUrl: `https://www.youtube-nocookie.com/embed/${episode.youtubeId}`
+    };
+  }
+
+  const jsonLd = [
+    podcastEpisode,
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
@@ -424,12 +528,15 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   ];
 
   return pageShell({
-    title: `${h1} — Episode ${episode.number} | ${SITE_NAME}`,
+    title: isLive
+      ? `${h1} — Episode ${episode.number} | ${SITE_NAME}`
+      : `${h1} — Premieres ${publishLabel} | ${SITE_NAME}`,
     description: metaDescription,
     canonical,
     ogImage,
     jsonLd,
     depth,
+    robots: isLive ? 'index, follow' : 'noindex, follow',
     body
   });
 }
@@ -442,14 +549,21 @@ function buildArchivePage(episodes, movies) {
 
   const items = episodes.map(ep => {
     const movie = movies[ep.id];
-    const meta = [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? `TMDb ${movie.rating}` : '']
-      .filter(Boolean).map(escapeHtml).join(' · ');
+    const isLive = isLiveEpisode(ep);
+    const meta = isLive
+      ? [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? `TMDb ${movie.rating}` : '']
+        .filter(Boolean).map(escapeHtml).join(' · ')
+      : `Premieres ${escapeHtml(ep.publishAt ? formatLongDate(ep.publishAt) : 'soon')}`;
+    const badge = isLive ? '' : '<span class="pill pill-rating">Premieres</span>';
+    const thumbnail = ep.thumbnail && !/^https?:/.test(ep.thumbnail)
+      ? pageAsset(ep.thumbnail, depth)
+      : pickSocialImage(ep.youtubeId, ep.thumbnail);
     return `      <li class="archive-item">
         <a href="./${escapeAttr(ep.slug)}/" aria-label="${escapeAttr(ep.shortTitle || ep.title)}">
-          <img src="${escapeAttr(pickSocialImage(ep.youtubeId, ep.thumbnail))}" alt="" width="132" height="74" loading="lazy" decoding="async" />
+          <img src="${escapeAttr(thumbnail)}" alt="" width="132" height="74" loading="lazy" decoding="async" />
         </a>
         <div class="archive-body">
-          <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a></div>
+          <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a> ${badge}</div>
           <div class="archive-meta">${meta}</div>
           ${ep.description ? `<p class="archive-desc">${escapeHtml(truncate(ep.description, 130))}</p>` : ''}
         </div>
@@ -493,10 +607,14 @@ ${items || '        <li class="archive-item"><div class="archive-body"><div clas
 }
 
 function buildSitemap(episodes) {
+  // Scheduled/draft pages are real pages, but they are noindex and must never
+  // be advertised to crawlers before YouTube makes the video public.
+  const live = episodes.filter(isLiveEpisode);
+  const newest = live[0] && (live[0].publishedAt || live[0].publishAt);
   const urls = [
-    { loc: siteUrl('/'), priority: '1.0', lastmod: episodes[0] && episodes[0].publishedAt },
-    { loc: siteUrl('/episodes/'), priority: '0.9', lastmod: episodes[0] && episodes[0].publishedAt },
-    ...episodes.map(ep => ({
+    { loc: siteUrl('/'), priority: '1.0', lastmod: newest },
+    { loc: siteUrl('/episodes/'), priority: '0.9', lastmod: newest },
+    ...live.map(ep => ({
       loc: siteUrl(`/episodes/${ep.slug}/`),
       priority: '0.8',
       lastmod: ep.publishedAt
@@ -528,22 +646,26 @@ Sitemap: ${siteUrl('/sitemap.xml')}
 // 4. RUN
 // ========================================================
 async function run() {
-  const episodes = readJson('data/episodes.json', []);
+  const catalog = readJson('data/episodes.json', []);
+  const payloads = readPipelinePayloads();
+  const episodes = mergeCatalogs(catalog, payloads);
   const movies = readJson('data/movies.json', {});
 
   if (!episodes.length) {
-    console.warn('[Pages] data/episodes.json is empty — run scripts/fetch-youtube.js first.');
+    console.warn('[Pages] No episodes in data/episodes.json or data/pipeline/ — run scripts/fetch-youtube.js first.');
     return;
   }
 
   const missingSlug = episodes.filter(ep => !ep.slug);
   if (missingSlug.length) {
-    console.error('[Pages] Episodes without a slug. Re-run: node scripts/fetch-youtube.js');
+    console.error('[Pages] Episodes without a slug. Re-run: node scripts/fetch-youtube.js or export the pipeline payload.');
     process.exit(1);
   }
 
-  // Newest first.
-  episodes.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+  // Newest first. A scheduled episode sorts by its release date so it sits at
+  // the top of the archive without pretending to be live.
+  const dateOf = ep => ep.publishAt || ep.publishedAt || 0;
+  episodes.sort((a, b) => new Date(dateOf(b)) - new Date(dateOf(a)));
 
   const written = new Set();
   for (const episode of episodes) {
@@ -556,7 +678,7 @@ async function run() {
     fs.writeFileSync(path.join(dir, GENERATED_MARKER), '', 'utf8');
     written.add(episode.slug);
 
-    console.log(`[Pages] episodes/${episode.slug}/index.html  (${transcript && transcript.dialogue ? transcript.dialogue.length : 0} transcript turns)`);
+    console.log(`[Pages] episodes/${episode.slug}/index.html  [${episode.status || 'live'}] (${transcript && transcript.dialogue ? transcript.dialogue.length : 0} transcript turns)`);
   }
 
   fs.mkdirSync(EPISODES_DIR, { recursive: true });
@@ -575,7 +697,8 @@ async function run() {
 
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), buildSitemap(episodes), 'utf8');
   fs.writeFileSync(path.join(ROOT, 'robots.txt'), buildRobots(), 'utf8');
-  console.log(`[Pages] sitemap.xml (${episodes.length + 2} urls) + robots.txt`);
+  const liveCount = episodes.filter(isLiveEpisode).length;
+  console.log(`[Pages] sitemap.xml (${liveCount + 2} urls, ${episodes.length - liveCount} pre-release excluded) + robots.txt`);
 }
 
 run().catch(err => {
