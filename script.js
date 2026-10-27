@@ -67,7 +67,10 @@ let activeVideoId = null;
 async function getEpisodeCatalog() {
   if (episodeCatalogCache) return episodeCatalogCache;
   try {
-    const res = await fetch('data/episodes.json');
+    // GitHub Pages serves JSON with max-age=600, so a viewer who loads the SPA
+    // right after a publish (or keeps a tab open) can mount a stale catalog and
+    // embed a video that no longer exists. Always revalidate the catalog.
+    const res = await fetch(`data/episodes.json?v=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       episodeCatalogCache = Array.isArray(data) ? data : [];
