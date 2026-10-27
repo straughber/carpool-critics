@@ -8,7 +8,7 @@
 // ========================================================
 const transcriptCache = {};
 let movieCatalogCache = null;
-let formFeedbackTimer = null;
+let contactFeedbackTimer = null;
 
 // Template placeholder episodes were removed; the live catalog is generated
 // from the YouTube channel into data/episodes.json by scripts/fetch-youtube.js.
@@ -388,60 +388,72 @@ async function renderMovieProfile(epId) {
 }
 
 // ========================================================
-// 6. CONTACT FORM AJAX HANDLER (WEB3FORMS)
+// 6. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
 // ========================================================
-function handleFormSubmission(e) {
-  e.preventDefault();
-  const form = e.target;
-  const alert = document.getElementById('form-feedback');
-  const submitBtn = form.querySelector('.btn-send-dispatch');
+// There is no form and no third-party submit endpoint, so there is nothing for
+// bots to POST to. The address is assembled at runtime from data attributes so
+// the raw string never sits in the served HTML for address harvesters.
+function getContactAddress() {
+  const link = document.getElementById('contact-email-link');
+  if (!link) return '';
+  const user = link.dataset.user || '';
+  const domain = link.dataset.domain || '';
+  return user && domain ? `${user}@${domain}` : '';
+}
 
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerText = 'Transmitting...';
+function initContactEmail() {
+  const link = document.getElementById('contact-email-link');
+  const address = getContactAddress();
+  if (!link || !address) return;
+  link.href = `mailto:${address}`;
+  link.textContent = address;
+}
+
+function showContactFeedback(message, isError) {
+  const feedback = document.getElementById('contact-feedback');
+  if (!feedback) return;
+  feedback.innerText = message;
+  feedback.style.color = isError ? 'var(--bmw-red)' : 'var(--bmw-blue)';
+  feedback.style.display = 'block';
+  if (contactFeedbackTimer) clearTimeout(contactFeedbackTimer);
+  contactFeedbackTimer = setTimeout(() => {
+    feedback.style.display = 'none';
+  }, 6000);
+}
+
+function copyContactEmail() {
+  const address = getContactAddress();
+  if (!address) return;
+  const onCopied = () => showContactFeedback('✓ Copied ' + address, false);
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(address)
+      .then(onCopied)
+      .catch(() => copyContactEmailFallback(address, onCopied));
+  } else {
+    copyContactEmailFallback(address, onCopied);
   }
+}
 
-  const formData = new FormData(form);
-
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        if (alert) {
-          alert.innerText = '✓ Dispatch transmitted successfully! We received your message.';
-          alert.style.color = 'var(--bmw-blue)';
-          alert.style.display = 'block';
-        }
-        form.reset();
-      } else {
-        if (alert) {
-          alert.innerText = 'Error: ' + (data.message || 'Could not send message.');
-          alert.style.color = 'var(--bmw-red)';
-          alert.style.display = 'block';
-        }
-      }
-    })
-    .catch(err => {
-      console.error('Submission error:', err);
-      if (alert) {
-        alert.innerText = 'Network error. Please try again later.';
-        alert.style.color = 'var(--bmw-red)';
-        alert.style.display = 'block';
-      }
-    })
-    .finally(() => {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Send';
-      }
-      if (formFeedbackTimer) clearTimeout(formFeedbackTimer);
-      formFeedbackTimer = setTimeout(() => {
-        if (alert) alert.style.display = 'none';
-      }, 6000);
-    });
+function copyContactEmailFallback(address, onCopied) {
+  const field = document.createElement('textarea');
+  field.value = address;
+  field.setAttribute('readonly', '');
+  field.style.position = 'fixed';
+  field.style.opacity = '0';
+  document.body.appendChild(field);
+  field.select();
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch (err) {
+    copied = false;
+  }
+  document.body.removeChild(field);
+  if (copied) {
+    onCopied();
+  } else {
+    showContactFeedback('Copy failed. Select the address manually.', true);
+  }
 }
 
 // ========================================================
@@ -458,6 +470,8 @@ function escapeHtml(str) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initContactEmail();
+
   // The home cockpit needs no catalog data. Episodes load on first visit to Reviews.
   if (document.getElementById('view-episodes')?.classList.contains('active')) {
     initEpisodesView();

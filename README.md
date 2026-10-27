@@ -169,7 +169,7 @@ scores are stored per pack on the device and can be exported back as JSON.
 ### 1. Error-Free & Clean Code
 * **Strict Semantic HTML5**: Accessible tags (`<article>`, `<header>`, `<footer>`, `<time>`, `<main>`, `<nav>`) throughout.
 * **Modern JavaScript**: Clean `async/await` fetch logic with fallback caching, eliminating deprecated `window.event` and preventing memory leaks.
-* **Form Accessibility**: Explicit `<label for="...">` matching input IDs and ARIA live regions for Web3Forms feedback alerts.
+* **Contact Without a Form**: The contact view is a plain email card (no form, no third-party submit endpoint, address assembled at runtime from data attributes) so there is no public POST target and no harvestable `mailto:` in the served HTML.
 
 ### 2. Lightning-Fast Load Times (<1s Initial Paint)
 * **CSS Decoupling**: Consolidates styles into `style.css` with a minimal inline critical CSS snippet, reducing `index.html` payload by over 60%.
