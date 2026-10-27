@@ -48,6 +48,8 @@ version:
 
 The generated episode and archive pages share the same tokens through
 `assets/css/episode.css` and the templates in `scripts/build-episode-pages.js`.
+The top menu — wordmark, deck nav, HUD — lives in `assets/css/site-bar.css` and is
+loaded by `index.html` and by every generated page, so it never reshapes between views.
 
 ---
 
@@ -57,6 +59,7 @@ The generated episode and archive pages share the same tokens through
 carpool-critics/
 ├── index.html                   # SPA shell: home cockpit, reviews, about, contact
 ├── style.css                    # Site styles
+├── assets/css/site-bar.css      # The one top menu (shared by every page)
 ├── script.js                    # View router, transcript loader, movie profiles
 ├── assets/                      # Cockpit plate, host cutouts, per-episode thumbnails
 ├── data/
