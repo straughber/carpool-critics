@@ -3,7 +3,7 @@
     "id": "ep1",
     "number": 1,
     "slug": "ep1-whalefall",
-    "title": "Whalefall, Graded on a Tachometer | Review",
+    "title": "We Argued About Whalefall for 22 Minutes",
     "shortTitle": "Ep. 1: Whalefall",
     "youtubeId": "Be0RFbGbbSU",
     "duration": "21m",
@@ -11,7 +11,7 @@
     "publishedAt": "2026-10-27T05:49:08-07:00",
     "date": null,
     "description": "Whalefall (2026): I at one point was thinking, is he going to get pooped out?",
-    "thumbnail": "https://i.ytimg.com/vi/BpmHfoLEf70/hqdefault.jpg",
+    "thumbnail": "https://i.ytimg.com/vi/Be0RFbGbbSU/hqdefault.jpg",
     "chapters": [
       {
         "time": "00:00",
@@ -32,10 +32,6 @@
       {
         "time": "20:00",
         "label": "Scorecards Nobody Agreed To"
-      },
-      {
-        "time": "22:40",
-        "label": "Outro: The Car Survives"
       }
     ],
     "movieQuery": "Whalefall",
