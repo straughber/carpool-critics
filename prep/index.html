@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="referrer" content="no-referrer" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#0b0f17" />
+<link rel="apple-touch-icon" href="../assets/images/hosts/shane.svg" />
+<title>Carpool Critics — In-Car Prep</title>
+<link rel="stylesheet" href="app.css?v=3" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">🚗</span>
+    <div>
+      <div class="brand-title">Carpool Critics</div>
+      <div class="brand-sub">In-Car Prep · unlisted</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab is-active" data-tab="packs" role="tab" aria-selected="true">Packs</button>
+    <button class="tab" data-tab="new" role="tab" aria-selected="false">New Movie</button>
+    <button class="tab" data-tab="more" role="tab" aria-selected="false">More</button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- ============================ PACK PICKER ============================ -->
+  <section class="pane" id="pane-packs" role="tabpanel">
+    <p class="hint">Prep packs generated on the Mac. Tap one to load it in the car.</p>
+    <div id="pack-list" class="pack-list">
+      <div class="skeleton">Loading packs…</div>
+    </div>
+  </section>
+
+  <!-- ============================== NEW MOVIE ============================= -->
+  <section class="pane is-hidden" id="pane-new" role="tabpanel">
+    <div class="card">
+      <h2 class="card-title">Generate a prep sheet on your phone</h2>
+      <p class="hint">Paste an IMDb link, an IMDb ID (tt…), or just the movie title.</p>
+      <div class="field-row">
+        <input id="movie-input" type="text" inputmode="url" autocomplete="off" autocapitalize="off"
+               placeholder="https://www.imdb.com/title/tt38058097/" />
+        <button id="generate-btn" class="btn btn-primary">Generate</button>
+      </div>
+      <div id="gen-status" class="gen-status" role="status" aria-live="polite"></div>
+      <p class="fineprint">
+        Movie facts come from Wikipedia (free, phone-friendly). Scores and jokes follow the
+        Carpool Critics template. Always glance at the synopsis before reading it out loud.
+      </p>
+    </div>
+    <div class="card" id="gen-result-card" hidden></div>
+  </section>
+
+  <!-- =============================== MORE =============================== -->
+  <section class="pane is-hidden" id="pane-more" role="tabpanel">
+    <div class="card">
+      <h2 class="card-title">Season RT standings</h2>
+      <div id="standings"></div>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Install on your phone</h2>
+      <ol class="steps">
+        <li>Open this page in Safari (iPhone) or Chrome (Android).</li>
+        <li>Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>.</li>
+        <li>It opens full-screen and keeps working with no signal in the car.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Send notes back to the Mac</h2>
+      <p class="hint">Your guesses, scores and checkmarks save on this phone. When you get home,
+      copy the episode JSON and drop it into the episode folder, or just re-type the numbers.</p>
+      <button class="btn" id="copy-all-btn">Copy all saved notes</button>
+      <pre id="notes-out" class="notes-out" hidden></pre>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Console</h2>
+      <p class="hint">Clear local data on this phone. Prep packs on the Mac are untouched.</p>
+      <button class="btn btn-danger" id="clear-btn">Clear this phone's saved prep data</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================== TIMER ============================== -->
+<div class="timer-bar" id="timer-bar" hidden>
+  <button class="timer-clock" id="timer-clock" aria-label="Start or pause the recording timer">
+    <span id="timer-time">00:00</span>
+    <span class="timer-state" id="timer-state">start</span>
+  </button>
+  <div class="timer-phase" id="timer-phase">Ready</div>
+  <div class="timer-progress"><span id="timer-fill"></span></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js?v=6" defer></script>
+</body>
+</html>

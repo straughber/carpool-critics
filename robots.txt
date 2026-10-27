@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /prep/
 
 Sitemap: https://straughber.github.io/carpool-critics/sitemap.xml

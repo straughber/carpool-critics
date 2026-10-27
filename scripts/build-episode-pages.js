@@ -652,6 +652,7 @@ ${entries}
 function buildRobots() {
   return `User-agent: *
 Allow: /
+Disallow: /prep/
 
 Sitemap: ${siteUrl('/sitemap.xml')}
 `;
