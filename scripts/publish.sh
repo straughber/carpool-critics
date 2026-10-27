@@ -55,7 +55,7 @@ echo $$ > "$LOCK/pid"
 trap 'rm -rf "$LOCK"' EXIT
 
 # ------------------------------------------------------------ working tree rule
-GENERATED_PATHS='^(episodes/|sitemap\.xml$|robots\.txt$|data/episodes\.json$|data/movies\.json$|data/transcripts/)'
+GENERATED_PATHS='^(episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/)'
 UNAPPROVED="$(git status --porcelain | cut -c4- | grep -vE "$GENERATED_PATHS" || true)"
 if [ "$MODE" = "auto" ] && [ -n "$UNAPPROVED" ]; then
   printf '%s\n' "$UNAPPROVED" | sed 's/^/  /'
@@ -84,11 +84,28 @@ node -e '
 [ -f robots.txt ] || fail "robots.txt missing" 1
 
 EPISODE_COUNT="$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/episodes.json","utf8")).length)')"
+# Scheduled episodes are rendered but intentionally absent from the public
+# catalog, so the page count must include data/pipeline/ payloads too.
+EXPECTED_PAGES="$(node -e '
+  const fs = require("fs");
+  const slugs = new Set();
+  for (const ep of JSON.parse(fs.readFileSync("data/episodes.json", "utf8"))) {
+    if (ep.slug) slugs.add(ep.slug);
+  }
+  try {
+    for (const file of fs.readdirSync("data/pipeline")) {
+      if (!file.endsWith(".json")) continue;
+      const payload = JSON.parse(fs.readFileSync("data/pipeline/" + file, "utf8"));
+      if (payload.slug) slugs.add(payload.slug);
+    }
+  } catch {}
+  console.log(slugs.size);
+')"
 PAGE_COUNT="$(find episodes -mindepth 2 -maxdepth 2 -name index.html | wc -l | tr -d ' ')"
-if [ "$EPISODE_COUNT" != "$PAGE_COUNT" ]; then
-  fail "catalog has $EPISODE_COUNT episodes but only $PAGE_COUNT pages were generated" 1
+if [ "$EXPECTED_PAGES" != "$PAGE_COUNT" ]; then
+  fail "catalog + pipeline describe $EXPECTED_PAGES episodes but $PAGE_COUNT pages were generated" 1
 fi
-echo "  $EPISODE_COUNT episodes / $PAGE_COUNT pages / sitemap + robots present"
+echo "  $EPISODE_COUNT live episodes / $PAGE_COUNT pages / sitemap + robots present"
 
 # --------------------------------------------------------------------- commit
 info "Commit"
