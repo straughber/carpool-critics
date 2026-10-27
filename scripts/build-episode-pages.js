@@ -26,7 +26,7 @@ const path = require('path');
 const SITE_ORIGIN = 'https://carpoolcritics.com';
 const BASE_PATH = '';
 const SITE_NAME = 'Carpool Critics';
-const SITE_TAGLINE = 'Fresh Out the Doors, Straight to the Dash — Austin, TX';
+const SITE_TAGLINE = 'Fresh Out the Doors, Straight to the Dash · Austin, TX';
 const OG_IMAGE_FALLBACK = `${SITE_ORIGIN}${BASE_PATH}/assets/images/cockpit/CurbsideCinema_Background.jpeg`;
 
 const ROOT = path.join(__dirname, '..');
@@ -447,7 +447,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   const heroImage = isLive ? ogImage : (localThumb || ogImage);
 
   const description = applyCanonicalYear(episode.description, movie && movie.year);
-  const metaDescription = truncate(description || `${title} — a ${episode.duration || ''} film review recorded live from the car.`, 155);
+  const metaDescription = truncate(description || `${title}. A ${episode.duration || ''} film review recorded live from the car.`, 155);
 
   const year = movie && movie.year ? ` (${movie.year})` : '';
   const h1 = movie ? `${movie.title}${year} Review` : title;
@@ -545,8 +545,8 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
 
   return pageShell({
     title: isLive
-      ? `${h1} — Episode ${episode.number} | ${SITE_NAME}`
-      : `${h1} — Premieres ${publishLabel} | ${SITE_NAME}`,
+      ? `${h1} · Episode ${episode.number} | ${SITE_NAME}`
+      : `${h1} · Premieres ${publishLabel} | ${SITE_NAME}`,
     description: metaDescription,
     canonical,
     ogImage,
