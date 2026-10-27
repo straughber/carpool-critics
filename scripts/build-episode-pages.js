@@ -194,9 +194,11 @@ function watchUrl(videoId, seconds) {
   return `https://www.youtube.com/watch?v=${videoId}${seconds ? `&t=${seconds}s` : ''}`;
 }
 
-/** Best available YouTube still, verified at build time. */
+/** Best available still: pipeline thumbnail, then YouTube, then the site fallback. */
 function pickSocialImage(videoId, storedThumbnail) {
-  return storedThumbnail || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  if (storedThumbnail) return storedThumbnail;
+  if (videoId) return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  return OG_IMAGE_FALLBACK;
 }
 
 async function headOk(url) {
@@ -213,12 +215,8 @@ function speakerClass(name) {
   return ['alex', 'dave', 'shane'].includes(key) ? `speaker-${key}` : 'speaker-dave';
 }
 
-/** Host roles, matching the on-site cockpit seating. */
-const HOST_ROLES = {
-  Alex: 'Driver',
-  Shane: 'Passenger',
-  Dave: 'Center Back'
-};
+// Host seats are per-episode facts, measured by the spatial calibration stage
+// and carried in data/pipeline/<site_id>.json. Never hardcode them here.
 
 // ========================================================
 // 3. PAGE TEMPLATES
