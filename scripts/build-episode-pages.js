@@ -174,6 +174,21 @@ function formatLongDate(iso) {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+/**
+ * TMDb is the source of truth for a film's year. Upload descriptions are typed
+ * by hand and drift; patch the first parenthesised year on the page even when
+ * the stored payload predates the TMDb lookup.
+ */
+function applyCanonicalYear(description, year) {
+  if (!description || !year) return description;
+  const match = String(description).match(/\(((?:19|20)\d{2})\)/);
+  if (!match) return description;
+  const existing = Number(match[1]);
+  const canonical = Number(year);
+  if (!Number.isFinite(canonical) || Math.abs(existing - canonical) > 2) return description;
+  return description.slice(0, match.index) + `(${canonical})` + description.slice(match.index + match[0].length);
+}
+
 /** "01:34" or "1:02:07" -> seconds */
 function parseTimeToSeconds(stamp) {
   const parts = String(stamp || '').trim().split(':').map(Number);
@@ -429,7 +444,8 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   if (!ogImage) ogImage = OG_IMAGE_FALLBACK;
   const heroImage = isLive ? ogImage : (localThumb || ogImage);
 
-  const metaDescription = truncate(episode.description || `${title} — a ${episode.duration || ''} film review recorded live from the car.`, 155);
+  const description = applyCanonicalYear(episode.description, movie && movie.year);
+  const metaDescription = truncate(description || `${title} — a ${episode.duration || ''} film review recorded live from the car.`, 155);
 
   const year = movie && movie.year ? ` (${movie.year})` : '';
   const h1 = movie ? `${movie.title}${year} Review` : title;
@@ -475,7 +491,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
 
       ${poster}
 
-      ${episode.description ? `<section class="section"><p class="ep-description">${escapeHtml(episode.description)}</p></section>` : ''}
+      ${description ? `<section class="section"><p class="ep-description">${escapeHtml(description)}</p></section>` : ''}
       ${filmCard(movie)}
       ${scorecardSection(episode)}
       ${bestMomentSection(episode, isLive)}
@@ -492,7 +508,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
     name: title,
     episodeNumber: episode.number || undefined,
     datePublished: episode.publishAt || episode.publishedAt || undefined,
-    description: episode.description || metaDescription,
+    description: description || metaDescription,
     partOfSeries: {
       '@type': 'PodcastSeries',
       name: SITE_NAME,
@@ -503,7 +519,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
     podcastEpisode.associatedMedia = {
       '@type': 'VideoObject',
       name: title,
-      description: episode.description || metaDescription,
+      description: description || metaDescription,
       thumbnailUrl: [ogImage],
       uploadDate: episode.publishedAt || undefined,
       duration: isoDuration(episode.durationSeconds) || undefined,
@@ -553,6 +569,7 @@ function buildArchivePage(episodes, movies) {
         .filter(Boolean).map(escapeHtml).join(' · ')
       : `Premieres ${escapeHtml(ep.publishAt ? formatLongDate(ep.publishAt) : 'soon')}`;
     const badge = isLive ? '' : '<span class="pill pill-rating">Premieres</span>';
+    const description = applyCanonicalYear(ep.description, movie && movie.year);
     const thumbnail = ep.thumbnail && !/^https?:/.test(ep.thumbnail)
       ? pageAsset(ep.thumbnail, depth)
       : pickSocialImage(ep.youtubeId, ep.thumbnail);
@@ -563,7 +580,7 @@ function buildArchivePage(episodes, movies) {
         <div class="archive-body">
           <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a> ${badge}</div>
           <div class="archive-meta">${meta}</div>
-          ${ep.description ? `<p class="archive-desc">${escapeHtml(truncate(ep.description, 130))}</p>` : ''}
+          ${description ? `<p class="archive-desc">${escapeHtml(truncate(description, 130))}</p>` : ''}
         </div>
       </li>`;
   }).join('\n');
