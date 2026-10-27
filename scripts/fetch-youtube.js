@@ -15,7 +15,7 @@ const path = require('path');
 
 const CHANNEL_ID = process.env.YT_CHANNEL_ID || 'UCqd2FV1LVePtMzLAUEtaWOQ';
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15';
-const BOT_UA = 'Mozilla/5.0 (compatible; CarpoolCriticsBuild/1.0; +https://straughber.github.io/carpool-critics/)';
+const BOT_UA = 'Mozilla/5.0 (compatible; CarpoolCriticsBuild/1.0; +https://carpoolcritics.com/)';
 
 const episodesPath = path.join(__dirname, '../data/episodes.json');
 const pipelineDir = path.join(__dirname, '../data/pipeline');
