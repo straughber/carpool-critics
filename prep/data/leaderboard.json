@@ -1,0 +1,45 @@
+{
+  "updated_at": "2026-10-27T04:29:31.537482+00:00",
+  "standings": {
+    "Shane": 1,
+    "Alex": 0,
+    "Dave": 1
+  },
+  "last_recap": {
+    "episode_id": "EP01_Whale_Fall",
+    "movie_title": "Whalefall",
+    "actual_critics": 71,
+    "actual_audience": 82,
+    "guesses": {
+      "Shane": {
+        "critics": 65,
+        "audience": 55,
+        "critics_diff": 6,
+        "audience_diff": 27
+      },
+      "Alex": {
+        "critics": 44,
+        "audience": 62,
+        "critics_diff": 27,
+        "audience_diff": 20
+      },
+      "Dave": {
+        "critics": 59,
+        "audience": 69,
+        "critics_diff": 12,
+        "audience_diff": 13
+      }
+    },
+    "points_awarded": {
+      "Shane": 1,
+      "Alex": 0,
+      "Dave": 1
+    },
+    "critics_winners": [
+      "Shane"
+    ],
+    "audience_winners": [
+      "Dave"
+    ]
+  }
+}
