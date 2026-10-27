@@ -142,6 +142,17 @@ function deriveShortName(title) {
   return head.length >= 3 ? head : title.trim();
 }
 
+/** Minimal, dependency-free URL segment: "Ep. 1: Whalefall" -> "whalefall" */
+function slugify(text) {
+  return String(text || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'episode';
+}
+
 /** Best-effort movie guess from the title (overridable via movieQuery in JSON). */
 function deriveMovieQuery(title) {
   const short = deriveShortName(title);
@@ -228,16 +239,22 @@ async function run() {
       movieYear: prior.movieYear || deriveMovieQuery(title).movieYear || null,
       transcriptFile,
       number: prior.number || null,
-      id: prior.id || null
+      id: prior.id || null,
+      slug: prior.slug || null
     });
   }
 
-  // Number chronologically so the oldest upload is Episode 1.
+  // Number chronologically so the oldest upload is Episode 1. Existing episodes
+  // keep their number; new uploads take the next free number rather than their
+  // array index, so a deleted or unlisted video can never create two "ep3"s.
   episodes.sort((a, b) => new Date(a.publishedAt || 0) - new Date(b.publishedAt || 0));
-  episodes.forEach((ep, index) => {
-    if (!ep.number) ep.number = index + 1;
+  let nextNumber = episodes.reduce((max, ep) => Math.max(max, ep.number || 0), 0) + 1;
+  episodes.forEach(ep => {
+    if (!ep.number) ep.number = nextNumber++;
     if (!ep.id) ep.id = `ep${ep.number}`;
     if (!ep.shortTitle) ep.shortTitle = `Ep. ${ep.number}: ${deriveShortName(ep.title)}`;
+    // Stable, human-readable URL segment: ep1-whalefall
+    if (!ep.slug) ep.slug = `${ep.id}-${slugify(ep.shortTitle.replace(/^Ep\.\s*\d+\s*:\s*/i, ''))}`;
   });
   episodes.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
 
@@ -245,6 +262,7 @@ async function run() {
   const ordered = episodes.map(ep => ({
     id: ep.id,
     number: ep.number,
+    slug: ep.slug,
     title: ep.title,
     shortTitle: ep.shortTitle,
     youtubeId: ep.youtubeId,

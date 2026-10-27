@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://straughber.github.io/carpool-critics/sitemap.xml

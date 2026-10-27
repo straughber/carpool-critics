@@ -1,0 +1,271 @@
+/* ========================================================
+   CARPOOL CRITICS - EPISODE / ARCHIVE PAGE STYLESHEET
+   Document-flow pages (not the cockpit viewport). Shares the
+   design tokens with style.css but nothing else, so these
+   pages never load cockpit geometry they do not use.
+   ======================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap');
+
+:root {
+  --bg-black: #000000;
+  --cockpit-dark: #070a12;
+  --bmw-blue: #48cae4;
+  --bmw-amber: #f4a261;
+  --bmw-red: #e63946;
+  --text-bright: #ffffff;
+  --text-dim: #94a3b8;
+  /* #64748b measures 4.41:1 on black — just under WCAG AA, so muted text is
+     lifted to 4.89:1. */
+  --text-muted: #6d7b90;
+  --card-bg: rgba(13, 18, 29, 0.94);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --font-header: 'Teko', sans-serif;
+  --font-body: 'Chivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-black);
+  color: var(--text-bright);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--bmw-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrap { width: 100%; max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- Top bar ---------- */
+.site-bar {
+  border-bottom: 1px solid var(--card-border);
+  background: rgba(7, 10, 18, 0.9);
+}
+
+.site-bar .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  flex-wrap: wrap;
+}
+
+.brand-mark {
+  font-family: var(--font-header);
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--text-bright);
+  text-transform: uppercase;
+}
+.brand-mark:hover { text-decoration: none; color: var(--bmw-blue); }
+
+.site-bar nav { display: flex; gap: 18px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+.site-bar nav a { color: var(--text-dim); }
+.site-bar nav a:hover { color: var(--bmw-blue); text-decoration: none; }
+
+/* ---------- Article head ---------- */
+.ep-head { padding: 44px 0 8px; }
+
+.eyebrow {
+  font-family: var(--font-header);
+  font-size: 15px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--bmw-amber);
+  margin-bottom: 10px;
+}
+
+h1.ep-title {
+  font-family: var(--font-header);
+  font-size: clamp(34px, 5.2vw, 56px);
+  line-height: 1.02;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 14px;
+}
+
+.ep-title .movie-year { color: var(--text-muted); }
+
+.ep-byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 26px;
+}
+.ep-byline span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---------- Video poster ---------- */
+.poster-link {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  background: #000;
+  margin-bottom: 10px;
+}
+.poster-link img { width: 100%; height: 100%; object-fit: cover; opacity: 0.88; transition: opacity 0.2s ease; display: block; }
+.poster-link:hover img { opacity: 1; }
+.poster-link .play-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: rgba(197, 138, 46, 0.94);
+  color: #0b0f16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+}
+.poster-link .play-badge svg { width: 34px; height: 34px; margin-left: 4px; }
+
+.poster-note { font-size: 12px; color: var(--text-muted); margin-bottom: 34px; }
+
+/* ---------- Sections ---------- */
+.section { margin: 34px 0; }
+
+h2.section-title {
+  font-family: var(--font-header);
+  font-size: 26px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-bright);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.ep-description { font-size: 17px; color: var(--text-dim); max-width: 74ch; }
+
+/* ---------- Film card ---------- */
+.film-card {
+  display: flex;
+  gap: 22px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 18px;
+}
+.film-card img { width: 116px; height: 174px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #0e1420; }
+.film-body { flex: 1 1 auto; min-width: 0; }
+.film-title { font-family: var(--font-header); font-size: 28px; letter-spacing: 1px; line-height: 1.1; margin-bottom: 10px; }
+.film-title .movie-year { color: var(--text-muted); font-size: 22px; }
+
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.pill {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.03);
+}
+.pill-rating { color: var(--bmw-amber); border-color: rgba(244, 162, 97, 0.4); }
+.pill-cert { color: var(--bmw-blue); border-color: rgba(72, 202, 228, 0.4); }
+
+.film-synopsis { font-size: 14px; color: var(--text-dim); margin-bottom: 12px; }
+.film-link { font-size: 13px; font-weight: 700; }
+
+/* ---------- Chapters ---------- */
+.chapter-list { list-style: none; }
+.chapter-list li { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.chapter-list li:last-child { border-bottom: none; }
+.chapter-list a {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 11px 4px;
+  color: var(--text-bright);
+  font-size: 15px;
+}
+.chapter-list a:hover { background: rgba(255, 255, 255, 0.03); text-decoration: none; }
+.chapter-time {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bmw-amber);
+  flex: 0 0 52px;
+}
+
+/* ---------- Transcript ---------- */
+.transcript-turn { padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.transcript-turn:last-child { border-bottom: none; }
+.turn-meta { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
+.turn-time { font-variant-numeric: tabular-nums; font-size: 11px; color: var(--text-muted); }
+.speaker-pill {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.speaker-alex { background: rgba(230, 57, 70, 0.2); color: #ff7b83; }
+.speaker-dave { background: rgba(244, 162, 97, 0.2); color: var(--bmw-amber); }
+.speaker-shane { background: rgba(72, 202, 228, 0.2); color: var(--bmw-blue); }
+.turn-text { font-size: 15px; color: var(--text-dim); }
+
+/* ---------- Archive list ---------- */
+.archive-list { list-style: none; }
+.archive-item {
+  display: flex;
+  gap: 18px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--card-border);
+  align-items: center;
+}
+.archive-item:last-child { border-bottom: none; }
+.archive-item img { width: 132px; height: 74px; object-fit: cover; border-radius: 5px; flex: 0 0 auto; background: #0e1420; }
+.archive-body { min-width: 0; }
+.archive-title { font-size: 17px; font-weight: 700; color: var(--text-bright); line-height: 1.3; }
+.archive-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.archive-desc { font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+
+/* ---------- Prev / next ---------- */
+.pager { display: flex; justify-content: space-between; gap: 16px; margin: 40px 0 10px; flex-wrap: wrap; }
+.pager a {
+  flex: 1 1 240px;
+  border: 1px solid var(--card-border);
+  border-radius: 7px;
+  padding: 13px 16px;
+  background: var(--card-bg);
+  color: var(--text-bright);
+}
+.pager a:hover { border-color: var(--bmw-amber); text-decoration: none; }
+.pager .pager-label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+.pager .pager-title { font-size: 14px; font-weight: 700; }
+.pager .next { text-align: right; }
+
+/* ---------- Footer ---------- */
+.site-foot {
+  border-top: 1px solid var(--card-border);
+  margin-top: 48px;
+  padding: 26px 0 46px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.site-foot .wrap { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .film-card { flex-direction: column; }
+  .film-card img { width: 96px; height: 144px; }
+  .archive-item img { width: 96px; height: 54px; }
+  .pager .next { text-align: left; }
+}

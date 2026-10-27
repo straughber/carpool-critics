@@ -9,3 +9,6 @@ npm-debug.log*
 .env
 .env.*
 tokens/
+
+# Build cache (transcript retry cooldowns, publish logs)
+.cache/

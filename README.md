@@ -148,3 +148,93 @@ When publishing a new episode:
 
 4. **Commit & Deploy**:
    Push to `main`. GitHub Pages automatically deploys the updated static site.
+
+---
+
+## Publishing
+
+GitHub Pages builds from `main`, so **publishing is pushing** — there is no separate
+upload step. Two scripts make that one action safe and repeatable.
+
+### One-time setup
+
+```bash
+brew install gh && gh auth login      # installs the git credential helper too
+```
+
+Verify with `gh auth status`, then `git ls-remote origin` should stop asking for a password.
+
+### `scripts/build-all.sh` — the only supported build
+
+```bash
+./scripts/build-all.sh                 # sync -> captions (if any missing) -> TMDb -> pages
+./scripts/build-all.sh --skip-transcripts
+./scripts/build-all.sh --retry-skipped # ignore the 7-day caption cooldown
+```
+
+Order matters and is no longer tribal knowledge: the catalog sync runs first, any
+episode without a transcript gets one (`yt-dlp`, then a re-sync wakes `transcriptFile`),
+TMDb enriches `data/movies.json` when `TMDB_READ_TOKEN` is set, and
+`build-episode-pages.js` renders last. Skipping that last step is what silently ships a
+catalog with no episode pages.
+
+Captions are a **per-new-episode** cost, not a per-build one: only episodes with no
+`data/transcripts/<id>.json` are fetched. Failures are non-fatal, retried after 7 days,
+and tracked in `.cache/transcript-failures.json` (gitignored).
+
+TMDb needs a token in the environment or in a gitignored `website/.env`:
+
+```bash
+TMDB_READ_TOKEN=eyJ...        # .env
+```
+
+### `scripts/publish.sh` — build, commit, push, verify
+
+```bash
+./scripts/publish.sh                  # normal publish: commit everything
+./scripts/publish.sh --dry-run        # build + gates, show what would ship
+./scripts/publish.sh --message "..."  # custom commit message
+./scripts/publish.sh --no-verify      # skip the live-deploy check
+```
+
+It runs `build-all.sh`, gates the result (JS syntax, JSON validity, episode page count
+matching the catalog, sitemap and robots present), commits only when something changed,
+rebases if `origin` moved, pushes, then polls `episodes/index.html` for up to five
+minutes and compares hashes — so "pushed" is never confused with "live". Exit codes:
+`1` build/gate failure, `3` push failure, `4` pushed but the deploy never appeared.
+
+A `mkdir`-based lock in `.git/` prevents overlapping runs.
+
+### Scheduled publish (daily, 09:15)
+
+```bash
+cp scripts/deploy/com.carpoolcritics.publish.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.carpoolcritics.publish.plist
+launchctl list | grep carpoolcritics          # verify
+log stream --predicate 'process == "publish.sh"'   # or: tail -f ~/Library/Logs/carpool-critics-publish.log
+```
+
+Remove it with:
+
+```bash
+launchctl bootout gui/$(id -u)/com.carpoolcritics.publish
+rm ~/Library/LaunchAgents/com.carpoolcritics.publish.plist
+```
+
+The scheduled run uses `--auto`, which **only commits generated paths** — `episodes/`,
+`sitemap.xml`, `robots.txt`, `data/episodes.json`, `data/movies.json`,
+`data/transcripts/`. If any hand-edited file (`index.html`, `script.js`, `style.css`,
+`scripts/*`) is dirty, it refuses and exits without touching the repo. A half-finished
+redesign can never be published by the timer.
+
+### When to push by hand
+
+`main` is production, so push at green checkpoints rather than continuously:
+
+- After any change you would be willing to show a viewer — run `./scripts/publish.sh`.
+- Before starting a risky redesign, so the previous state is a clean rollback point.
+- After the daily job has committed: `git status` should be clean; if you have local
+  work, `git pull --rebase` first (the publish script rebases automatically, manual
+  pushes do not).
+- Not mid-refactor. Commit locally as often as you like; pushing is what deploys.
+
