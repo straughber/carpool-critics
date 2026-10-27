@@ -1,6 +1,7 @@
 /* ========================================================
    CARPOOL CRITICS - MASTER INTERACTION LOGIC
-   Version: 4.2.0 (MCP Optimized & Cleaned)
+   Version: 5.0.0 - Dash-Cam Brutalism
+   Contract: /BRAND.md
    ======================================================== */
 
 // ========================================================
@@ -9,32 +10,62 @@
 const transcriptCache = {};
 let movieCatalogCache = null;
 let contactFeedbackTimer = null;
+let hudClockTimer = null;
+const bootTime = Date.now();
 
 // Template placeholder episodes were removed; the live catalog is generated
 // from the YouTube channel into data/episodes.json by scripts/fetch-youtube.js.
 const fallbackTranscripts = {};
 const fallbackMovies = {};
 
+const SECTIONS = ['home', 'about', 'episodes', 'contact'];
+
 // ========================================================
 // 2. VIEW NAVIGATION & ROUTING
 // ========================================================
-function switchSection(sectionId) {
-  const panels = document.querySelectorAll('.view-panel');
-  panels.forEach(panel => panel.classList.remove('active'));
+function sectionFromLocation() {
+  const key = (location.hash || '').replace(/^#/, '').trim();
+  return SECTIONS.includes(key) ? key : 'home';
+}
+
+function syncDeckNav(sectionId) {
+  document.querySelectorAll('.deck-btn[data-section]').forEach(btn => {
+    if (btn.getAttribute('data-section') === sectionId) {
+      btn.setAttribute('aria-current', 'page');
+    } else {
+      btn.removeAttribute('aria-current');
+    }
+  });
+}
+
+function switchSection(sectionId, options = {}) {
+  if (!SECTIONS.includes(sectionId)) sectionId = 'home';
+
+  document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
 
   const activePanel = document.getElementById('view-' + sectionId);
   if (activePanel) {
     activePanel.classList.add('active');
   }
 
-  // Fade out and hide title header when navigating away from home
-  const header = document.querySelector('.title-header');
-  if (header) {
-    if (sectionId === 'home') {
-      header.classList.remove('header-hidden');
-    } else {
-      header.classList.add('header-hidden');
+  syncDeckNav(sectionId);
+
+  // The site is a single dashboard. Replace the URL fragment so a view is
+  // shareable, but never let the browser jump to an anchor.
+  if (options.updateHistory !== false) {
+    const target = sectionId === 'home'
+      ? `${location.pathname}${location.search}`
+      : `${location.pathname}${location.search}#${sectionId}`;
+    try {
+      history.pushState({ section: sectionId }, '', target);
+    } catch (err) {
+      // file:// previews can reject pushState; navigation still works.
     }
+  }
+
+  if (sectionId !== 'home') {
+    const scroller = activePanel && activePanel.querySelector('.subpage-scroll-container');
+    if (scroller) scroller.scrollTop = 0;
   }
 
   // Lazy-load the episode catalog only when the Reviews view is first opened,
@@ -48,16 +79,80 @@ function switchSection(sectionId) {
 function setHover(hostKey, isHovered) {
   const group = document.getElementById('group-' + hostKey);
   if (group) {
-    if (isHovered) {
-      group.classList.add('is-hovered');
-    } else {
-      group.classList.remove('is-hovered');
-    }
+    group.classList.toggle('is-hovered', Boolean(isHovered));
   }
 }
 
+// Bind every dashboard control once. The cockpit hotspots are divs, so they
+// also get Enter/Space handling instead of relying on synthetic clicks.
+function initNavigation() {
+  document.querySelectorAll('[data-section]').forEach(el => {
+    const go = () => switchSection(el.dataset.section);
+    el.addEventListener('click', go);
+
+    if (el.tagName !== 'BUTTON') {
+      el.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          go();
+        }
+      });
+    }
+  });
+}
+
 // ========================================================
-// 3. EPISODE CATALOG, PLAYLIST & CLICK-TO-LOAD VIDEO FACADE
+// 3. ASCII TACHOMETER GAUGE
+// ========================================================
+/**
+ * Convert a numeric rating into the brand's ten-cell ASCII gauge.
+ * 8 -> "[▓▓▓▓▓▓▓▓░░] 8.0/10"
+ * Missing/invalid -> "[░░░░░░░░░░] --/--"
+ */
+function asciiGauge(value, max = 10, cells = 10) {
+  const numeric = Number(value);
+  const valid = value !== null && value !== '' && Number.isFinite(numeric);
+  if (!valid) {
+    return `[${'░'.repeat(cells)}] --/--`;
+  }
+  const clamped = Math.min(Math.max(numeric, 0), max);
+  const filled = Math.round((clamped / max) * cells);
+  const bar = `${'▓'.repeat(filled)}${'░'.repeat(cells - filled)}`;
+  const shownMax = Number.isInteger(max) ? String(max) : max.toFixed(1);
+  return `[${bar}] ${clamped.toFixed(1)}/${shownMax}`;
+}
+
+// Exposed for preview tools and console checks.
+window.asciiGauge = asciiGauge;
+
+// ========================================================
+// 4. REC CLOCK (runtime counter, not wall time)
+// ========================================================
+function formatRuntime(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = String(Math.floor(total / 3600)).padStart(2, '0');
+  const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+  const s = String(total % 60).padStart(2, '0');
+  return `${h}:${m}:${s}`;
+}
+
+function initClock() {
+  const tick = () => {
+    const stamp = formatRuntime(Date.now() - bootTime);
+    document.querySelectorAll('[data-clock]').forEach(el => {
+      el.textContent = stamp;
+    });
+  };
+  tick();
+  if (hudClockTimer) clearInterval(hudClockTimer);
+  hudClockTimer = setInterval(tick, 1000);
+
+  const yearEl = document.getElementById('status-year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+}
+
+// ========================================================
+// 5. EPISODE CATALOG, PLAYLIST & CLICK-TO-LOAD VIDEO FACADE
 // ========================================================
 let episodeCatalogCache = null;
 let episodesViewReady = false;
@@ -112,7 +207,7 @@ async function initEpisodesView() {
 
   if (!episodes.length) {
     if (stack) {
-      stack.innerHTML = '<div class="transcript-loading-msg">No episodes published yet. Check back after the next dispatch.</div>';
+      stack.innerHTML = '<div class="transcript-loading-msg">NO EPISODES PUBLISHED YET // CHECK BACK AFTER THE NEXT DISPATCH.</div>';
     }
     const titleEl = document.getElementById('current-video-title');
     if (titleEl) titleEl.innerText = 'No episodes yet';
@@ -123,20 +218,35 @@ async function initEpisodesView() {
   selectEpisode(episodes[0]);
 }
 
+function formatEpisodeNumber(ep, index) {
+  const raw = Number(ep.number);
+  const value = Number.isFinite(raw) && raw > 0 ? raw : index + 1;
+  return String(value).padStart(2, '0');
+}
+
 function renderEpisodePlaylist(episodes, stack) {
   if (!stack) return;
-  stack.innerHTML = episodes.map(ep => {
+  stack.innerHTML = episodes.map((ep, index) => {
     const meta = [escapeHtml(ep.duration || ''), escapeHtml(relativeDate(ep.publishedAt))]
-      .filter(Boolean).join(' • ');
+      .filter(Boolean).join(' // ');
+    const number = formatEpisodeNumber(ep, index);
     return `
       <div class="playlist-card" role="button" tabindex="0"
-           data-ep="${escapeHtml(ep.id)}" data-video="${escapeHtml(ep.youtubeId)}"
-           aria-label="${escapeHtml(ep.shortTitle || ep.title)}">
-        <div>
-          <div class="pl-ep-title">${escapeHtml(ep.shortTitle || ep.title)}</div>
-          <div class="pl-ep-meta">${meta}</div>
+           data-ep="${escapeHtml(ep.id)}" data-video="${escapeHtml(ep.youtubeId)}">
+        <div class="ticket-head">
+          <span>ADMIT ONE // EP #${number}</span>
+          <span class="ticket-head-right">HOV-3</span>
         </div>
-        <span class="pl-play-tag">▶ PLAY</span>
+        <div class="pl-ticket-body">
+          <div>
+            <div class="pl-ep-title">${escapeHtml(ep.shortTitle || ep.title)}</div>
+            <div class="pl-ep-meta">${meta || 'DISPATCH'}</div>
+          </div>
+        </div>
+        <div class="ticket-foot">
+          <span>HOV-3: SHANE, ALEX, DAVE</span>
+          <span class="pl-play-tag">[ ▶ PLAY ]</span>
+        </div>
       </div>`;
   }).join('');
 
@@ -166,7 +276,7 @@ function selectEpisode(ep, options = {}) {
   const subEl = document.getElementById('current-video-sub');
   if (subEl) {
     const bits = [ep.duration, relativeDate(ep.publishedAt)].filter(Boolean);
-    subEl.innerText = ep.description || bits.join(' • ');
+    subEl.innerText = ep.description || bits.join(' // ');
   }
 
   const poster = document.getElementById('video-facade-poster');
@@ -208,7 +318,7 @@ function selectEpisode(ep, options = {}) {
 function showTranscriptPlaceholder() {
   const body = document.getElementById('transcript-body');
   if (body) {
-    body.innerHTML = '<div class="transcript-loading-msg">Transcript coming soon for this episode.</div>';
+    body.innerHTML = '<div class="transcript-loading-msg">TRANSCRIPT COMING SOON // NO CAPTION TRACK YET.</div>';
   }
 }
 
@@ -242,7 +352,7 @@ function activateVideoPlayer() {
 }
 
 // ========================================================
-// 4. ON-DEMAND TRANSCRIPT LOADER
+// 6. ON-DEMAND TRANSCRIPT LOADER
 // ========================================================
 async function loadEpisodeTranscript(epId) {
   const transcriptBody = document.getElementById('transcript-body');
@@ -255,7 +365,7 @@ async function loadEpisodeTranscript(epId) {
     return;
   }
 
-  transcriptBody.innerHTML = '<div class="transcript-loading-msg">Fetching episode transcript on-demand...</div>';
+  transcriptBody.innerHTML = '<div class="transcript-loading-msg">READING TRANSCRIPT // ON-DEMAND FETCH...</div>';
 
   try {
     const response = await fetch(`data/transcripts/${encodeURIComponent(epId)}.json`);
@@ -269,7 +379,7 @@ async function loadEpisodeTranscript(epId) {
       transcriptCache[epId] = fallbackTranscripts[epId];
       renderTranscript(fallbackTranscripts[epId]);
     } else {
-      transcriptBody.innerHTML = '<div class="transcript-loading-msg">Transcript coming soon for this episode.</div>';
+      transcriptBody.innerHTML = '<div class="transcript-loading-msg">TRANSCRIPT COMING SOON // NO CAPTION TRACK YET.</div>';
     }
   }
 }
@@ -279,7 +389,7 @@ function renderTranscript(data) {
   if (!transcriptBody) return;
 
   if (!data.dialogue || data.dialogue.length === 0) {
-    transcriptBody.innerHTML = '<div class="transcript-loading-msg">No transcript available.</div>';
+    transcriptBody.innerHTML = '<div class="transcript-loading-msg">NO TRANSCRIPT AVAILABLE.</div>';
     return;
   }
 
@@ -289,7 +399,7 @@ function renderTranscript(data) {
       <article class="transcript-entry">
         <div class="transcript-meta">
           <time class="transcript-time">${escapeHtml(entry.time || '00:00:00')}</time>
-          <span class="speaker-pill speaker-${speakerKey}">${escapeHtml(entry.speaker)} (${escapeHtml(entry.role || 'Host')})</span>
+          <span class="speaker-pill speaker-${speakerKey}">◊ ${escapeHtml(entry.speaker)} // ${escapeHtml(entry.role || 'HOST')}</span>
         </div>
         <p class="transcript-text">${escapeHtml(entry.text)}</p>
       </article>
@@ -309,12 +419,12 @@ function toggleTranscript() {
 
   const isCollapsed = body.classList.toggle('collapsed');
   if (btn) btn.setAttribute('aria-expanded', !isCollapsed);
-  if (text) text.innerText = isCollapsed ? 'Show Transcript' : 'Hide Transcript';
+  if (text) text.innerText = isCollapsed ? '[ SHOW ]' : '[ HIDE ]';
   if (icon) icon.innerText = isCollapsed ? '▼' : '▲';
 }
 
 // ========================================================
-// 5. TMDB MOVIE PROFILE RENDERER
+// 7. TMDB MOVIE PROFILE RENDERER
 // ========================================================
 async function getMovieCatalog() {
   if (movieCatalogCache) return movieCatalogCache;
@@ -331,6 +441,10 @@ async function getMovieCatalog() {
   return movieCatalogCache;
 }
 
+function upper(value) {
+  return String(value == null ? '' : value).toUpperCase();
+}
+
 async function renderMovieProfile(epId) {
   const card = document.getElementById('movie-profile-card');
   if (!card) return;
@@ -344,7 +458,7 @@ async function renderMovieProfile(epId) {
     return;
   }
 
-  card.style.display = 'flex';
+  card.style.display = 'block';
 
   const posterImg = document.getElementById('movie-poster-img');
   if (posterImg) {
@@ -354,22 +468,26 @@ async function renderMovieProfile(epId) {
 
   const titleEl = document.getElementById('movie-title');
   if (titleEl) {
-    titleEl.innerHTML = `${escapeHtml(movie.title)} <span class="movie-year">(${escapeHtml(movie.year || '')})</span>`;
+    const yearHtml = movie.year
+      ? ` <span class="movie-year">(${escapeHtml(movie.year)})</span>`
+      : '';
+    titleEl.innerHTML = `${escapeHtml(upper(movie.title))}${yearHtml}`;
   }
 
-  const ratingScore = document.getElementById('movie-rating-score');
-  if (ratingScore) {
-    ratingScore.innerText = movie.rating || 'N/A';
+  // The rating is always a tachometer, never a star badge.
+  const gaugeEl = document.getElementById('movie-rating-gauge');
+  if (gaugeEl) {
+    gaugeEl.innerText = asciiGauge(movie.rating);
   }
 
   const pillsEl = document.getElementById('movie-meta-pills');
   if (pillsEl) {
     let html = '';
-    if (movie.runtime) html += `<span class="meta-pill pill-runtime">${escapeHtml(movie.runtime)}</span>`;
-    if (movie.certification) html += `<span class="meta-pill pill-cert">${escapeHtml(movie.certification)}</span>`;
+    if (movie.runtime) html += `<span class="meta-pill pill-runtime">${escapeHtml(upper(movie.runtime))}</span>`;
+    if (movie.certification) html += `<span class="meta-pill pill-cert">${escapeHtml(upper(movie.certification))}</span>`;
     if (movie.genres && Array.isArray(movie.genres)) {
       movie.genres.forEach(g => {
-        html += `<span class="meta-pill pill-genre">${escapeHtml(g)}</span>`;
+        html += `<span class="meta-pill pill-genre">${escapeHtml(upper(g))}</span>`;
       });
     }
     pillsEl.innerHTML = html;
@@ -383,12 +501,12 @@ async function renderMovieProfile(epId) {
   const linkEl = document.getElementById('movie-tmdb-link');
   if (linkEl) {
     linkEl.href = movie.tmdbUrl || '#';
-    linkEl.style.display = movie.tmdbUrl ? 'inline-flex' : 'none';
+    linkEl.style.display = movie.tmdbUrl ? 'inline-block' : 'none';
   }
 }
 
 // ========================================================
-// 6. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
+// 8. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
 // ========================================================
 // There is no form and no third-party submit endpoint, so there is nothing for
 // bots to POST to. The address is assembled at runtime from data attributes so
@@ -413,7 +531,8 @@ function showContactFeedback(message, isError) {
   const feedback = document.getElementById('contact-feedback');
   if (!feedback) return;
   feedback.innerText = message;
-  feedback.style.color = isError ? 'var(--bmw-red)' : 'var(--bmw-blue)';
+  feedback.style.color = 'var(--text-ticket)';
+  feedback.style.borderLeftColor = isError ? 'var(--accent-brake)' : 'var(--accent-hov)';
   feedback.style.display = 'block';
   if (contactFeedbackTimer) clearTimeout(contactFeedbackTimer);
   contactFeedbackTimer = setTimeout(() => {
@@ -424,7 +543,7 @@ function showContactFeedback(message, isError) {
 function copyContactEmail() {
   const address = getContactAddress();
   if (!address) return;
-  const onCopied = () => showContactFeedback('✓ Copied ' + address, false);
+  const onCopied = () => showContactFeedback('[ COPIED ] ' + address, false);
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(address)
       .then(onCopied)
@@ -452,12 +571,12 @@ function copyContactEmailFallback(address, onCopied) {
   if (copied) {
     onCopied();
   } else {
-    showContactFeedback('Copy failed. Select the address manually.', true);
+    showContactFeedback('[ FAIL ] SELECT THE ADDRESS MANUALLY.', true);
   }
 }
 
 // ========================================================
-// 7. UTILITIES & INITIALIZATION
+// 9. UTILITIES & INITIALIZATION
 // ========================================================
 function escapeHtml(str) {
   if (!str) return '';
@@ -470,10 +589,17 @@ function escapeHtml(str) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initClock();
   initContactEmail();
+  initNavigation();
 
-  // The home cockpit needs no catalog data. Episodes load on first visit to Reviews.
-  if (document.getElementById('view-episodes')?.classList.contains('active')) {
-    initEpisodesView();
-  }
+  // Deep links: carpoolcritics.com/#episodes opens the Reviews dashboard.
+  const initial = sectionFromLocation();
+  syncDeckNav(initial);
+  if (initial !== 'home') switchSection(initial, { updateHistory: false });
+
+  window.addEventListener('popstate', () => {
+    const section = sectionFromLocation();
+    switchSection(section, { updateHistory: false });
+  });
 });

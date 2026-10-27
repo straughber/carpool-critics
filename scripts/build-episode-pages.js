@@ -232,6 +232,24 @@ function speakerClass(name) {
   return ['alex', 'dave', 'shane'].includes(key) ? `speaker-${key}` : 'speaker-dave';
 }
 
+/** The only score renderer. Mirrors asciiGauge() in script.js and BRAND.md. */
+function asciiGauge(value, cells = 10) {
+  const numeric = Number(value);
+  if (value === null || value === '' || !Number.isFinite(numeric)) {
+    return `[${'░'.repeat(cells)}] --/--`;
+  }
+  const clamped = Math.min(Math.max(numeric, 0), 10);
+  const filled = Math.round((clamped / 10) * cells);
+  return `[${'▓'.repeat(filled)}${'░'.repeat(cells - filled)}] ${clamped.toFixed(1)}/10`;
+}
+
+function episodeNumber(episode, fallback = '') {
+  const number = Number(episode.number);
+  return Number.isFinite(number) && number > 0
+    ? String(number).padStart(2, '0')
+    : fallback;
+}
+
 // Host seats are per-episode facts, measured by the spatial calibration stage
 // and carried in data/pipeline/<site_id>.json. Never hardcode them here.
 
@@ -254,6 +272,8 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeAttr(description)}" />
   <meta name="robots" content="${escapeAttr(robots)}" />
+  <meta name="theme-color" content="#0A0A0C" />
+  <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="${canonical}" />
 
   <meta property="og:type" content="${ogType}" />
@@ -268,19 +288,26 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <meta name="twitter:description" content="${escapeAttr(description)}" />
   <meta name="twitter:image" content="${ogImage}" />
 
-  <link rel="stylesheet" href="${asset('assets/css/episode.css')}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.0.0" />
   ${jsonLdBlocks}
 </head>
 <body>
 
+  <div class="scanline-plane" aria-hidden="true"></div>
+
   <header class="site-bar">
     <div class="wrap">
-      <a class="brand-mark" href="${asset('')}">${SITE_NAME}</a>
+      <a class="brand-mark" href="${asset('')}">◊ CARPOOL CRITICS</a>
       <nav aria-label="Site">
-        <a href="${asset('')}">Home</a>
-        ${navEpisodes ? `<a href="${asset('episodes/')}">All Episodes</a>` : ''}
-        <a href="https://www.youtube.com/@CarpoolCritics" rel="noopener">YouTube</a>
+        <a href="${asset('')}">[ DASH ]</a>
+        <a href="${asset('')}#about">[ HOSTS ]</a>
+        ${navEpisodes ? `<a href="${asset('episodes/')}">[ ARCHIVE ]</a>` : ''}
+        <a href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ]</a>
       </nav>
+      <span class="site-hud" aria-hidden="true"><span class="rec-dot">●</span> REC // HOV-3 // AUSTIN, TX</span>
     </div>
   </header>
 
@@ -291,7 +318,7 @@ ${body}
   <footer class="site-foot">
     <div class="wrap">
       <span>&copy; ${new Date().getFullYear()} ${SITE_NAME} · ${escapeHtml(SITE_TAGLINE)}</span>
-      <span>Recorded in a parked car, Austin, Texas</span>
+      <span>◊ HOV-3 // PARKED IN AUSTIN, TEXAS</span>
     </div>
   </footer>
 
@@ -303,25 +330,31 @@ ${body}
 function filmCard(movie) {
   if (!movie) return '';
   const pills = [
-    movie.rating ? `<span class="pill pill-rating">TMDb ${escapeHtml(movie.rating)}</span>` : '',
+    movie.rating ? `<span class="pill pill-rating">${escapeHtml(asciiGauge(movie.rating))}</span>` : '',
     movie.year ? `<span class="pill">${escapeHtml(movie.year)}</span>` : '',
-    movie.runtime ? `<span class="pill">${escapeHtml(movie.runtime)}</span>` : '',
-    movie.certification ? `<span class="pill pill-cert">${escapeHtml(movie.certification)}</span>` : '',
-    ...(Array.isArray(movie.genres) ? movie.genres.map(g => `<span class="pill">${escapeHtml(g)}</span>`) : [])
+    movie.runtime ? `<span class="pill">${escapeHtml(String(movie.runtime).toUpperCase())}</span>` : '',
+    movie.certification ? `<span class="pill pill-cert">${escapeHtml(String(movie.certification).toUpperCase())}</span>` : '',
+    ...(Array.isArray(movie.genres) ? movie.genres.map(g => `<span class="pill">${escapeHtml(String(g).toUpperCase())}</span>`) : [])
   ].filter(Boolean).join('\n          ');
 
   return `
       <section class="section" aria-labelledby="film-heading">
-        <h2 class="section-title" id="film-heading">The Film</h2>
-        <div class="film-card">
-          ${movie.posterPath ? `<img src="${escapeAttr(movie.posterPath)}" alt="${escapeAttr(`${movie.title} poster`)}" width="116" height="174" loading="lazy" decoding="async" />` : ''}
-          <div class="film-body">
-            <h3 class="film-title">${escapeHtml(movie.title)}${movie.year ? ` <span class="movie-year">(${escapeHtml(movie.year)})</span>` : ''}</h3>
-            <div class="pills">
-          ${pills}
+        <h2 class="section-title" id="film-heading">◊ THE FILM</h2>
+        <div class="film-card ticket">
+          <div class="ticket-head">
+            <span>CARPOOL CRITICS // RECEIPT</span>
+            <span class="ticket-head-right">FILM FILE</span>
+          </div>
+          <div class="film-card-body">
+            ${movie.posterPath ? `<img src="${escapeAttr(movie.posterPath)}" alt="${escapeAttr(`${movie.title} poster`)}" width="116" height="174" loading="lazy" decoding="async" />` : ''}
+            <div class="film-body">
+              <h3 class="film-title">${escapeHtml(String(movie.title).toUpperCase())}${movie.year ? ` <span class="movie-year">(${escapeHtml(movie.year)})</span>` : ''}</h3>
+              <div class="pills">
+            ${pills}
+              </div>
+              ${movie.overview ? `<p class="film-synopsis">${escapeHtml(movie.overview)}</p>` : ''}
+              ${movie.tmdbUrl ? `<a class="film-link" href="${escapeAttr(movie.tmdbUrl)}" rel="noopener">[ VIEW ON TMDB ↗ ]</a>` : ''}
             </div>
-            ${movie.overview ? `<p class="film-synopsis">${escapeHtml(movie.overview)}</p>` : ''}
-            ${movie.tmdbUrl ? `<a class="film-link" href="${escapeAttr(movie.tmdbUrl)}" rel="noopener">View on TMDb ↗</a>` : ''}
           </div>
         </div>
       </section>`;
@@ -341,7 +374,7 @@ function chapterSection(episode, isLive) {
 
   return `
       <section class="section" aria-labelledby="chapters-heading">
-        <h2 class="section-title" id="chapters-heading">Chapters</h2>
+        <h2 class="section-title" id="chapters-heading">◊ CHAPTERS</h2>
         <ol class="chapter-list">
 ${items}
         </ol>
@@ -352,14 +385,14 @@ function scorecardSection(episode) {
   const scores = episode.scorecards || {};
   const names = Object.keys(scores);
   if (!names.length) return '';
-  const pills = names.map(name =>
-    `<span class="pill"><strong>${escapeHtml(name)}</strong> ${escapeHtml(String(scores[name]))}/10</span>`
+  const rows = names.map(name =>
+    `<div class="score-row"><strong>◊ ${escapeHtml(String(name).toUpperCase())}</strong><span class="gauge">${escapeHtml(asciiGauge(scores[name]))}</span></div>`
   ).join('\n          ');
   return `
       <section class="section" aria-labelledby="scores-heading">
-        <h2 class="section-title" id="scores-heading">Final Scorecards</h2>
-        <div class="pills">
-          ${pills}
+        <h2 class="section-title" id="scores-heading">◊ FINAL TACHOMETER</h2>
+        <div class="scorecard">
+          ${rows}
         </div>
       </section>`;
 }
@@ -372,10 +405,10 @@ function bestMomentSection(episode, isLive) {
     : null;
   return `
       <section class="section" aria-labelledby="moment-heading">
-        <h2 class="section-title" id="moment-heading">Best Moment</h2>
+        <h2 class="section-title" id="moment-heading">◊ BEST MOMENT</h2>
         <blockquote class="best-moment">
           <p>“${escapeHtml(moment.quote)}”</p>
-          <footer>${escapeHtml(moment.label || 'Highlight')}${href ? ` · <a href="${escapeAttr(href)}" rel="noopener">Jump to ${escapeHtml(moment.time || '')} ↗</a>` : ''}</footer>
+          <footer>${escapeHtml(String(moment.label || 'Highlight').toUpperCase())}${href ? ` · <a href="${escapeAttr(href)}" rel="noopener">[ JUMP TO ${escapeHtml(moment.time || '')} ↗ ]</a>` : ''}</footer>
         </blockquote>
       </section>`;
 }
@@ -391,7 +424,7 @@ function shortsSection(episode) {
   const items = shorts.map(short => `        <li><a href="${escapeAttr(short.url)}" rel="noopener"><span class="chapter-time">${escapeHtml(short.duration ? formatClock(short.duration) : '')}</span><span>${escapeHtml(short.title || 'Short')}</span></a></li>`).join('\n');
   return `
       <section class="section" aria-labelledby="shorts-heading">
-        <h2 class="section-title" id="shorts-heading">Clips from This Episode</h2>
+        <h2 class="section-title" id="shorts-heading">◊ CLIPS FROM THIS EPISODE</h2>
         <ol class="chapter-list">
 ${items}
         </ol>
@@ -413,14 +446,14 @@ function transcriptSection(transcript) {
   const turns = transcript.dialogue.map(turn => `      <div class="transcript-turn">
         <div class="turn-meta">
           <span class="turn-time">${escapeHtml(turn.time)}</span>
-          <span class="speaker-pill ${speakerClass(turn.speaker)}">${escapeHtml(turn.speaker)}</span>
+          <span class="speaker-pill ${speakerClass(turn.speaker)}">◊ ${escapeHtml(turn.speaker)}</span>
         </div>
         <p class="turn-text">${escapeHtml(turn.text)}</p>
       </div>`).join('\n');
 
   return `
       <section class="section" aria-labelledby="transcript-heading">
-        <h2 class="section-title" id="transcript-heading">Full Transcript</h2>
+        <h2 class="section-title" id="transcript-heading">◊ FULL TRANSCRIPT</h2>
 ${turns}
       </section>`;
 }
@@ -453,10 +486,10 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   const h1 = movie ? `${movie.title}${year} Review` : title;
 
   const byline = [
-    episode.number ? `<span>Episode ${episode.number}</span>` : '',
+    episode.number ? `<span>EPISODE ${escapeHtml(String(episode.number))}</span>` : '',
     isLive && episode.duration ? `<span>${escapeHtml(episode.duration)}</span>` : '',
     isLive && episode.publishedAt ? `<span>${escapeHtml(formatLongDate(episode.publishedAt))}</span>` : '',
-    !isLive ? `<span class="pill pill-rating">Premieres ${escapeHtml(publishLabel)}</span>` : '',
+    !isLive ? `<span class="pill pill-rating">[ PREMIERES ${escapeHtml(publishLabel.toUpperCase())} ]</span>` : '',
     `<span>${hostsByline(episode)}</span>`
   ].filter(Boolean).join('\n        ');
 
@@ -470,21 +503,21 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
       </nav>`;
 
   const poster = isLive
-    ? `<a class="poster-link" href="${escapeAttr(watchUrl(episode.youtubeId))}" rel="noopener" aria-label="Watch ${escapeAttr(title)} on YouTube">
+    ? `<a class="poster-link" href="${escapeAttr(watchUrl(episode.youtubeId))}" rel="noopener" aria-label="[ ▶ PLAY ] Watch ${escapeAttr(title)} on YouTube">
         <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} video thumbnail`)}" width="1280" height="720" decoding="async" />
-        <span class="play-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="play-badge" aria-hidden="true">[ ▶ PLAY ]</span>
       </a>
-      <p class="poster-note">Full episode on YouTube · ${escapeHtml(episode.duration || '')}</p>`
+      <p class="poster-note">FULL EPISODE ON YOUTUBE // ${escapeHtml(episode.duration || '')}</p>`
     : `<div class="poster-link is-preview">
         <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} preview thumbnail`)}" width="1280" height="720" decoding="async" />
-        <span class="premiere-badge">Premieres</span>
+        <span class="premiere-badge">[ PREMIERES ]</span>
       </div>
-      <p class="poster-note">Premieres ${escapeHtml(publishLabel)} · Full episode drops on YouTube</p>`;
+      <p class="poster-note">PREMIERES ${escapeHtml(publishLabel.toUpperCase())} // FULL EPISODE DROPS ON YOUTUBE</p>`;
 
   const body = `
     <article>
       <header class="ep-head">
-        <p class="eyebrow">${escapeHtml(SITE_NAME)} · Episode ${escapeHtml(String(episode.number || ''))}</p>
+        <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // EPISODE ${escapeHtml(String(episode.number || ''))}</p>
         <h1 class="ep-title">${escapeHtml(h1)}</h1>
         <div class="ep-byline">
         ${byline}
@@ -563,37 +596,43 @@ function buildArchivePage(episodes, movies) {
   const title = `All Episodes | ${SITE_NAME}`;
   const description = `Every ${SITE_NAME} episode: in-car film reviews recorded live in Austin, Texas. Full transcripts, chapters, and scorecards.`;
 
-  const items = episodes.map(ep => {
+  const items = episodes.map((ep, index) => {
     const movie = movies[ep.id];
     const isLive = isLiveEpisode(ep);
     const meta = isLive
-      ? [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? `TMDb ${movie.rating}` : '']
-        .filter(Boolean).map(escapeHtml).join(' · ')
-      : `Premieres ${escapeHtml(ep.publishAt ? formatLongDate(ep.publishAt) : 'soon')}`;
-    const badge = isLive ? '' : '<span class="pill pill-rating">Premieres</span>';
+      ? [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? asciiGauge(movie.rating) : '']
+        .filter(Boolean).map(escapeHtml).join(' // ')
+      : `PREMIERES ${escapeHtml((ep.publishAt ? formatLongDate(ep.publishAt) : 'SOON').toUpperCase())}`;
+    const badge = isLive ? 'LIVE' : '<span class="pill pill-rating">[ PREMIERES ]</span>';
     const description = applyCanonicalYear(ep.description, movie && movie.year);
     const thumbnail = ep.thumbnail && !/^https?:/.test(ep.thumbnail)
       ? pageAsset(ep.thumbnail, depth)
       : pickSocialImage(ep.youtubeId, ep.thumbnail);
-    return `      <li class="archive-item">
-        <a href="./${escapeAttr(ep.slug)}/" aria-label="${escapeAttr(ep.shortTitle || ep.title)}">
-          <img src="${escapeAttr(thumbnail)}" alt="" width="132" height="74" loading="lazy" decoding="async" />
-        </a>
-        <div class="archive-body">
-          <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a> ${badge}</div>
-          <div class="archive-meta">${meta}</div>
-          ${description ? `<p class="archive-desc">${escapeHtml(truncate(description, 130))}</p>` : ''}
+    return `      <li class="archive-item ticket">
+        <div class="ticket-head">
+          <span>ADMIT ONE // EP #${escapeHtml(episodeNumber(ep, String(index + 1).padStart(2, '0')))}</span>
+          <span class="ticket-head-right">${badge}</span>
+        </div>
+        <div class="archive-row">
+          <a href="./${escapeAttr(ep.slug)}/" aria-label="${escapeAttr(ep.shortTitle || ep.title)}">
+            <img src="${escapeAttr(thumbnail)}" alt="" width="132" height="74" loading="lazy" decoding="async" />
+          </a>
+          <div class="archive-body">
+            <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a></div>
+            <div class="archive-meta">${meta}</div>
+            ${description ? `<p class="archive-desc">${escapeHtml(truncate(description, 130))}</p>` : ''}
+          </div>
         </div>
       </li>`;
   }).join('\n');
 
   const body = `
     <header class="ep-head">
-      <p class="eyebrow">${escapeHtml(SITE_NAME)}</p>
-      <h1 class="ep-title">All Episodes</h1>
+      <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // HOV-3</p>
+      <h1 class="ep-title">ALL EPISODES</h1>
       <div class="ep-byline">
-        <span>${episodes.length} episode${episodes.length === 1 ? '' : 's'}</span>
-        <span>In-car film reviews · Austin, TX</span>
+        <span>${episodes.length} EPISODE${episodes.length === 1 ? '' : 'S'}</span>
+        <span>IN-CAR FILM REVIEWS // AUSTIN, TX</span>
       </div>
     </header>
 

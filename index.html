@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
   <!-- Primary SEO Meta Tags -->
   <title>Carpool Critics | Austin, TX Film Review Podcast</title>
   <meta name="description" content="Raw, unfiltered film review dispatches recorded live inside a parked car overlooking the Austin night skyline with hosts Alex, Dave, and Shane." />
   <meta name="keywords" content="Carpool Critics, Austin film reviews, movie podcast, in-car movie review, practical horror, blockbuster critique, Alex Dave Shane" />
   <meta name="author" content="Carpool Critics" />
   <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0A0A0C" />
+  <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="https://carpoolcritics.com/" />
 
   <!-- Open Graph / Facebook / LinkedIn -->
@@ -58,323 +60,432 @@
   }
   </script>
 
-  <!-- Google Fonts: Teko (Headers) & Chivo (Body) Preconnect -->
+  <!-- Brand fonts: Archivo Black (marquee) + JetBrains Mono (HUD). See BRAND.md. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300..900;1,300..900&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 
   <!-- Production Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=4.2.0" />
+  <link rel="stylesheet" href="style.css?v=5.0.9" />
 
   <!-- Critical Above-the-Fold Styling (Prevents FOUC) -->
   <style>
-    body { background-color: #000000; color: #ffffff; margin: 0; }
-    .cinema-viewport { width: 100vw; max-width: 1600px; height: 100vh; margin: 0 auto; position: relative; background-color: #000000; overflow: hidden; }
+    body { background-color: #0A0A0C; color: #F4F0EA; margin: 0; }
+    .cinema-viewport { width: 100vw; max-width: 1600px; height: 100vh; height: 100dvh; margin: 0 auto; position: relative; background-color: #0A0A0C; overflow: hidden; }
   </style>
 
   <!-- Defer Script Execution for Non-Blocking Initial Paint -->
-  <script src="script.js?v=4.2.0" defer></script>
+  <script src="script.js?v=5.0.9" defer></script>
 </head>
 <body>
 
-  <div class="cinema-viewport">
-    <!-- Minimalist Title Header (With Mobile Buttons Underneath) -->
-    <header class="title-header">
-      <div class="title-badge">
-        <h1 class="brand-title">CARPOOL CRITICS</h1>
-        <p class="brand-sub">Fresh Out the Doors, Straight to the Dash - Austin, TX</p>
-      </div>
+  <!-- CRT / VFD scanline plane. Decorative, never interactive. -->
+  <div class="scanline-plane" aria-hidden="true"></div>
 
-      <!-- Mobile-only Buttons in Alphabetical Order: About Us, Contact Us, Episodes -->
-      <nav class="mobile-nav-bar" aria-label="Mobile Navigation">
-        <button class="mobile-btn mobile-btn-about" onclick="switchSection('about')">About Us</button>
-        <button class="mobile-btn mobile-btn-contact" onclick="switchSection('contact')">Contact Us</button>
-        <button class="mobile-btn mobile-btn-episodes" onclick="switchSection('episodes')">Episodes</button>
-      </nav>
+  <div class="cinema-viewport">
+
+    <!-- ======================================================== -->
+    <!-- BRAND BAR: ASCII BANNER, STEREO-DECK NAV, LIVE HUD        -->
+    <!-- ======================================================== -->
+    <header class="brand-bar">
+      <div class="ascii-wrap">
+        <pre class="ascii-banner ascii-wide" aria-hidden="true">╔══════════════════════════════════════════════════════════════════════════╗
+║  ◊ CARPOOL CRITICS  //  HOV-3 // AUSTIN, TX  //  ● REC <span class="hud-clock" data-clock>00:00:00</span>          ║
+╚══════════════════════════════════════════════════════════════════════════╝</pre>
+        <pre class="ascii-banner ascii-narrow" aria-hidden="true">╔════════════════════════════════════════╗
+║ ◊ CARPOOL CRITICS // HOV-3             ║
+╚════════════════════════════════════════╝</pre>
+      </div>
+      <h1 class="sr-only">Carpool Critics | Austin, TX Film Review Podcast</h1>
+
+      <div class="brand-row">
+        <p class="brand-sub">FRESH OUT THE DOORS // STRAIGHT TO THE DASH</p>
+
+        <nav class="deck-nav" aria-label="Primary">
+          <button type="button" class="deck-btn" data-section="home">[ DASH ]</button>
+          <button type="button" class="deck-btn" data-section="episodes">[ EPISODES ]</button>
+          <button type="button" class="deck-btn" data-section="about">[ HOSTS ]</button>
+          <a class="deck-btn" href="episodes/">[ ARCHIVE ]</a>
+          <button type="button" class="deck-btn" data-section="contact">[ CONTACT ]</button>
+        </nav>
+
+        <div class="hud-strip" aria-hidden="true">
+          <span class="hud-item hud-rec"><span class="rec-dot">●</span> REC</span>
+          <span class="hud-item">◊ HOV-3</span>
+          <span class="hud-item hud-rpm">RPM [▓▓▓▓▓▓░░░░]</span>
+        </div>
+      </div>
     </header>
 
     <!-- ======================================================== -->
-    <!-- VIEW 1: HOME COCKPIT VIEW (PROPORTIONAL LIFE-SIZE HOSTS) -->
+    <!-- VIEW STACK                                                -->
     <!-- ======================================================== -->
-    <main class="view-panel active" id="view-home">
-      <div class="cockpit-stage">
-        <!-- Seamless Full-Bleed Vignette (Restricted to Cockpit) -->
-        <div class="vignette-overlay"></div>
+    <div class="view-stack">
 
-        <!-- 1. Background Car Interior Image (Categorized Media with Fallbacks) -->
-        <img 
-          src="assets/images/cockpit/CurbsideCinema_Background.jpeg" 
-          alt="Carpool Critics mobile studio inside a parked car overlooking the Austin, Texas night skyline" 
-          class="stage-layer bg-car-image" 
-          width="1600"
-          height="900"
-          loading="eager"
-          fetchpriority="high"
-          onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpeg'; this.onerror=function(){this.src='CurbsideCinema_Background.jpg';};"
-        />
+      <!-- ====================================================== -->
+      <!-- VIEW 1: HOME COCKPIT (PROPORTIONAL LIFE-SIZE HOSTS)     -->
+      <!-- ====================================================== -->
+      <main class="view-panel active" id="view-home">
+        <div class="cockpit-stage">
+          <div class="vignette-overlay"></div>
 
-        <!-- Ambient Blue LED Reflection -->
-        <div class="cockpit-ambient-glow"></div>
-
-        <!-- 2. Full-Width Host Cutout Layers & Spotlights -->
-        <!-- DAVE (Center Back Seat) -->
-        <div class="host-group group-dave" id="group-dave">
-          <div class="spotlight-cone cone-dave"></div>
-          <img 
-            src="assets/images/hosts/Dave_CurbsideCritic.webp" 
-            alt="Dave, center back row host and creature feature historian on Carpool Critics" 
-            class="stage-layer host-cutout-img img-dave" 
-            width="500"
-            height="700"
-            onerror="this.onerror=null; this.src='Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/dave.svg';};"
+          <!-- 1. Background Car Interior Image (Categorized Media with Fallbacks) -->
+          <img
+            src="assets/images/cockpit/CurbsideCinema_Background.jpeg"
+            alt="Carpool Critics mobile studio inside a parked car overlooking the Austin, Texas night skyline"
+            class="stage-layer bg-car-image"
+            width="1600"
+            height="900"
+            loading="eager"
+            fetchpriority="high"
+            onerror="this.onerror=null; this.src='CurbsideCinema_Background.jpeg'; this.onerror=function(){this.src='CurbsideCinema_Background.jpg';};"
           />
-        </div>
 
-        <!-- ALEX (Driver Seat, Left) -->
-        <div class="host-group group-alex" id="group-alex">
-          <div class="spotlight-cone cone-alex"></div>
-          <img 
-            src="assets/images/hosts/Alex_CurbsideCritic.webp" 
-            alt="Alex, driver and host analyzing screenplay pacing and narrative arcs on Carpool Critics" 
-            class="stage-layer host-cutout-img img-alex" 
-            width="500"
-            height="700"
-            onerror="this.onerror=null; this.src='Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/alex.svg';};"
-          />
-        </div>
-
-        <!-- SHANE (Passenger Seat, Right) -->
-        <div class="host-group group-shane" id="group-shane">
-          <div class="spotlight-cone cone-shane"></div>
-          <img 
-            src="assets/images/hosts/Shane_CurbsideCritic.webp" 
-            alt="Shane, passenger host analyzing camera movement and cinematography on Carpool Critics" 
-            class="stage-layer host-cutout-img img-shane" 
-            width="500"
-            height="700"
-            onerror="this.onerror=null; this.src='Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/shane.svg';};"
-          />
-        </div>
-
-        <!-- 3. Clickable Host Hotspots with Front Navigation Labels -->
-        <div 
-          class="host-hitbox hitbox-alex" 
-          onclick="switchSection('about')" 
-          title="Alex • About Us"
-          onmouseenter="setHover('alex', true)"
-          onmouseleave="setHover('alex', false)"
-        >
-          <div class="host-nav-label label-alex">About Us</div>
-        </div>
-
-        <div 
-          class="host-hitbox hitbox-dave" 
-          onclick="switchSection('episodes')" 
-          title="Dave • Episodes"
-          onmouseenter="setHover('dave', true)"
-          onmouseleave="setHover('dave', false)"
-        >
-          <div class="host-nav-label label-dave">Episodes</div>
-        </div>
-
-        <div 
-          class="host-hitbox hitbox-shane" 
-          onclick="switchSection('contact')" 
-          title="Shane • Contact Us"
-          onmouseenter="setHover('shane', true)"
-          onmouseleave="setHover('shane', false)"
-        >
-          <div class="host-nav-label label-shane">Contact Us</div>
-        </div>
-
-        <!-- Interaction Helper Pill -->
-        <div class="cockpit-hint-pill">
-          Interactive Cockpit • Click Any Host To Navigate
-        </div>
-      </div>
-    </main>
-
-    <!-- ======================================================== -->
-    <!-- VIEW 2: ABOUT US SUB-PAGE -->
-    <!-- ======================================================== -->
-    <section class="view-panel" id="view-about">
-      <div class="subpage-scroll-container">
-        <div class="subpage-nav-bar">
-          <h2 class="subpage-heading">About Carpool Critics</h2>
-          <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
-        </div>
-        <p class="subpage-intro">
-          Three dudes who hit up pre-screenings and hang out in the parking lot to unpack hot takes, have plenty of laughs, and give incorrect opinions.
-        </p>
-        <div class="hosts-bio-grid">
-          <div class="bio-card">
-            <span class="seat-badge badge-alex">Driver Seat</span>
-            <h3 class="bio-name">Alex</h3>
-            <p class="bio-description">He channels his background in writing into a deep appreciation for strong storytelling and character arcs. Whether he is unpacking complex narratives or celebrating the finer, eye-opening documentaries in life, he brings thoughtful analysis and sharp wit to the front seat.</p>
+          <!-- 2. Host Cutout Layers -->
+          <!-- DAVE (Center Back Seat) -->
+          <div class="host-group group-dave" id="group-dave">
+            <img
+              src="assets/images/hosts/Dave_CurbsideCritic.webp"
+              alt="Dave, back seat host and creature feature historian on Carpool Critics"
+              class="stage-layer host-cutout-img img-dave"
+              width="500"
+              height="700"
+              onerror="this.onerror=null; this.src='Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/dave.svg';};"
+            />
           </div>
-          <div class="bio-card">
-            <span class="seat-badge badge-dave">Back Seat</span>
-            <h3 class="bio-name">Dave</h3>
-            <p class="bio-description">The man, the myth, the legend, leverages a background in tech to appreciate smart execution in cinema. Despite his analytical side, he carries a massive soft spot for a great rom-com, bringing infectious optimism with a side of love for happily ever after.</p>
+
+          <!-- ALEX (Passenger Seat) -->
+          <div class="host-group group-alex" id="group-alex">
+            <img
+              src="assets/images/hosts/Alex_CurbsideCritic.webp"
+              alt="Alex, passenger seat host analyzing screenplay pacing and narrative arcs on Carpool Critics"
+              class="stage-layer host-cutout-img img-alex"
+              width="500"
+              height="700"
+              onerror="this.onerror=null; this.src='Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/alex.svg';};"
+            />
           </div>
-          <div class="bio-card">
-            <span class="seat-badge badge-shane">Passenger Seat</span>
-            <h3 class="bio-name">Shane</h3>
-            <p class="bio-description">With a background in design, marketing, and sports nutrition, he's always appreciating the details and is a total sucker for a good coming-of-age story.</p>
+
+          <!-- SHANE (Driver Seat) -->
+          <div class="host-group group-shane" id="group-shane">
+            <img
+              src="assets/images/hosts/Shane_CurbsideCritic.webp"
+              alt="Shane, driver seat host analyzing camera movement and cinematography on Carpool Critics"
+              class="stage-layer host-cutout-img img-shane"
+              width="500"
+              height="700"
+              onerror="this.onerror=null; this.src='Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/shane.svg';};"
+            />
+          </div>
+
+          <!-- 3. Clickable Host Hotspots -->
+          <div
+            class="host-hitbox hitbox-alex"
+            data-section="about"
+            role="button"
+            tabindex="0"
+            title="Alex • About Us"
+            onmouseenter="setHover('alex', true)"
+            onmouseleave="setHover('alex', false)"
+          >
+            <div class="host-nav-label label-alex">[ ABOUT US ]</div>
+          </div>
+
+          <div
+            class="host-hitbox hitbox-dave"
+            data-section="episodes"
+            role="button"
+            tabindex="0"
+            title="Dave • Episodes"
+            onmouseenter="setHover('dave', true)"
+            onmouseleave="setHover('dave', false)"
+          >
+            <div class="host-nav-label label-dave">[ EPISODES ]</div>
+          </div>
+
+          <div
+            class="host-hitbox hitbox-shane"
+            data-section="contact"
+            role="button"
+            tabindex="0"
+            title="Shane • Contact Us"
+            onmouseenter="setHover('shane', true)"
+            onmouseleave="setHover('shane', false)"
+          >
+            <div class="host-nav-label label-shane">[ CONTACT ]</div>
+          </div>
+
+          <!-- 4. Stage HUD: hard-edged, no glass -->
+          <div class="stage-hud stage-hud-tl" aria-hidden="true">
+            <span>TACH [▓▓▓▓▓▓▓░░░] 7.4</span>
+            <span>CAM 01 // WIDE CABIN</span>
+          </div>
+          <div class="stage-hud stage-hud-tr" aria-hidden="true">
+            <span><span class="rec-dot">●</span> REC <span class="hud-clock" data-clock>00:00:00</span></span>
+          </div>
+          <div class="stage-hud stage-hud-bl" aria-hidden="true">
+            <span>◊ HOV-3 // THREE ABOARD</span>
+          </div>
+          <div class="stage-frame" aria-hidden="true"></div>
+
+          <div class="cockpit-hint-pill">
+            [ ◊ CLICK A HOST // NAVIGATE ]
           </div>
         </div>
-      </div>
-    </section>
+      </main>
 
-    <!-- ======================================================== -->
-    <!-- VIEW 3: EPISODES & REVIEWS SUB-PAGE -->
-    <!-- ======================================================== -->
-    <section class="view-panel" id="view-episodes">
-      <div class="subpage-scroll-container">
-        <div class="subpage-nav-bar">
-          <h2 class="subpage-heading">Reviews</h2>
-          <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
-        </div>
-        <div class="episodes-container-layout">
-          <div>
-            <div class="youtube-responsive-box" id="video-facade-box">
-              <button
-                type="button"
-                class="video-facade"
-                id="video-facade"
-                aria-label="Play featured episode"
-                onclick="activateVideoPlayer()"
-              >
-                <img
-                  class="video-facade-poster"
-                  id="video-facade-poster"
-                  src="assets/images/cockpit/CurbsideCinema_Background.jpeg"
-                  alt=""
-                  width="1280"
-                  height="720"
-                  decoding="async"
-                  onerror="this.style.display='none'"
-                />
-                <span class="video-facade-play" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </span>
-              </button>
+      <!-- ====================================================== -->
+      <!-- VIEW 2: HOSTS / ABOUT                                  -->
+      <!-- ====================================================== -->
+      <section class="view-panel" id="view-about">
+        <div class="subpage-scroll-container">
+          <div class="subpage-nav-bar">
+            <div class="view-heading-group">
+              <p class="view-eyebrow">FILE // 01</p>
+              <h2 class="subpage-heading">◊ HOSTS</h2>
             </div>
-            <div class="video-meta-box">
-              <h3 id="current-video-title" class="video-title">Loading episode…</h3>
-              <p class="video-sub" id="current-video-sub">Fetching the latest dispatch from the car.</p>
-              <p class="video-permalink-row">
-                <a class="video-permalink" id="episode-permalink" href="episodes/">Full episode page, chapters &amp; transcript ↗</a>
-              </p>
-            </div>
+            <button type="button" class="btn-back-car" data-section="home">[ ← BACK TO DASH ]</button>
+          </div>
 
-            <!-- Auto-Generated Movie Profile Card (TMDb Enriched) -->
-            <article class="movie-profile-card" id="movie-profile-card" aria-label="Featured Movie Profile">
-              <div class="movie-poster-wrap">
-                <img 
-                  id="movie-poster-img"
-                  src="https://image.tmdb.org/t/p/w300/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg" 
-                  alt="Alien (1979) Poster" 
-                  class="movie-poster-img"
-                  loading="lazy"
-                  onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20300%22%20fill%3D%22%23111827%22%3E%3Crect%20width%3D%22200%22%20height%3D%22300%22%20fill%3D%22%230e1420%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2214%22%20font-family%3D%22sans-serif%22%3ENo%20Poster%3C%2Ftext%3E%3C%2Fsvg%3E';"
-                />
+          <p class="subpage-intro">
+            Three dudes who hit up pre-screenings and hang out in the parking lot to unpack hot takes, have plenty of laughs, and give incorrect opinions.
+          </p>
+
+          <div class="hosts-bio-grid">
+            <article class="bio-card ticket">
+              <div class="ticket-head">
+                <span>ADMIT ONE // SEAT 02</span>
+                <span class="ticket-head-right">HOV-3</span>
               </div>
-              <div class="movie-profile-details">
-                <header class="movie-header-row">
-                  <h4 class="movie-title" id="movie-title">Alien <span class="movie-year" id="movie-year">(1979)</span></h4>
-                  <div class="movie-rating-badge" id="movie-rating-badge" title="TMDb User Rating">
-                    <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                    </svg>
-                    <span class="rating-score" id="movie-rating-score">8.1</span>
-                    <span class="rating-max">/10</span>
-                  </div>
-                </header>
-
-                <div class="movie-meta-pills" id="movie-meta-pills" aria-label="Movie Metadata">
-                  <span class="meta-pill pill-runtime" id="movie-runtime">1h 57m</span>
-                  <span class="meta-pill pill-cert" id="movie-cert">R</span>
-                  <span class="meta-pill pill-genre">Horror</span>
-                  <span class="meta-pill pill-genre">Science Fiction</span>
-                </div>
-
-                <p class="movie-synopsis" id="movie-synopsis">
-                  During its return to the earth, commercial spaceship Nostromo intercepts a distress signal from a distant planet. When a three-member team of the crew investigates the source of the signal, they uncover a horrific extraterrestrial lifeform.
-                </p>
-
-                <footer class="movie-card-footer">
-                  <a 
-                    href="https://www.themoviedb.org/movie/348-alien" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    class="tmdb-quick-link" 
-                    id="movie-tmdb-link"
-                  >
-                    View on TMDb <span aria-hidden="true">↗</span>
-                  </a>
-                </footer>
+              <span class="seat-badge badge-alex">◊ PASSENGER SEAT</span>
+              <h3 class="bio-name">ALEX</h3>
+              <p class="bio-description">He channels his background in writing into a deep appreciation for strong storytelling and character arcs. Whether he is unpacking complex narratives or celebrating the finer, eye-opening documentaries in life, he brings thoughtful analysis and sharp wit to the front seat.</p>
+              <div class="ticket-tear" aria-hidden="true"></div>
+              <div class="ticket-foot">
+                <span>MIC 02 // STORY</span>
+                <span class="barcode" aria-hidden="true">▌▐▌▌▐▌▐▐▌</span>
               </div>
             </article>
 
-            <!-- On-Demand Episode Transcript Section (Accessibility & SEO) -->
-            <section class="transcript-container" aria-labelledby="transcript-header">
-              <div class="transcript-bar">
-                <div class="transcript-badge-group">
-                  <h4 id="transcript-header" class="transcript-heading-text">Episode Transcript</h4>
-                </div>
-                <button class="transcript-toggle" id="btn-toggle-transcript" onclick="toggleTranscript()" aria-expanded="true">
-                  <span id="txt-toggle-transcript">Hide Transcript</span>
-                  <span id="ico-toggle-transcript">▲</span>
+            <article class="bio-card ticket">
+              <div class="ticket-head">
+                <span>ADMIT ONE // SEAT 03</span>
+                <span class="ticket-head-right">HOV-3</span>
+              </div>
+              <span class="seat-badge badge-dave">◊ BACK SEAT</span>
+              <h3 class="bio-name">DAVE</h3>
+              <p class="bio-description">The man, the myth, the legend, leverages a background in tech to appreciate smart execution in cinema. Despite his analytical side, he carries a massive soft spot for a great rom-com, bringing infectious optimism with a side of love for happily ever after.</p>
+              <div class="ticket-tear" aria-hidden="true"></div>
+              <div class="ticket-foot">
+                <span>MIC 03 // WILDCARD</span>
+                <span class="barcode" aria-hidden="true">▌▐▌▌▐▌▐▐▌</span>
+              </div>
+            </article>
+
+            <article class="bio-card ticket">
+              <div class="ticket-head">
+                <span>ADMIT ONE // SEAT 01</span>
+                <span class="ticket-head-right">HOV-3</span>
+              </div>
+              <span class="seat-badge badge-shane">◊ DRIVER SEAT</span>
+              <h3 class="bio-name">SHANE</h3>
+              <p class="bio-description">With a background in design, marketing, and sports nutrition, he's always appreciating the details and is a total sucker for a good coming-of-age story.</p>
+              <div class="ticket-tear" aria-hidden="true"></div>
+              <div class="ticket-foot">
+                <span>MIC 01 // CAMERA</span>
+                <span class="barcode" aria-hidden="true">▌▐▌▌▐▌▐▐▌</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 3: EPISODES & REVIEWS                             -->
+      <!-- ====================================================== -->
+      <section class="view-panel" id="view-episodes">
+        <div class="subpage-scroll-container">
+          <div class="subpage-nav-bar">
+            <div class="view-heading-group">
+              <p class="view-eyebrow">FILE // 02</p>
+              <h2 class="subpage-heading">◊ REVIEWS</h2>
+            </div>
+            <button type="button" class="btn-back-car" data-section="home">[ ← BACK TO DASH ]</button>
+          </div>
+
+          <div class="episodes-container-layout">
+            <div>
+              <div class="youtube-responsive-box" id="video-facade-box">
+                <button
+                  type="button"
+                  class="video-facade"
+                  id="video-facade"
+                  onclick="activateVideoPlayer()"
+                >
+                  <img
+                    class="video-facade-poster"
+                    id="video-facade-poster"
+                    src="assets/images/cockpit/CurbsideCinema_Background.jpeg"
+                    alt=""
+                    width="1280"
+                    height="720"
+                    decoding="async"
+                    onerror="this.style.display='none'"
+                  />
+                  <span class="video-facade-corners" aria-hidden="true"></span>
+                  <span class="video-facade-play">[ ▶ PLAY ]</span>
+                  <span class="video-facade-rec" aria-hidden="true"><span class="rec-dot">●</span> REC</span>
                 </button>
               </div>
-              <div class="transcript-scroll-box" id="transcript-body" role="region" aria-live="polite">
-                <!-- Populated on-demand from data/transcripts/ -->
+
+              <div class="video-meta-box">
+                <p class="video-kicker">NOW PLAYING // ADMIT ONE</p>
+                <h3 id="current-video-title" class="video-title">Loading episode…</h3>
+                <p class="video-sub" id="current-video-sub">Fetching the latest dispatch from the car.</p>
+                <p class="video-permalink-row">
+                  <a class="video-permalink" id="episode-permalink" href="episodes/">[ FULL EPISODE PAGE / CHAPTERS / TRANSCRIPT ↗ ]</a>
+                </p>
               </div>
-            </section>
-          </div>
-          
-          <div class="episodes-playlist-stack" id="episode-playlist" aria-label="Episode playlist">
-            <!-- Populated at runtime from data/episodes.json (synced from YouTube) -->
+
+              <!-- Auto-Generated Movie Profile Card (TMDb Enriched) -->
+              <article class="movie-profile-card ticket" id="movie-profile-card" aria-label="Featured Movie Profile">
+                <div class="ticket-head">
+                  <span>CARPOOL CRITICS // RECEIPT</span>
+                  <span class="ticket-head-right">FILM FILE</span>
+                </div>
+
+                <div class="movie-card-body">
+                  <div class="movie-poster-wrap">
+                    <img
+                      id="movie-poster-img"
+                      src="https://image.tmdb.org/t/p/w300/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
+                      alt="Alien (1979) Poster"
+                      class="movie-poster-img"
+                      loading="lazy"
+                      onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20300%22%3E%3Crect%20width%3D%22200%22%20height%3D%22300%22%20fill%3D%22%23121316%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20fill%3D%22%238E8D8A%22%20font-size%3D%2214%22%20font-family%3D%22monospace%22%3E%5B%20NO%20POSTER%20%5D%3C%2Ftext%3E%3C%2Fsvg%3E';"
+                    />
+                  </div>
+
+                  <div class="movie-profile-details">
+                    <header class="movie-header-row">
+                      <h4 class="movie-title" id="movie-title">Alien <span class="movie-year" id="movie-year">(1979)</span></h4>
+                    </header>
+
+                    <div class="movie-rating-badge" id="movie-rating-badge" title="TMDb User Rating">
+                      <span class="rating-gauge" id="movie-rating-gauge">[▓▓▓▓▓▓▓▓░░] 8.1/10</span>
+                      <span class="rating-source">TMDb</span>
+                    </div>
+
+                    <div class="movie-meta-pills" id="movie-meta-pills" aria-label="Movie Metadata">
+                      <span class="meta-pill pill-runtime">1H 57M</span>
+                      <span class="meta-pill pill-cert">R</span>
+                      <span class="meta-pill pill-genre">HORROR</span>
+                      <span class="meta-pill pill-genre">SCIENCE FICTION</span>
+                    </div>
+
+                    <p class="movie-synopsis" id="movie-synopsis">
+                      During its return to the earth, commercial spaceship Nostromo intercepts a distress signal from a distant planet. When a three-member team of the crew investigates the source of the signal, they uncover a horrific extraterrestrial lifeform.
+                    </p>
+
+                    <div class="ticket-tear" aria-hidden="true"></div>
+
+                    <footer class="movie-card-footer">
+                      <span class="barcode" aria-hidden="true">▌▐▌▌▐▌▐▐▌▌▐▌▌▐▌▐▐▌</span>
+                      <a
+                        href="https://www.themoviedb.org/movie/348-alien"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="tmdb-quick-link"
+                        id="movie-tmdb-link"
+                      >
+                        [ VIEW ON TMDB ↗ ]
+                      </a>
+                    </footer>
+                  </div>
+                </div>
+              </article>
+
+              <!-- On-Demand Episode Transcript Section (Accessibility & SEO) -->
+              <section class="transcript-container" aria-labelledby="transcript-header">
+                <div class="transcript-bar">
+                  <div class="transcript-badge-group">
+                    <h4 id="transcript-header" class="transcript-heading-text">TRANSCRIPT.LOG</h4>
+                    <span class="transcript-status" aria-hidden="true">◊ LIVE TEXT</span>
+                  </div>
+                  <button type="button" class="transcript-toggle" id="btn-toggle-transcript" onclick="toggleTranscript()" aria-expanded="true">
+                    <span id="txt-toggle-transcript">[ HIDE ]</span>
+                    <span id="ico-toggle-transcript">▲</span>
+                  </button>
+                </div>
+                <div class="transcript-scroll-box" id="transcript-body" role="region" aria-live="polite">
+                  <!-- Populated on-demand from data/transcripts/ -->
+                </div>
+              </section>
+            </div>
+
+            <div class="episodes-playlist-stack" id="episode-playlist" aria-label="Episode playlist">
+              <!-- Populated at runtime from data/episodes.json (synced from YouTube) -->
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 4: CONTACT                                        -->
+      <!-- ====================================================== -->
+      <section class="view-panel" id="view-contact">
+        <div class="subpage-scroll-container">
+          <div class="subpage-nav-bar">
+            <div class="view-heading-group">
+              <p class="view-eyebrow">FILE // 03</p>
+              <h2 class="subpage-heading">◊ CONTACT THE S.A.D. BOYS</h2>
+            </div>
+            <button type="button" class="btn-back-car" data-section="home">[ ← BACK TO DASH ]</button>
+          </div>
+
+          <div class="contact-simple-card ticket">
+            <div class="ticket-head">
+              <span>CARPOOL CRITICS // INBOX</span>
+              <span class="ticket-head-right">NO FORM</span>
+            </div>
+
+            <p class="contact-simple-lead">
+              No form, no funnel. One inbox the three of us actually read: review requests, business, and everything else.
+            </p>
+
+            <!-- Address is assembled at runtime from these parts (see initContactEmail) -->
+            <a class="contact-email-link"
+               id="contact-email-link"
+               data-user="carpoolcriticsshow"
+               data-domain="gmail.com"
+               rel="nofollow">Email us</a>
+
+            <div class="contact-action-row">
+              <button type="button" class="btn-copy-email" id="copy-email-btn" onclick="copyContactEmail()">[ COPY EMAIL ]</button>
+              <a class="contact-youtube-link" href="https://www.youtube.com/@CarpoolCritics" target="_blank" rel="noopener">[ WATCH ON YOUTUBE → ]</a>
+            </div>
+
+            <div class="ticket-tear" aria-hidden="true"></div>
+
+            <p class="contact-platform-note">
+              We're only on YouTube. No Spotify, no Apple Podcasts, no other socials. Recorded in Austin, TX.
+            </p>
+
+            <p class="contact-feedback-alert" id="contact-feedback" role="status"></p>
+          </div>
+        </div>
+      </section>
+
+    </div>
 
     <!-- ======================================================== -->
-    <!-- VIEW 4: CONTACT US SUB-PAGE -->
+    <!-- STATUS BAR                                                -->
     <!-- ======================================================== -->
-    <section class="view-panel" id="view-contact">
-      <div class="subpage-scroll-container">
-        <div class="subpage-nav-bar">
-          <h2 class="subpage-heading">CONTACT THE S.A.D. BOYS</h2>
-          <button class="btn-back-car" onclick="switchSection('home')">← Back to Home</button>
-        </div>
-        <div class="contact-simple-card">
-          <p class="contact-simple-lead">
-            No form, no funnel. One inbox the three of us actually read: review requests, business, and everything else.
-          </p>
-
-          <!-- Address is assembled at runtime from these parts (see initContactEmail) -->
-          <a class="contact-email-link"
-             id="contact-email-link"
-             data-user="carpoolcriticsshow"
-             data-domain="gmail.com"
-             rel="nofollow">Email us</a>
-
-          <div class="contact-action-row">
-            <button type="button" class="btn-copy-email" id="copy-email-btn" onclick="copyContactEmail()">Copy Email</button>
-            <a class="contact-youtube-link" href="https://www.youtube.com/@CarpoolCritics" target="_blank" rel="noopener">Watch on YouTube →</a>
-          </div>
-
-          <p class="contact-platform-note">
-            We're only on YouTube. No Spotify, no Apple Podcasts, no other socials. Recorded in Austin, TX.
-          </p>
-
-          <p class="contact-feedback-alert" id="contact-feedback" role="status"></p>
-        </div>
-      </div>
-    </section>
+    <footer class="status-bar">
+      <span>◊ HOV-3 // AUSTIN, TX</span>
+      <span class="status-mid">NO SCHEDULE // WHEN IT'S READY, IT GOES UP</span>
+      <span>© <span id="status-year">2026</span> CARPOOL CRITICS</span>
+    </footer>
 
   </div>
 
