@@ -157,17 +157,36 @@ if [ "$VERIFY" -eq 0 ]; then
 fi
 
 info "Verify the live deploy"
-LOCAL_HASH="$(shasum -a 256 episodes/index.html | awk '{print $1}')"
-CANARY="$SITE_URL/episodes/index.html"
+# Hash every committed HTML page plus the two shared assets those pages pull in.
+# Checking a single canary was a false pass once: the page it watched had not
+# changed, so it matched an old build while index.html still served the previous
+# deploy. Pages publishes atomically, but the CDN caches per file, so retry until
+# every file matches instead of trusting one.
+CANARY_FILES=()
+while IFS= read -r f; do
+  [ -n "$f" ] && CANARY_FILES+=("$f")
+done <<< "$(git ls-files '*.html' 'style.css' 'script.js' | sort -u)"
+[ ${#CANARY_FILES[@]} -gt 0 ] || fail "no committed files to verify against" 1
+
+CANARY_LOCAL=()
+for f in "${CANARY_FILES[@]}"; do
+  CANARY_LOCAL+=("$(shasum -a 256 "$f" | awk '{print $1}')")
+done
+
+STALE=()
 for attempt in $(seq 1 20); do
-  LIVE_HASH="$(curl -fsSL --max-time 20 "$CANARY?cb=$(date +%s)-$attempt" 2>/dev/null | shasum -a 256 | awk '{print $1}' || true)"
-  if [ "$LIVE_HASH" = "$LOCAL_HASH" ]; then
-    echo "  live build matches pushed build after ${attempt} probe(s)"
-    echo "  $SITE_URL/episodes/index.html"
+  STALE=()
+  for i in "${!CANARY_FILES[@]}"; do
+    LIVE_HASH="$(curl -fsSL --max-time 20 "$SITE_URL/${CANARY_FILES[$i]}?cb=$(date +%s)-$attempt" 2>/dev/null | shasum -a 256 | awk '{print $1}' || true)"
+    [ "$LIVE_HASH" = "${CANARY_LOCAL[$i]}" ] || STALE+=("${CANARY_FILES[$i]}")
+  done
+  if [ ${#STALE[@]} -eq 0 ]; then
+    echo "  live build matches pushed build after ${attempt} probe(s) (${#CANARY_FILES[@]} files)"
+    printf '  %s\n' "${CANARY_FILES[@]}"
     exit 0
   fi
-  printf '  waiting for Pages rebuild (%d/20)\n' "$attempt"
+  printf '  waiting for Pages rebuild (%d/20, stale: %s)\n' "$attempt" "${STALE[*]}"
   sleep 15
 done
 
-fail "pushed, but the live site still serves the old build after ~5 minutes. Check https://github.com/straughber/carpool-critics/actions" 4
+fail "pushed, but the live site still serves an old build after ~5 minutes (stale: ${STALE[*]}). Check https://github.com/straughber/carpool-critics/actions" 4

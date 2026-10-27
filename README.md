@@ -112,7 +112,8 @@ never clobbers a correction.
 ```
 
 `publish.sh` refuses to ship a half-built catalog (invalid JSON, missing episode pages,
-absent sitemap), commits only when something changed, pushes, then checks the live site so
+absent sitemap), commits only when something changed, pushes, then hash-compares **every
+committed `*.html` page plus `style.css` and `script.js`** against the live site, so
 "pushed" is never confused with "deployed".
 
 A daily GitHub Action runs the same publish in `--auto` mode, which commits generated
