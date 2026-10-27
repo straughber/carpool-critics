@@ -322,9 +322,19 @@ async function run() {
     const transcriptFile = prior.transcriptFile
       || (localTranscript && fs.existsSync(path.join(__dirname, '..', localTranscript)) ? localTranscript : null);
 
-    // The YouTube blurb is the default, but a hand-written correction in
-    // "descriptionOverride" always wins so a sync never clobbers it.
+    // The YouTube blurb is the default. A descriptionOverride exists for exactly
+    // one reason: the canonical TMDb year differs from the year YouTube carries.
+    // Once the live description already says the right year, the override is
+    // stale and must be dropped - otherwise it pins the old copy forever and a
+    // corrected upload never reaches the page.
     const freshDescription = firstParagraph(description);
+    const canonicalYear = prior.movieYear || deriveMovieQuery(title).movieYear || null;
+    // The year lives in the credit line, not necessarily the first paragraph,
+    // so check the whole live description.
+    const freshHasCanonicalYear = canonicalYear
+      ? String(description || '').includes(`(${canonicalYear})`)
+      : true;
+    const keepOverride = Boolean(prior.descriptionOverride) && !freshHasCanonicalYear;
 
     episodes.push(applyPipelinePayload({
       youtubeId: entry.videoId,
@@ -334,8 +344,10 @@ async function run() {
       durationSeconds: details.lengthSeconds || prior.durationSeconds || null,
       publishedAt,
       date: null, // computed in the browser from publishedAt
-      description: prior.descriptionOverride || freshDescription || prior.description || '',
-      descriptionOverride: prior.descriptionOverride || null,
+      description: keepOverride
+        ? prior.descriptionOverride
+        : (freshDescription || prior.description || ''),
+      descriptionOverride: keepOverride ? prior.descriptionOverride : null,
       thumbnail: `https://i.ytimg.com/vi/${entry.videoId}/hqdefault.jpg`,
       chapters: chapters.length ? chapters : (prior.chapters || []),
       movieQuery: prior.movieQuery || deriveMovieQuery(title).movieQuery || null,
