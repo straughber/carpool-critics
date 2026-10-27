@@ -97,8 +97,10 @@ The data scripts need Node. Transcript sync additionally needs `yt-dlp`
 ## Refreshing content
 
 ```bash
-# Catalog from the public YouTube channel (no API key)
-node scripts/fetch-youtube.js
+# Catalog from the public YouTube channel
+# Set YOUTUBE_API_KEY for exact Data API metadata; without it the RSS/page
+# scraper is used as the keyless fallback.
+YOUTUBE_API_KEY="<key>" node scripts/fetch-youtube.js
 
 # Captions for an episode, if it has none yet
 node scripts/fetch-transcript.js ep2
