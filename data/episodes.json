@@ -10,8 +10,8 @@
     "durationSeconds": 1256,
     "publishedAt": "2026-10-26T17:38:52-07:00",
     "date": null,
-    "description": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.",
-    "descriptionOverride": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.",
+    "description": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.\n\n🍿 Rotten Tomatoes: https://www.rottentomatoes.com/m/whalefall",
+    "descriptionOverride": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.\n\n🍿 Rotten Tomatoes: https://www.rottentomatoes.com/m/whalefall",
     "thumbnail": "https://i.ytimg.com/vi/BpmHfoLEf70/hqdefault.jpg",
     "chapters": [
       {
@@ -41,6 +41,8 @@
     ],
     "movieQuery": "Whalefall",
     "movieYear": 2026,
-    "transcriptFile": "data/transcripts/ep1.json"
+    "transcriptFile": "data/transcripts/ep1.json",
+    "status": "live",
+    "publishAt": null
   }
 ]
