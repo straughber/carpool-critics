@@ -173,6 +173,18 @@ function selectEpisode(ep, options = {}) {
     poster.alt = `${ep.shortTitle || 'Episode'} thumbnail`;
   }
 
+  // Point at the pre-rendered static page so the episode is shareable and
+  // crawlable (built by scripts/build-episode-pages.js).
+  const permalink = document.getElementById('episode-permalink');
+  if (permalink) {
+    if (ep.slug) {
+      permalink.href = `episodes/${encodeURIComponent(ep.slug)}/`;
+      permalink.style.display = '';
+    } else {
+      permalink.style.display = 'none';
+    }
+  }
+
   document.querySelectorAll('.playlist-card').forEach(card => {
     card.classList.toggle('active', card.getAttribute('data-ep') === ep.id);
   });
