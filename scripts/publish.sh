@@ -100,19 +100,23 @@ fi
 
 git add -A
 if git diff --cached --quiet; then
-  echo "  nothing changed since the last publish"
-  echo "  live site: $SITE_URL/"
-  exit 0
-fi
-
-if [ -n "${CUSTOM_MESSAGE:-}" ]; then
-  COMMIT_MESSAGE="$CUSTOM_MESSAGE"
+  AHEAD="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
+  if [ "${AHEAD:-0}" -eq 0 ]; then
+    echo "  nothing changed since the last publish"
+    echo "  live site: $SITE_URL/"
+    exit 0
+  fi
+  echo "  working tree clean, but $AHEAD commit(s) are not pushed yet"
 else
-  COMMIT_MESSAGE="Publish $EPISODE_COUNT episodes ($PAGE_COUNT pages) — $(date '+%Y-%m-%d %H:%M')"
+  if [ -n "${CUSTOM_MESSAGE:-}" ]; then
+    COMMIT_MESSAGE="$CUSTOM_MESSAGE"
+  else
+    COMMIT_MESSAGE="Publish $EPISODE_COUNT episodes ($PAGE_COUNT pages) — $(date '+%Y-%m-%d %H:%M')"
+  fi
+  git config user.email >/dev/null 2>&1 || fail "git user.email is not set: git config --global user.email 'you@example.com'" 1
+  git commit -q -m "$COMMIT_MESSAGE"
+  git --no-pager log --oneline -1 | sed 's/^/  /'
 fi
-git config user.email >/dev/null 2>&1 || fail "git user.email is not set: git config --global user.email 'you@example.com'" 1
-git commit -q -m "$COMMIT_MESSAGE"
-git --no-pager log --oneline -1 | sed 's/^/  /'
 
 # ----------------------------------------------------------------------- push
 info "Push to origin/$BRANCH"
