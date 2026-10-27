@@ -397,6 +397,11 @@ async function run() {
       }
     }
 
+    if (details.lengthSeconds && details.lengthSeconds < 300) {
+      console.log(`[YouTube] Skipping ${entry.videoId}: Shorts-length video (${details.lengthSeconds}s)`);
+      continue;
+    }
+
     const prior = previousByVideoId.get(entry.videoId) || {};
     // The live channel is authoritative for the title. The previous catalog is
     // a fallback for a transient scrape failure, never a pin.
