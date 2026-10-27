@@ -28,6 +28,29 @@ Highlights:
 
 ---
 
+## Design system
+
+The site is **Dash-Cam Brutalism**: terminal ASCII, 80s dashboard VFDs, and thermal
+ticket stubs. The contract is `BRAND.md` in the production repository (one level above
+this site checkout) — read it before changing a color, corner, shadow, or font. Short
+version:
+
+* `#0A0A0C` asphalt, `#121316` dash, `#F4F0EA` ticket ink, `#8E8D8A` muted,
+  `#FFB000` amber, `#008751` HOV green, `#E63946` brake red.
+* **Archivo Black** for marquee titles, **JetBrains Mono** for every UI/HUD label.
+* `border-radius: 0` everywhere. Shadows are hard offsets (`4px 4px 0`). No blur, no
+  `backdrop-filter`, no purple/slate gradients.
+* Episode and film cards are **thermal tickets**: dashed perforation, receipt header,
+  `ADMIT ONE // EP #XX // HOV-3`.
+* Every score is a ten-cell ASCII gauge from `asciiGauge()` in `script.js`:
+  `[▓▓▓▓▓▓▓▓░░] 8.0/10`. Never a star icon.
+* A 3.5% scanline plane covers the viewport; view changes are instant, not eased.
+
+The generated episode and archive pages share the same tokens through
+`assets/css/episode.css` and the templates in `scripts/build-episode-pages.js`.
+
+---
+
 ## Repository layout
 
 ```text
