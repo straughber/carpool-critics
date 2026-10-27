@@ -4,42 +4,42 @@
   "number": 1,
   "slug": "ep1-whalefall",
   "status": "live",
-  "title": "Whalefall: An Extremely Aggressive Way to Avoid Your Problems",
+  "title": "Whalefall, Graded on a Tachometer | Review",
   "shortTitle": "Ep. 1: Whalefall",
   "youtubeId": "Be0RFbGbbSU",
   "duration": "21m",
   "durationSeconds": 1308,
-  "publishedAt": "2026-10-26T23:53:42.308962",
+  "publishedAt": "2026-10-27T05:49:08-07:00",
   "publishAt": null,
   "uploadedAt": "2026-10-26T23:53:42.308962",
-  "description": "Shane, Alex, and Dave review Whalefall (2025) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.\n\n🍿 Rotten Tomatoes: https://www.rottentomatoes.com/m/whalefall",
-  "descriptionOverride": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.\n\n🍿 Rotten Tomatoes: https://www.rottentomatoes.com/m/whalefall",
+  "description": "Whalefall (2026): I at one point was thinking, is he going to get pooped out?",
+  "descriptionOverride": null,
   "thumbnail": "https://i.ytimg.com/vi/BpmHfoLEf70/hqdefault.jpg",
   "ogImage": null,
   "chapters": [
     {
       "time": "00:00",
-      "label": "Will He Get Pooped Out? (Whalefall Cold Open)"
+      "label": "The Hook: The Worst Possible Question"
     },
     {
       "time": "00:20",
-      "label": "Alex Reads Whalefall's Absurd IMDb Premise (Movie Setup)"
+      "label": "Show Intro and the IMDb Premise Read"
     },
     {
-      "time": "01:34",
-      "label": "Predicting Whalefall's Rotten Tomatoes Score (Cabin Chaos)"
+      "time": "01:20",
+      "label": "Guessing the Rotten Tomatoes Number, Unearned"
     },
     {
-      "time": "11:26",
-      "label": "Full Spoiler Review & Dave's 30-Year Ribcage Theory (Ending Breakdown)"
+      "time": "08:20",
+      "label": "Spoilers and One Unnecessary Theory"
     },
     {
-      "time": "18:40",
-      "label": "Final Scorecards: \"He Should've Just Gone to Therapy\" (Review Verdicts)"
+      "time": "20:00",
+      "label": "Scorecards Nobody Agreed To"
     },
     {
-      "time": "21:28",
-      "label": "Outro: Surviving the Whale (And the Car Ride)"
+      "time": "22:40",
+      "label": "Outro: The Car Survives"
     }
   ],
   "movieQuery": "Whalefall",
@@ -88,7 +88,62 @@
     "label": "absurd comedic analogy",
     "quote": "I at one point was thinking, is he going to get pooped out? And I was just wondering how far they would end up taking the whale's guts. Yeah..."
   },
-  "shorts": [],
+  "shorts": [
+    {
+      "id": 6,
+      "title": "The Ultra-Fast Speedrun | Whalefall",
+      "videoId": "qgG2QjiJQog",
+      "url": "https://youtube.com/shorts/qgG2QjiJQog",
+      "duration": 15.1,
+      "viralScore": 90,
+      "category": "content_reframing_structural_flips"
+    },
+    {
+      "id": 7,
+      "title": "Reverse Monologue | Whalefall",
+      "videoId": "YAnnYJKIZAI",
+      "url": "https://youtube.com/shorts/YAnnYJKIZAI",
+      "duration": 27.0,
+      "viralScore": 90,
+      "category": "micro_cut_linguistic_gags"
+    },
+    {
+      "id": 8,
+      "title": "Alphabetical Sentence Stitch | Whalefall",
+      "videoId": "6aPLtgWZuG8",
+      "url": "https://youtube.com/shorts/6aPLtgWZuG8",
+      "duration": 15.8,
+      "viralScore": 90,
+      "category": "micro_cut_linguistic_gags"
+    },
+    {
+      "id": 9,
+      "title": "The Unfinished Thought Supercut | Whalefall",
+      "videoId": "WMT57_RO2qk",
+      "url": "https://youtube.com/shorts/WMT57_RO2qk",
+      "duration": 35.3,
+      "viralScore": 90,
+      "category": "content_reframing_structural_flips"
+    },
+    {
+      "id": 1,
+      "title": "Dave's Whalefall score, argued at 0 mph",
+      "videoId": "uvCFbGh4EV4",
+      "url": "https://youtube.com/shorts/uvCFbGh4EV4",
+      "duration": 16.16,
+      "viralScore": 60,
+      "category": "ai_viral_debate"
+    },
+    {
+      "id": 2,
+      "title": "Whalefall: What do you call that?",
+      "videoId": "ZR7KUFCSskY",
+      "url": "https://youtube.com/shorts/ZR7KUFCSskY",
+      "duration": 10.42,
+      "viralScore": 60,
+      "category": "ai_viral_debate"
+    }
+  ],
   "source": {
     "episode": "EP01_Whale_Fall",
     "publishingPackage": "episodes/EP01_Whale_Fall/03_Episode_Cuts/publishing_package.json",
