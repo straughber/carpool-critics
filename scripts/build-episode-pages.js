@@ -256,7 +256,38 @@ function episodeNumber(episode, fallback = '') {
 // ========================================================
 // 3. PAGE TEMPLATES
 // ========================================================
-function pageShell({ title, description, canonical, ogImage, ogType = 'article', jsonLd, depth, body, navEpisodes = true, robots = 'index, follow' }) {
+// The site bar is the same component as index.html (assets/css/site-bar.css).
+// Same five items, same order, same look on every page; only aria-current moves.
+function siteBar(asset, current) {
+  const button = (href, label, key) =>
+    `<a class="deck-btn" href="${href}"${key === current ? ' aria-current="page"' : ''}>[ ${label} ]</a>`;
+
+  const home = asset('');
+  return `  <header class="brand-bar is-sticky">
+    <div class="wordmark" aria-hidden="true">
+      <span class="wordmark-bar">═══════</span>
+      <span class="wordmark-diamond">◊</span>
+      <span class="wordmark-name">Carpool Critics</span>
+      <span class="wordmark-diamond">◊</span>
+      <span class="wordmark-bar">═══════</span>
+    </div>
+    <div class="brand-row">
+      <nav class="deck-nav" aria-label="Primary">
+        ${button(home, 'DASH', 'home')}
+        ${button(`${home}#episodes`, 'EPISODES', 'episodes')}
+        ${button(`${home}#about`, 'HOSTS', 'hosts')}
+        ${button(asset('episodes/'), 'ARCHIVE', 'archive')}
+        ${button(`${home}#contact`, 'CONTACT', 'contact')}
+      </nav>
+      <div class="hud-strip" aria-hidden="true">
+        <span class="hud-item">◊ HOV-3</span>
+        <span class="hud-item hud-rpm">RPM [▓▓▓▓▓▓░░░░]</span>
+      </div>
+    </div>
+  </header>`;
+}
+
+function pageShell({ title, description, canonical, ogImage, ogType = 'article', jsonLd, depth, body, current = 'archive', robots = 'index, follow' }) {
   const asset = p => `${'../'.repeat(depth)}${p}`;
   const jsonLdBlocks = (Array.isArray(jsonLd) ? jsonLd : [jsonLd])
     .filter(Boolean)
@@ -291,25 +322,15 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.0.0" />
+  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.1.0" />
+  <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.0.0" />
   ${jsonLdBlocks}
 </head>
 <body>
 
   <div class="scanline-plane" aria-hidden="true"></div>
 
-  <header class="site-bar">
-    <div class="wrap">
-      <a class="brand-mark" href="${asset('')}">◊ CARPOOL CRITICS</a>
-      <nav aria-label="Site">
-        <a href="${asset('')}">[ DASH ]</a>
-        <a href="${asset('')}#about">[ HOSTS ]</a>
-        ${navEpisodes ? `<a href="${asset('episodes/')}">[ ARCHIVE ]</a>` : ''}
-        <a href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ]</a>
-      </nav>
-      <span class="site-hud" aria-hidden="true"><span class="rec-dot">●</span> REC // HOV-3 // AUSTIN, TX</span>
-    </div>
-  </header>
+${siteBar(asset, current)}
 
   <main class="wrap">
 ${body}
@@ -319,6 +340,7 @@ ${body}
     <div class="wrap">
       <span>&copy; ${new Date().getFullYear()} ${SITE_NAME} · ${escapeHtml(SITE_TAGLINE)}</span>
       <span>◊ HOV-3 // PARKED IN AUSTIN, TEXAS</span>
+      <a class="foot-link" href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ↗ ]</a>
     </div>
   </footer>
 
@@ -649,7 +671,6 @@ ${items || '        <li class="archive-item"><div class="archive-body"><div clas
     ogImage: OG_IMAGE_FALLBACK,
     ogType: 'website',
     depth,
-    navEpisodes: false,
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',

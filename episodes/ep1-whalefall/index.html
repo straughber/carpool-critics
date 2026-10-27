@@ -26,7 +26,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/episode.css?v=5.0.0" />
+  <link rel="stylesheet" href="../../assets/css/episode.css?v=5.1.0" />
+  <link rel="stylesheet" href="../../assets/css/site-bar.css?v=1.0.0" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -86,16 +87,26 @@
 
   <div class="scanline-plane" aria-hidden="true"></div>
 
-  <header class="site-bar">
-    <div class="wrap">
-      <a class="brand-mark" href="../../">◊ CARPOOL CRITICS</a>
-      <nav aria-label="Site">
-        <a href="../../">[ DASH ]</a>
-        <a href="../../#about">[ HOSTS ]</a>
-        <a href="../../episodes/">[ ARCHIVE ]</a>
-        <a href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ]</a>
+  <header class="brand-bar is-sticky">
+    <div class="wordmark" aria-hidden="true">
+      <span class="wordmark-bar">═══════</span>
+      <span class="wordmark-diamond">◊</span>
+      <span class="wordmark-name">Carpool Critics</span>
+      <span class="wordmark-diamond">◊</span>
+      <span class="wordmark-bar">═══════</span>
+    </div>
+    <div class="brand-row">
+      <nav class="deck-nav" aria-label="Primary">
+        <a class="deck-btn" href="../../">[ DASH ]</a>
+        <a class="deck-btn" href="../../#episodes">[ EPISODES ]</a>
+        <a class="deck-btn" href="../../#about">[ HOSTS ]</a>
+        <a class="deck-btn" href="../../episodes/" aria-current="page">[ ARCHIVE ]</a>
+        <a class="deck-btn" href="../../#contact">[ CONTACT ]</a>
       </nav>
-      <span class="site-hud" aria-hidden="true"><span class="rec-dot">●</span> REC // HOV-3 // AUSTIN, TX</span>
+      <div class="hud-strip" aria-hidden="true">
+        <span class="hud-item">◊ HOV-3</span>
+        <span class="hud-item hud-rpm">RPM [▓▓▓▓▓▓░░░░]</span>
+      </div>
     </div>
   </header>
 
@@ -706,6 +717,7 @@
     <div class="wrap">
       <span>&copy; 2026 Carpool Critics · Fresh Out the Doors, Straight to the Dash · Austin, TX</span>
       <span>◊ HOV-3 // PARKED IN AUSTIN, TEXAS</span>
+      <a class="foot-link" href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ↗ ]</a>
     </div>
   </footer>
 

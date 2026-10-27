@@ -66,7 +66,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 
   <!-- Production Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=5.1.2" />
+  <link rel="stylesheet" href="style.css?v=5.1.5" />
+
+  <!-- The one top menu. Shared with every generated episode/archive page. -->
+  <link rel="stylesheet" href="assets/css/site-bar.css?v=1.0.0" />
 
   <!-- Critical Above-the-Fold Styling (Prevents FOUC) -->
   <style>
@@ -85,16 +88,15 @@
   <div class="cinema-viewport">
 
     <!-- ======================================================== -->
-    <!-- BRAND BAR: ASCII BANNER, STEREO-DECK NAV, LIVE HUD        -->
+    <!-- BRAND BAR: WORDMARK, STEREO-DECK NAV, LIVE HUD           -->
     <!-- ======================================================== -->
     <header class="brand-bar">
-      <div class="ascii-wrap">
-        <pre class="ascii-banner ascii-wide" aria-hidden="true">╔══════════════════════════════════════════════════════════════════════════╗
-║  ◊ CARPOOL CRITICS  //  HOV-3 // AUSTIN, TX  //  THREE HOSTS // ONE CAR  ║
-╚══════════════════════════════════════════════════════════════════════════╝</pre>
-        <pre class="ascii-banner ascii-narrow" aria-hidden="true">╔════════════════════════════════════════╗
-║ ◊ CARPOOL CRITICS // HOV-3             ║
-╚════════════════════════════════════════╝</pre>
+      <div class="wordmark" aria-hidden="true">
+        <span class="wordmark-bar">═══════</span>
+        <span class="wordmark-diamond">◊</span>
+        <span class="wordmark-name">Carpool Critics</span>
+        <span class="wordmark-diamond">◊</span>
+        <span class="wordmark-bar">═══════</span>
       </div>
       <h1 class="sr-only">Carpool Critics | Austin, TX Film Review Podcast</h1>
 
@@ -485,6 +487,7 @@
     <footer class="status-bar">
       <span>◊ HOV-3 // AUSTIN, TX</span>
       <span class="status-mid">NO SCHEDULE // WHEN IT'S READY, IT GOES UP</span>
+      <a class="status-link" href="https://www.youtube.com/@CarpoolCritics" target="_blank" rel="noopener">[ YOUTUBE ↗ ]</a>
       <span>© <span id="status-year">2026</span> CARPOOL CRITICS</span>
     </footer>
 

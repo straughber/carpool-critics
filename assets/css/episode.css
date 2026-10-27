@@ -77,77 +77,22 @@ a:hover { text-decoration: none; }
   padding: 0 24px;
 }
 
-/* ---------- Top bar ---------- */
-.site-bar {
-  border-bottom: var(--rule);
-  background: var(--bg-asphalt);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.site-bar .wrap {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  min-height: 58px;
-  flex-wrap: wrap;
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-
-.brand-mark {
-  font-family: var(--font-display);
-  font-size: 19px;
-  letter-spacing: 0;
-  color: var(--text-ticket);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.brand-mark:hover { color: var(--accent-amber); }
-
-.site-bar nav {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
+/* ---------- Top bar ----------
+   The site bar lives in assets/css/site-bar.css and is shared with
+   index.html. Only footer specifics belong here. */
+.site-foot .foot-link {
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.site-bar nav a {
-  color: var(--text-ticket);
-  border: 2px solid transparent;
-  padding: 4px 6px;
-}
-
-.site-bar nav a:hover {
-  color: var(--accent-amber);
-  border-color: var(--accent-amber);
-}
-
-.site-hud {
-  font-family: var(--font-mono);
-  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--text-muted);
   text-transform: uppercase;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
-.rec-dot {
-  color: var(--accent-brake);
-  animation: rec-blink 1s steps(1, end) infinite;
-}
-
-@keyframes rec-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0.18; }
+.site-foot .foot-link:hover,
+.site-foot .foot-link:focus-visible {
+  color: var(--accent-amber);
 }
 
 /* ---------- Article head ---------- */
@@ -694,19 +639,6 @@ h2.section-title {
 
 @media (max-width: 720px) {
   body { font-size: 14px; }
-
-  .site-bar .wrap {
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .site-hud { display: none; }
-
-  .site-bar nav {
-    width: 100%;
-    justify-content: center;
-    font-size: 9px;
-  }
 
   .ep-head { padding: 24px 0 8px; }
 
