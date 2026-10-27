@@ -12,7 +12,7 @@ An interactive film review dispatch recorded inside a car after watching a movie
 The project decouples presentation markup, dynamic media catalogs, and build-time metadata to maintain sub-second load times on static hosting (GitHub Pages) while ensuring full search engine crawlability for 100+ episodes.
 
 ```text
-carpool-cinema-critics/
+carpool-critics/
 ├── index.html                   # High-performance SPA shell (~15KB) with Schema.org JSON-LD
 ├── style.css                    # Production stylesheet with modular MCP section banners
 ├── script.js                    # Interaction router, transcript loader & movie profile renderer
@@ -25,16 +25,55 @@ carpool-cinema-critics/
 │           ├── Dave_CurbsideCritic.webp (dave.svg fallback)
 │           └── Shane_CurbsideCritic.webp (shane.svg fallback)
 ├── data/                        # Decoupled static data catalogs
-│   ├── episodes.json            # Master lightweight episode directory
+│   ├── episodes.json            # GENERATED from the YouTube channel (do not hand-edit)
 │   ├── movies.json              # Pre-cached TMDb movie metadata (ratings, runtime, posters)
 │   └── transcripts/             # On-demand dialogue transcripts (loaded only on click)
-│       ├── ep42.json
-│       ├── ep41.json
-│       ├── ep40.json
+│       ├── ep1.json
 │       └── ...
 └── scripts/                     # Automation & build scripts
+    ├── fetch-youtube.js         # Build-time channel sync -> data/episodes.json
+    ├── fetch-transcript.js      # Build-time caption -> data/transcripts/ep<N>.json
     └── fetch-tmdb.js            # Build-time TMDb API fetcher (zero client key exposure)
 ```
+
+---
+
+## Episode Catalog Sync (YouTube)
+
+`data/episodes.json` is **generated**, never hand-maintained. It is produced from the live
+channel by `scripts/fetch-youtube.js`, which uses no API key and no quota:
+
+```bash
+node scripts/fetch-youtube.js      # refresh data/episodes.json from the channel
+```
+
+How it works:
+
+1. **Channel RSS feed** (`youtube.com/feeds/videos.xml`) — cheapest source, but YouTube
+   serves it inconsistently for new/small channels.
+2. **Channel `/videos` page scrape** — fallback whenever RSS is empty or unavailable.
+   Note: this sees the first page of uploads (~30 videos); a full archive beyond that
+   needs the Data API with an API key.
+3. **Per-video watch page** — authoritative duration, publish date, full description,
+   and parsed `CHAPTERS` block.
+
+The script is **idempotent and non-destructive**: on re-run it preserves hand-authored
+fields (`movieQuery`, `movieYear`, `number`, `id`, `transcriptFile`) by matching on
+`youtubeId`, and it auto-wires a transcript as soon as `data/transcripts/ep<N>.json`
+exists.
+
+Because episode numbering follows upload order, the oldest upload is always `ep1`.
+
+### Why this is fast
+
+* Visitors never call YouTube for metadata — the catalog is a static, cached JSON file.
+* The episode catalog is fetched **only when the Reviews view is first opened**, so the
+  home cockpit keeps its fast first paint.
+* The YouTube `<iframe>` (~1MB of third-party JS) is injected **only after a click**
+  via a click-to-load facade. The poster is a plain `i.ytimg.com` thumbnail, which needs
+  no API call.
+* Relative dates ("7m ago", "Released Yesterday") are computed in the browser from
+  `publishedAt`, so they never go stale in the repo.
 
 ---
 
@@ -65,27 +104,47 @@ carpool-cinema-critics/
 
 When publishing a new episode:
 
-1. **Add Transcript**:
-   Create `data/transcripts/ep<id>.json` with structured dialogue timestamps:
+1. **Sync the catalog (required)**:
+   ```bash
+   node scripts/fetch-youtube.js
+   ```
+   This rebuilds `data/episodes.json` from the channel. Upload the video first — the
+   script only sees public uploads. The new episode appears in the playlist
+   automatically; **no HTML or JSON editing needed**.
+
+2. **Add Transcript (optional but recommended)**:
+   ```bash
+   node scripts/fetch-transcript.js ep2
+   ```
+   This pulls the channel's own caption track (requires `brew install yt-dlp`) and writes
+   `data/transcripts/ep2.json`. Because the uploader tags every cue — `[SHANE] ...`,
+   `[ALEX] ...`, `[DAVE] ...` — no diarization is needed: consecutive cues from the same
+   host are merged into readable turns with a timestamp and a speaker pill.
+   Re-run `node scripts/fetch-youtube.js` afterwards and `transcriptFile` is wired
+   automatically. Until then the player shows "Transcript coming soon".
+
+   To hand-write a transcript instead, create `data/transcripts/ep<N>.json`:
    ```json
    {
-     "episodeId": "ep43",
-     "title": "Episode 43: Title",
+     "episodeId": "ep2",
+     "title": "Episode 2: Title",
      "dialogue": [
        { "time": "00:00:15", "speaker": "Shane", "role": "Passenger", "text": "..." }
      ]
    }
    ```
 
-2. **Register in Catalog**:
-   Add the episode to `data/episodes.json` with `id`, `youtubeId`, and `movieQuery` (e.g., `"movieQuery": "Dune"`).
+   **Note on descriptions**: `description` is pulled from YouTube, but a
+   `descriptionOverride` field always wins so a sync never clobbers a correction.
+   To re-pull from YouTube, delete `descriptionOverride` from that episode.
 
-3. **Fetch TMDb Metadata (Build Step)**:
+3. **Fetch TMDb Metadata (build step)**:
    Run the build script using your TMDb API credentials:
    ```bash
    TMDB_READ_TOKEN="<your_token>" node scripts/fetch-tmdb.js
    ```
    This automatically updates `data/movies.json` with the official poster, MPAA rating, runtime, and synopsis.
+   The script reads `movieQuery` / `movieYear` from each entry in `data/episodes.json`.
 
 4. **Commit & Deploy**:
    Push to `main`. GitHub Pages automatically deploys the updated static site.

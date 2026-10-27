@@ -10,70 +10,10 @@ const transcriptCache = {};
 let movieCatalogCache = null;
 let formFeedbackTimer = null;
 
-const fallbackTranscripts = {
-  ep42: {
-    dialogue: [
-      { time: "00:00:12", speaker: "Shane", role: "Passenger", text: "Engine's idling, parking brake is on, and the Austin skyline is glowing right out the back window. We literally walked out of the midnight screening ten minutes ago. Alex, take the wheel on this one—what was your immediate reaction to that opening sequence?" },
-      { time: "00:00:35", speaker: "Alex", role: "Driver", text: "The camera blocking in the first twelve minutes was masterclass level. Shooting through rainy windshields with practical sodium-vapor streetlights created an overwhelming sense of dread before a single line of dialogue was spoken. It sets the tone for the entire mystery." },
-      { time: "00:01:02", speaker: "Dave", role: "Center Back", text: "From the back seat here, I gotta point out the practical creature effects in the subway tunnel. Notice how they didn't use motion blur to hide rubber seams? They used silhouette and strobe lighting the way Ridley Scott did in Alien. That was genuine craftsmanship." },
-      { time: "00:01:28", speaker: "Shane", role: "Passenger", text: "And the sound design! Sitting here in the car with the theater acoustics still ringing in my ears, the rumble of the engine in the chase scene was recorded with real binaural mics. Let's break down where the second act stumbled before getting into the twist ending." },
-      { time: "00:01:52", speaker: "Alex", role: "Driver", text: "Agreed. The subplot with the detective's estranged sister felt like studio interference designed to pad runtime, but the finale completely redeemed it. Let's give our final hubcap ratings." }
-    ]
-  },
-  ep41: {
-    dialogue: [
-      { time: "00:00:08", speaker: "Shane", role: "Passenger", text: "Welcome back inside the X5. Episode 41 is all about the summer blockbuster cycle and why so many two-hundred-million-dollar tentpoles look identical." },
-      { time: "00:00:26", speaker: "Alex", role: "Driver", text: "When every sequence relies on pre-visualization software and grey color grading, the emotional stakes vanish. We just watched four consecutive explosions with zero geographic continuity." },
-      { time: "00:00:48", speaker: "Dave", role: "Center Back", text: "That's why Mad Max: Fury Road or Top Gun: Maverick stood out so fiercely. When you put real stunt drivers on real tarmac, the human brain registers the physical danger." }
-    ]
-  },
-  ep40: {
-    dialogue: [
-      { time: "00:00:10", speaker: "Shane", role: "Passenger", text: "Late-night horror dispatch. Tonight we're debating why 80s animatronics still look terrifying while 2026 CGI monsters often look like video game cutscenes." },
-      { time: "00:00:30", speaker: "Dave", role: "Center Back", text: "It comes down to tactile light interaction. Foam latex and silicone physically absorb and reflect photons from practical lamps. CGI shaders are calculating approximations, and your eye knows the difference." },
-      { time: "00:00:55", speaker: "Alex", role: "Driver", text: "And the actors behave differently when there's an actual seven-foot mechanical puppet in the room with them versus a tennis ball on a green broomstick." }
-    ]
-  }
-};
-
-const fallbackMovies = {
-  ep42: {
-    id: 348,
-    title: "Alien",
-    year: "1979",
-    rating: "8.1",
-    runtime: "1h 57m",
-    certification: "R",
-    genres: ["Horror", "Science Fiction"],
-    overview: "During its return to the earth, commercial spaceship Nostromo intercepts a distress signal from a distant planet. When a three-member team of the crew investigates the source of the signal, they uncover a horrific extraterrestrial lifeform.",
-    posterPath: "https://image.tmdb.org/t/p/w300/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",
-    tmdbUrl: "https://www.themoviedb.org/movie/348-alien"
-  },
-  ep41: {
-    id: 361743,
-    title: "Top Gun: Maverick",
-    year: "2022",
-    rating: "8.2",
-    runtime: "2h 11m",
-    certification: "PG-13",
-    genres: ["Action", "Drama"],
-    overview: "After more than thirty years of service as one of the Navy's top aviators, Pete 'Maverick' Mitchell is where he belongs, pushing the envelope as a courageous test pilot and dodging the advancement in rank that would ground him.",
-    posterPath: "https://image.tmdb.org/t/p/w300/62HCnUTziyWcpDaBO2i1DX17ljH.jpg",
-    tmdbUrl: "https://www.themoviedb.org/movie/361743-top-gun-maverick"
-  },
-  ep40: {
-    id: 1091,
-    title: "The Thing",
-    year: "1982",
-    rating: "8.0",
-    runtime: "1h 49m",
-    certification: "R",
-    genres: ["Horror", "Mystery", "Science Fiction"],
-    overview: "A team of American scientists investigating an outbreak at a Norwegian research base in Antarctica discover that a parasitic alien organism capable of imitating its victims is on the loose.",
-    posterPath: "https://image.tmdb.org/t/p/w300/tzGY49kseSE9QAKxRjJIPAgL8Wd.jpg",
-    tmdbUrl: "https://www.themoviedb.org/movie/1091-the-thing"
-  }
-};
+// Template placeholder episodes were removed; the live catalog is generated
+// from the YouTube channel into data/episodes.json by scripts/fetch-youtube.js.
+const fallbackTranscripts = {};
+const fallbackMovies = {};
 
 // ========================================================
 // 2. VIEW NAVIGATION & ROUTING
@@ -97,12 +37,10 @@ function switchSection(sectionId) {
     }
   }
 
-  // Ensure default episode data is loaded when navigating to episodes
+  // Lazy-load the episode catalog only when the Reviews view is first opened,
+  // so the home cockpit keeps its fast first paint.
   if (sectionId === 'episodes') {
-    if (!transcriptCache['current']) {
-      loadEpisodeTranscript('ep42');
-    }
-    renderMovieProfile('ep42');
+    initEpisodesView();
   }
 }
 
@@ -119,34 +57,173 @@ function setHover(hostKey, isHovered) {
 }
 
 // ========================================================
-// 3. EPISODE PLAYER & PLAYLIST HANDLER
+// 3. EPISODE CATALOG, PLAYLIST & CLICK-TO-LOAD VIDEO FACADE
 // ========================================================
-function loadYouTubeVideo(youtubeId, title, epId) {
-  const player = document.getElementById('main-video-player');
-  const titleEl = document.getElementById('current-video-title');
-  
-  if (player && youtubeId) {
-    player.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(youtubeId)}?autoplay=1`;
+let episodeCatalogCache = null;
+let episodesViewReady = false;
+let activeVideoId = null;
+
+/** data/episodes.json is generated from the YouTube channel by scripts/fetch-youtube.js */
+async function getEpisodeCatalog() {
+  if (episodeCatalogCache) return episodeCatalogCache;
+  try {
+    const res = await fetch('data/episodes.json');
+    if (res.ok) {
+      const data = await res.json();
+      episodeCatalogCache = Array.isArray(data) ? data : [];
+      return episodeCatalogCache;
+    }
+  } catch (err) {
+    console.warn('Could not load data/episodes.json', err);
   }
-  if (titleEl && title) {
-    titleEl.innerText = title;
+  episodeCatalogCache = [];
+  return episodeCatalogCache;
+}
+
+/** Human label computed at view time so it never goes stale in the repo. */
+function relativeDate(iso) {
+  if (!iso) return '';
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+  const seconds = Math.floor((Date.now() - then) / 1000);
+  if (seconds < 0) return 'Upcoming';
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+
+  const days = Math.floor(seconds / 86400);
+  if (days === 1) return 'Released Yesterday';
+  if (days < 7) return `${days} days ago`;
+  if (days < 14) return '1 week ago';
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+  if (days < 60) return '1 month ago';
+  return `${Math.floor(days / 30)} months ago`;
+}
+
+async function initEpisodesView() {
+  if (episodesViewReady) return;
+  episodesViewReady = true;
+
+  const stack = document.getElementById('episode-playlist');
+  const episodes = await getEpisodeCatalog();
+
+  if (!episodes.length) {
+    if (stack) {
+      stack.innerHTML = '<div class="transcript-loading-msg">No episodes published yet. Check back after the next dispatch.</div>';
+    }
+    const titleEl = document.getElementById('current-video-title');
+    if (titleEl) titleEl.innerText = 'No episodes yet';
+    return;
   }
 
-  // Synchronize active playlist card styling without deprecated window.event
-  const cards = document.querySelectorAll('.playlist-card');
+  renderEpisodePlaylist(episodes, stack);
+  selectEpisode(episodes[0]);
+}
+
+function renderEpisodePlaylist(episodes, stack) {
+  if (!stack) return;
+  stack.innerHTML = episodes.map(ep => {
+    const meta = [escapeHtml(ep.duration || ''), escapeHtml(relativeDate(ep.publishedAt))]
+      .filter(Boolean).join(' • ');
+    return `
+      <div class="playlist-card" role="button" tabindex="0"
+           data-ep="${escapeHtml(ep.id)}" data-video="${escapeHtml(ep.youtubeId)}"
+           aria-label="${escapeHtml(ep.shortTitle || ep.title)}">
+        <div>
+          <div class="pl-ep-title">${escapeHtml(ep.shortTitle || ep.title)}</div>
+          <div class="pl-ep-meta">${meta}</div>
+        </div>
+        <span class="pl-play-tag">▶ PLAY</span>
+      </div>`;
+  }).join('');
+
+  const cards = [...stack.querySelectorAll('.playlist-card')];
   cards.forEach(card => {
-    if (epId && card.getAttribute('data-ep') === epId) {
-      card.classList.add('active');
-    } else {
-      card.classList.remove('active');
-    }
+    const activate = () => {
+      const ep = episodes.find(e => e.id === card.getAttribute('data-ep'));
+      if (ep) selectEpisode(ep, { autoplay: true });
+    };
+    card.addEventListener('click', activate);
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activate();
+      }
+    });
+  });
+}
+
+function selectEpisode(ep, options = {}) {
+  if (!ep || !ep.youtubeId) return;
+  activeVideoId = ep.youtubeId;
+
+  const titleEl = document.getElementById('current-video-title');
+  if (titleEl) titleEl.innerText = ep.title || ep.shortTitle || '';
+
+  const subEl = document.getElementById('current-video-sub');
+  if (subEl) {
+    const bits = [ep.duration, relativeDate(ep.publishedAt)].filter(Boolean);
+    subEl.innerText = ep.description || bits.join(' • ');
+  }
+
+  const poster = document.getElementById('video-facade-poster');
+  if (poster) {
+    poster.src = ep.thumbnail || `https://i.ytimg.com/vi/${ep.youtubeId}/hqdefault.jpg`;
+    poster.style.display = '';
+    poster.alt = `${ep.shortTitle || 'Episode'} thumbnail`;
+  }
+
+  document.querySelectorAll('.playlist-card').forEach(card => {
+    card.classList.toggle('active', card.getAttribute('data-ep') === ep.id);
   });
 
-  // Load transcript and movie profile asynchronously
-  if (epId) {
-    loadEpisodeTranscript(epId);
-    renderMovieProfile(epId);
+  if (options.autoplay) mountVideoPlayer(true);
+
+  // Only request a transcript when one is actually registered for the episode.
+  if (ep.id) {
+    if (ep.transcriptFile) {
+      loadEpisodeTranscript(ep.id);
+    } else {
+      showTranscriptPlaceholder();
+    }
+    renderMovieProfile(ep.id);
   }
+}
+
+function showTranscriptPlaceholder() {
+  const body = document.getElementById('transcript-body');
+  if (body) {
+    body.innerHTML = '<div class="transcript-loading-msg">Transcript coming soon for this episode.</div>';
+  }
+}
+
+/**
+ * The iframe is ~1MB of third-party script, so it is only injected after an
+ * explicit click. This is the single biggest Lighthouse win on this page.
+ */
+function mountVideoPlayer(autoplay = true) {
+  const box = document.getElementById('video-facade-box');
+  if (!box || !activeVideoId) return;
+
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(activeVideoId)}?rel=0${autoplay ? '&autoplay=1' : ''}`;
+  const existing = box.querySelector('iframe');
+  if (existing) {
+    existing.src = src;
+    return;
+  }
+
+  box.innerHTML = `
+    <iframe
+      id="main-video-player"
+      src="${src}"
+      title="Carpool Critics Episode Player"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>`;
+}
+
+function activateVideoPlayer() {
+  mountVideoPlayer(true);
 }
 
 // ========================================================
@@ -366,6 +443,8 @@ function escapeHtml(str) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadEpisodeTranscript('ep42');
-  renderMovieProfile('ep42');
+  // The home cockpit needs no catalog data. Episodes load on first visit to Reviews.
+  if (document.getElementById('view-episodes')?.classList.contains('active')) {
+    initEpisodesView();
+  }
 });

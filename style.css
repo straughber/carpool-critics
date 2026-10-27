@@ -564,6 +564,61 @@ h1,
   border: none;
 }
 
+/* Click-to-load facade: keeps ~1MB of YouTube JS off the critical path */
+.video-facade {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: #000;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.video-facade-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.video-facade:hover .video-facade-poster,
+.video-facade:focus-visible .video-facade-poster {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.video-facade-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: rgba(197, 138, 46, 0.94);
+  color: #0b0f16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s ease;
+}
+
+.video-facade:hover .video-facade-play,
+.video-facade:focus-visible .video-facade-play {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.video-facade-play svg {
+  width: 34px;
+  height: 34px;
+  margin-left: 4px;
+}
+
 .video-meta-box {
   margin-top: 16px;
 }

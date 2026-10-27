@@ -10,21 +10,21 @@
   <meta name="keywords" content="Carpool Critics, Austin film reviews, movie podcast, BMW X5 cinema review, practical horror, blockbuster critique, Alex Dave Shane" />
   <meta name="author" content="Carpool Critics" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://straughber.github.io/carpool-cinema-critics/" />
+  <link rel="canonical" href="https://straughber.github.io/carpool-critics/" />
 
   <!-- Open Graph / Facebook / LinkedIn -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Carpool Critics | Austin, TX Film Review Podcast" />
   <meta property="og:description" content="Film review debriefs recorded live inside a BMW X5 overlooking the Austin, Texas skyline the moment the credits roll." />
-  <meta property="og:image" content="https://straughber.github.io/carpool-cinema-critics/assets/images/cockpit/CurbsideCinema_Background.jpeg" />
-  <meta property="og:url" content="https://straughber.github.io/carpool-cinema-critics/" />
+  <meta property="og:image" content="https://straughber.github.io/carpool-critics/assets/images/cockpit/CurbsideCinema_Background.jpeg" />
+  <meta property="og:url" content="https://straughber.github.io/carpool-critics/" />
   <meta property="og:site_name" content="Carpool Critics" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Carpool Critics" />
   <meta name="twitter:description" content="Fresh Out the Doors, Straight to the Dash - Austin, TX" />
-  <meta name="twitter:image" content="https://straughber.github.io/carpool-cinema-critics/assets/images/cockpit/CurbsideCinema_Background.jpeg" />
+  <meta name="twitter:image" content="https://straughber.github.io/carpool-critics/assets/images/cockpit/CurbsideCinema_Background.jpeg" />
 
   <!-- Schema.org JSON-LD Structured Data for PodcastSeries & WebSite -->
   <script type="application/ld+json">
@@ -33,7 +33,7 @@
     "@type": "PodcastSeries",
     "name": "Carpool Critics",
     "description": "Film review debriefs recorded live inside a BMW X5 overlooking the Austin, Texas skyline the moment the credits roll.",
-    "url": "https://straughber.github.io/carpool-cinema-critics/",
+    "url": "https://straughber.github.io/carpool-critics/",
     "locationCreated": {
       "@type": "Place",
       "name": "Austin, Texas"
@@ -237,18 +237,32 @@
         </div>
         <div class="episodes-container-layout">
           <div>
-            <div class="youtube-responsive-box">
-              <iframe 
-                id="main-video-player" 
-                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" 
-                title="Carpool Critics Episode Player" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen
-              ></iframe>
+            <div class="youtube-responsive-box" id="video-facade-box">
+              <button
+                type="button"
+                class="video-facade"
+                id="video-facade"
+                aria-label="Play featured episode"
+                onclick="activateVideoPlayer()"
+              >
+                <img
+                  class="video-facade-poster"
+                  id="video-facade-poster"
+                  src="assets/images/cockpit/CurbsideCinema_Background.jpeg"
+                  alt=""
+                  width="1280"
+                  height="720"
+                  decoding="async"
+                  onerror="this.style.display='none'"
+                />
+                <span class="video-facade-play" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              </button>
             </div>
             <div class="video-meta-box">
-              <h3 id="current-video-title" class="video-title">Episode 42: Midnight In Austin • Post-Screening Dispatch</h3>
-              <p class="video-sub" id="current-video-sub">Recorded live from the BMW X5 overlooking Lady Bird Lake right after a midnight premiere.</p>
+              <h3 id="current-video-title" class="video-title">Loading episode…</h3>
+              <p class="video-sub" id="current-video-sub">Fetching the latest dispatch from the car.</p>
             </div>
 
             <!-- Auto-Generated Movie Profile Card (TMDb Enriched) -->
@@ -317,28 +331,8 @@
             </section>
           </div>
           
-          <div class="episodes-playlist-stack">
-            <div class="playlist-card active" data-ep="ep42" onclick="loadYouTubeVideo('dQw4w9WgXcQ', 'Episode 42: Midnight In Austin • Post-Screening Dispatch', 'ep42')">
-              <div>
-                <div class="pl-ep-title">Ep. 42: Midnight In Austin</div>
-                <div class="pl-ep-meta">1h 12m • Released Yesterday</div>
-              </div>
-              <span class="pl-play-tag">▶ PLAY</span>
-            </div>
-            <div class="playlist-card" data-ep="ep41" onclick="loadYouTubeVideo('L_LUpnjgPso', 'Episode 41: Blockbuster Highs & Franchise Fatigue', 'ep41')">
-              <div>
-                <div class="pl-ep-title">Ep. 41: Blockbuster Fatigue</div>
-                <div class="pl-ep-meta">58m • 1 week ago</div>
-              </div>
-              <span class="pl-play-tag">▶ PLAY</span>
-            </div>
-            <div class="playlist-card" data-ep="ep40" onclick="loadYouTubeVideo('fJ9rUzIMcZQ', 'Episode 40: Practical Horror vs Digital Noise', 'ep40')">
-              <div>
-                <div class="pl-ep-title">Ep. 40: Practical Horror FX</div>
-                <div class="pl-ep-meta">1h 24m • 2 weeks ago</div>
-              </div>
-              <span class="pl-play-tag">▶ PLAY</span>
-            </div>
+          <div class="episodes-playlist-stack" id="episode-playlist" aria-label="Episode playlist">
+            <!-- Populated at runtime from data/episodes.json (synced from YouTube) -->
           </div>
         </div>
       </div>
