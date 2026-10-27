@@ -2,7 +2,7 @@
 
 Store cockpit and vehicle environment media here:
 
-- `CurbsideCinema_Background.jpeg`: Main 16:9 night shot of the BMW X5 cabin overlooking Lady Bird Lake and the Austin skyline.
+- `CurbsideCinema_Background.jpeg`: Main 16:9 night shot of the car cabin overlooking Lady Bird Lake and the Austin skyline.
 
 ### SEO & Performance Guidelines:
 - Optimal format: `.webp` or `.jpeg`
