@@ -132,6 +132,38 @@ passed. The publish script commits `data/pipeline/` and
 
 ---
 
+## In-Car Prep App (`/prep/`, unlisted)
+
+`prep/` is a standalone, no-build web app for the hosts to open on a phone in the
+car. It is deliberately **unlisted**: `noindex` meta tags, no nav links, and
+`Disallow: /prep/` in the generated `robots.txt`. It is not in `sitemap.xml`.
+
+```text
+prep/index.html            app shell (tabs: Packs / New Movie / More)
+prep/app.css               mobile-first dark UI
+prep/app.js                rendering, timer, Wikipedia lookup, local storage
+prep/sw.js                 service worker — works with no signal once visited
+prep/data/index.json       list of published prep packs (newest first)
+prep/data/<key>.json       one full prep pack per episode
+prep/data/leaderboard.json season Rotten Tomatoes standings + last recap
+```
+
+Packs are written by the workspace tool, never by hand:
+
+```bash
+python3 tools/generate_episode_prep.py https://www.imdb.com/title/tt38058097/ \
+  --prev-ep episodes/EP01_Whale_Fall --ep-num 2 --publish-web
+# then publish the site
+cd website && ./scripts/publish.sh --message "Add EP02 Club Kid prep pack"
+```
+
+`--publish-site` does both steps in one command. The **New Movie** tab builds a
+sheet on the phone itself from a title or IMDb link (movie facts via the
+Wikipedia API, which is CORS-enabled and needs no key). Those packs live in
+`localStorage` and survive a reload; the timer, checkmarks, RT guesses and `/10`
+scores are stored per pack on the device and can be exported back as JSON.
+
+
 ## Technical Highlights & Four Core Pillars
 
 ### 1. Error-Free & Clean Code
