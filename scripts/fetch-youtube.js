@@ -18,6 +18,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15
 const BOT_UA = 'Mozilla/5.0 (compatible; CarpoolCriticsBuild/1.0; +https://straughber.github.io/carpool-critics/)';
 
 const episodesPath = path.join(__dirname, '../data/episodes.json');
+const pipelineDir = path.join(__dirname, '../data/pipeline');
 
 // ========================================================
 // 1. FETCH HELPERS
@@ -160,6 +161,85 @@ function deriveMovieQuery(title) {
 }
 
 // ========================================================
+// 2b. PIPELINE PAYLOADS (authoritative content)
+// ========================================================
+/**
+ * tools/export_website_payload.py writes one JSON file per finished episode.
+ * These carry the real title, description, chapters, transcript, host seats and
+ * scorecards, so the site does not have to rediscover them from YouTube.
+ *
+ * YouTube remains authoritative for exactly two things: the video id and
+ * whether the video is public.
+ */
+function loadPipelinePayloads() {
+  try {
+    return fs.readdirSync(pipelineDir)
+      .filter(file => file.endsWith('.json'))
+      .map(file => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(pipelineDir, file), 'utf8'));
+        } catch (err) {
+          console.warn(`[YouTube] Ignoring malformed payload ${file}: ${err.message}`);
+          return null;
+        }
+      })
+      .filter(payload => payload && payload.siteId);
+  } catch {
+    return [];
+  }
+}
+
+/** Pipeline content wins; the scraper only fills gaps. */
+function applyPipelinePayload(episode, payload) {
+  if (!payload) return episode;
+  const first = (...values) => values.find(value => value !== undefined && value !== null && value !== '');
+  return {
+    ...episode,
+    id: first(payload.siteId, episode.id),
+    number: first(payload.number, episode.number),
+    slug: first(payload.slug, episode.slug),
+    title: first(payload.title, episode.title),
+    shortTitle: first(payload.shortTitle, episode.shortTitle),
+    duration: first(payload.duration, episode.duration),
+    durationSeconds: first(payload.durationSeconds, episode.durationSeconds),
+    publishedAt: first(episode.publishedAt, payload.publishedAt),
+    description: first(payload.descriptionOverride, payload.description, episode.description),
+    descriptionOverride: first(payload.descriptionOverride, episode.descriptionOverride),
+    thumbnail: first(payload.thumbnail, episode.thumbnail),
+    chapters: payload.chapters && payload.chapters.length ? payload.chapters : episode.chapters,
+    movieQuery: first(payload.movieQuery, episode.movieQuery),
+    movieYear: first(payload.movieYear, episode.movieYear),
+    transcriptFile: first(payload.transcriptFile, episode.transcriptFile),
+    status: first(episode.status, payload.status, 'live'),
+    publishAt: first(payload.publishAt, episode.publishAt)
+  };
+}
+
+function emptyEpisode(videoId) {
+  return {
+    youtubeId: videoId,
+    title: null,
+    shortTitle: null,
+    duration: null,
+    durationSeconds: null,
+    publishedAt: null,
+    date: null,
+    description: '',
+    descriptionOverride: null,
+    thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    chapters: [],
+    movieQuery: null,
+    movieYear: null,
+    transcriptFile: null,
+    number: null,
+    id: null,
+    slug: null,
+    status: null,
+    publishAt: null
+  };
+}
+
+// ========================================================
 // 3. BUILD
 // ========================================================
 async function run() {
@@ -171,6 +251,17 @@ async function run() {
     previous = [];
   }
   const previousByVideoId = new Map(previous.map(ep => [ep.youtubeId, ep]));
+
+  // Finished episodes exported by tools/export_website_payload.py. These are
+  // the authoritative content source; the scrape below is enrichment only.
+  const pipeline = loadPipelinePayloads();
+  const pipelineByVideoId = new Map(
+    pipeline.filter(payload => payload.youtubeId).map(payload => [payload.youtubeId, payload])
+  );
+  const pipelineLive = pipeline.filter(payload => payload.status === 'live' && payload.youtubeId);
+  if (pipeline.length) {
+    console.log(`[YouTube] ${pipeline.length} pipeline payload(s), ${pipelineLive.length} live.`);
+  }
 
   console.log(`[YouTube] Reading channel ${CHANNEL_ID}...`);
   let entries = [];
@@ -193,12 +284,22 @@ async function run() {
   }
 
   if (entries.length === 0) {
-    console.warn('[YouTube] No public uploads found. Leaving data/episodes.json untouched.');
-    return;
+    if (pipelineLive.length) {
+      console.log('[YouTube] Scrape unavailable; rebuilding from live pipeline payloads.');
+      entries = pipelineLive.map(payload => ({
+        videoId: payload.youtubeId,
+        title: payload.title,
+        publishedAt: payload.publishedAt
+      }));
+    } else {
+      console.warn('[YouTube] No public uploads and no live pipeline payloads. Leaving data/episodes.json untouched.');
+      return;
+    }
   }
 
   const episodes = [];
   for (const entry of entries) {
+    const payload = pipelineByVideoId.get(entry.videoId) || null;
     let details;
     try {
       details = await fetchVideoDetails(entry.videoId);
@@ -223,7 +324,7 @@ async function run() {
     // "descriptionOverride" always wins so a sync never clobbers it.
     const freshDescription = firstParagraph(description);
 
-    episodes.push({
+    episodes.push(applyPipelinePayload({
       youtubeId: entry.videoId,
       title,
       shortTitle: prior.shortTitle || null, // filled below once numbering is known
@@ -240,8 +341,21 @@ async function run() {
       transcriptFile,
       number: prior.number || null,
       id: prior.id || null,
-      slug: prior.slug || null
-    });
+      slug: prior.slug || null,
+      // A video that appears in the public channel scrape is, by definition, live.
+      status: 'live',
+      publishAt: null
+    }, payload));
+  }
+
+  // A live payload whose video the scrape missed (RSS lag, >30 uploads) still
+  // belongs in the public catalog. Scheduled/draft payloads do not: their pages
+  // are rendered separately and stay noindex until YouTube makes them public.
+  const seenVideoIds = new Set(episodes.map(ep => ep.youtubeId));
+  for (const payload of pipelineLive) {
+    if (seenVideoIds.has(payload.youtubeId)) continue;
+    console.log(`[YouTube] Adding ${payload.siteId} from pipeline payload (not seen in scrape).`);
+    episodes.push(applyPipelinePayload(emptyEpisode(payload.youtubeId), payload));
   }
 
   // Number chronologically so the oldest upload is Episode 1. Existing episodes
@@ -276,7 +390,9 @@ async function run() {
     chapters: ep.chapters,
     movieQuery: ep.movieQuery,
     movieYear: ep.movieYear,
-    transcriptFile: ep.transcriptFile
+    transcriptFile: ep.transcriptFile,
+    status: ep.status || 'live',
+    publishAt: ep.publishAt || null
   }));
 
   fs.writeFileSync(episodesPath, `${JSON.stringify(ordered, null, 2)}\n`, 'utf8');

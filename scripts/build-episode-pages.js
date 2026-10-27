@@ -29,6 +29,7 @@ const OG_IMAGE_FALLBACK = `${SITE_ORIGIN}${BASE_PATH}/assets/images/cockpit/Curb
 
 const ROOT = path.join(__dirname, '..');
 const EPISODES_DIR = path.join(ROOT, 'episodes');
+const PIPELINE_DIR = path.join(ROOT, 'data/pipeline');
 const GENERATED_MARKER = '.generated';
 
 const siteUrl = p => `${SITE_ORIGIN}${BASE_PATH}${p}`;
@@ -42,6 +43,88 @@ function readJson(file, fallback) {
   } catch {
     return fallback;
   }
+}
+
+/** One payload per finished episode, written by tools/export_website_payload.py. */
+function readPipelinePayloads() {
+  try {
+    return fs.readdirSync(PIPELINE_DIR)
+      .filter(file => file.endsWith('.json'))
+      .map(file => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(PIPELINE_DIR, file), 'utf8'));
+        } catch (err) {
+          console.warn(`[Pages] Ignoring malformed payload ${file}: ${err.message}`);
+          return null;
+        }
+      })
+      .filter(payload => payload && payload.siteId);
+  } catch {
+    return [];
+  }
+}
+
+function isLiveEpisode(episode) {
+  return episode.status !== 'scheduled' && episode.status !== 'draft' && Boolean(episode.youtubeId);
+}
+
+/**
+ * Pipeline payloads carry content that the YouTube scrape cannot know (host
+ * seats, scorecards, the ranked best moment, uploaded shorts). The public
+ * catalog remains authoritative for live state and YouTube's own duration.
+ */
+function mergeCatalogs(catalog, payloads) {
+  const byVideoId = new Map();
+  const byId = new Map();
+  for (const episode of catalog) {
+    if (episode.youtubeId) byVideoId.set(episode.youtubeId, episode);
+    if (episode.id) byId.set(episode.id, episode);
+  }
+
+  const merged = [];
+  const seen = new Set();
+  for (const payload of payloads) {
+    const base = (payload.youtubeId && byVideoId.get(payload.youtubeId))
+      || byId.get(payload.siteId)
+      || {};
+    const episode = {
+      ...base,
+      ...payload,
+      id: payload.siteId || base.id,
+      youtubeId: payload.youtubeId || base.youtubeId || null,
+      status: base.status || payload.status || 'live',
+      title: payload.title || base.title,
+      shortTitle: payload.shortTitle || base.shortTitle,
+      description: payload.descriptionOverride || base.descriptionOverride || payload.description || base.description || '',
+      descriptionOverride: payload.descriptionOverride || base.descriptionOverride || null,
+      duration: base.duration || payload.duration,
+      durationSeconds: base.durationSeconds || payload.durationSeconds,
+      publishedAt: base.publishedAt || payload.publishedAt,
+      publishAt: payload.publishAt || base.publishAt || null,
+      thumbnail: base.thumbnail || payload.thumbnail,
+      ogImage: payload.ogImage || base.ogImage || null,
+      chapters: payload.chapters && payload.chapters.length ? payload.chapters : (base.chapters || []),
+      movieQuery: payload.movieQuery || base.movieQuery,
+      movieYear: payload.movieYear || base.movieYear,
+      transcriptFile: payload.transcriptFile || base.transcriptFile
+    };
+    merged.push(episode);
+    if (episode.id) seen.add(episode.id);
+    if (episode.youtubeId) seen.add(episode.youtubeId);
+  }
+
+  for (const episode of catalog) {
+    if (seen.has(episode.id) || (episode.youtubeId && seen.has(episode.youtubeId))) continue;
+    merged.push(episode);
+  }
+  return merged;
+}
+
+/** A repo-relative asset path -> a path that works from episodes/<slug>/. */
+function pageAsset(value, depth) {
+  if (!value) return value;
+  if (/^(https?:)?\/\//.test(value)) return value;
+  return `${'../'.repeat(depth)}${String(value).replace(/^\/+/, '')}`;
 }
 
 function escapeHtml(value) {
@@ -124,7 +207,7 @@ const HOST_ROLES = {
 // ========================================================
 // 3. PAGE TEMPLATES
 // ========================================================
-function pageShell({ title, description, canonical, ogImage, ogType = 'article', jsonLd, depth, body, navEpisodes = true }) {
+function pageShell({ title, description, canonical, ogImage, ogType = 'article', jsonLd, depth, body, navEpisodes = true, robots = 'index, follow' }) {
   const asset = p => `${'../'.repeat(depth)}${p}`;
   const jsonLdBlocks = (Array.isArray(jsonLd) ? jsonLd : [jsonLd])
     .filter(Boolean)
@@ -139,7 +222,7 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
 
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeAttr(description)}" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="${escapeAttr(robots)}" />
   <link rel="canonical" href="${canonical}" />
 
   <meta property="og:type" content="${ogType}" />

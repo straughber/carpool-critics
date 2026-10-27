@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "siteId": "ep1",
+  "number": 1,
+  "slug": "ep1-whalefall",
+  "status": "live",
+  "title": "Whalefall: An Extremely Aggressive Way to Avoid Your Problems",
+  "shortTitle": "Ep. 1: Whalefall",
+  "youtubeId": "BpmHfoLEf70",
+  "duration": "20m",
+  "durationSeconds": 1256,
+  "publishedAt": "2026-10-26T17:38:52-07:00",
+  "publishAt": null,
+  "uploadedAt": "2026-10-25T20:02:25.575300",
+  "description": "Shane, Alex, and Dave review Whalefall (2025) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.\n\n🍿 Rotten Tomatoes: https://www.rottentomatoes.com/m/whalefall",
+  "descriptionOverride": "Shane, Alex, and Dave review Whalefall (2026) live from the car! From disturbing deep-sea horror dissections to heated Rotten Tomatoes predictions, the cabin erupts over whether this movie is an underrated thriller or completely unhinged.\n\n🍿 Rotten Tomatoes: https://www.rottentomatoes.com/m/whalefall",
+  "thumbnail": "https://i.ytimg.com/vi/BpmHfoLEf70/hqdefault.jpg",
+  "ogImage": null,
+  "chapters": [
+    {
+      "time": "00:00",
+      "label": "Will He Get Pooped Out? (Whalefall Cold Open)"
+    },
+    {
+      "time": "00:20",
+      "label": "Alex Reads Whalefall's Absurd IMDb Premise (Movie Setup)"
+    },
+    {
+      "time": "01:34",
+      "label": "Predicting Whalefall's Rotten Tomatoes Score (Cabin Chaos)"
+    },
+    {
+      "time": "10:51",
+      "label": "Full Spoiler Review & Dave's 30-Year Ribcage Theory (Ending Breakdown)"
+    },
+    {
+      "time": "18:03",
+      "label": "Final Scorecards: \"He Should've Just Gone to Therapy\" (Review Verdicts)"
+    },
+    {
+      "time": "20:50",
+      "label": "Outro: Surviving the Whale (And the Car Ride)"
+    }
+  ],
+  "movieQuery": "Whalefall",
+  "movieYear": 2026,
+  "transcriptFile": "data/transcripts/ep1.json",
+  "hosts": [
+    {
+      "name": "Shane",
+      "seat": "driver",
+      "role": "Driver",
+      "seatPosition": "front_left",
+      "faceX": 0.6538,
+      "faceY": 0.3345,
+      "detected": true,
+      "description": "Shane / Driver punch-in"
+    },
+    {
+      "name": "Alex",
+      "seat": "passenger",
+      "role": "Passenger",
+      "seatPosition": "front_right",
+      "faceX": 0.348,
+      "faceY": 0.3625,
+      "detected": true,
+      "description": "Alex / Passenger punch-in"
+    },
+    {
+      "name": "Dave",
+      "seat": "backseat",
+      "role": "Back Seat",
+      "seatPosition": "back_center",
+      "faceX": 0.5,
+      "faceY": 0.4,
+      "detected": false,
+      "description": "Dave / Backseat center punch-in"
+    }
+  ],
+  "scorecards": {
+    "Shane": 7.5,
+    "Alex": 6.0,
+    "Dave": 7.0
+  },
+  "bestMoment": {
+    "time": "00:00:00",
+    "seconds": 0,
+    "label": "absurd comedic analogy",
+    "quote": "I at one point was thinking, is he going to get pooped out? And I was just wondering how far they would end up taking the whale's guts. Yeah..."
+  },
+  "shorts": [
+    {
+      "id": 6,
+      "title": "The Definition of 'Dork' Divided Our Whalefall Review #Shorts",
+      "videoId": "JUfvqlgUj8I",
+      "url": "https://youtube.com/shorts/JUfvqlgUj8I",
+      "duration": 15.1,
+      "viralScore": 90,
+      "category": "content_reframing_structural_flips"
+    },
+    {
+      "id": 7,
+      "title": "Going Into Whalefall Expecting Complete Disaster #Shorts",
+      "videoId": "ZslCSuRGlyQ",
+      "url": "https://youtube.com/shorts/ZslCSuRGlyQ",
+      "duration": 27.0,
+      "viralScore": 90,
+      "category": "micro_cut_linguistic_gags"
+    },
+    {
+      "id": 8,
+      "title": "Is Whalefall's Script Genius or Completely Clueless? #Shorts",
+      "videoId": "mDy-6fL5bxk",
+      "url": "https://youtube.com/shorts/mDy-6fL5bxk",
+      "duration": 15.8,
+      "viralScore": 90,
+      "category": "micro_cut_linguistic_gags"
+    },
+    {
+      "id": 1,
+      "title": "Will Audiences Hate Whalefall More Than Us? #Shorts",
+      "videoId": "74MLl_LhmII",
+      "url": "https://youtube.com/shorts/74MLl_LhmII",
+      "duration": 16.16,
+      "viralScore": 60,
+      "category": "ai_viral_debate"
+    },
+    {
+      "id": 2,
+      "title": "Predicting Whalefall's Rotten Tomatoes Score: 44%?! #Shorts",
+      "videoId": "sxrQX3su8PE",
+      "url": "https://youtube.com/shorts/sxrQX3su8PE",
+      "duration": 10.42,
+      "viralScore": 60,
+      "category": "ai_viral_debate"
+    },
+    {
+      "id": 3,
+      "title": "Whalefall Warning: Turn It Off Now If You Hate Spoilers #Shorts",
+      "videoId": "VjHQX24Wnac",
+      "url": "https://youtube.com/shorts/VjHQX24Wnac",
+      "duration": 45.96,
+      "viralScore": 55,
+      "category": "ai_viral_debate"
+    }
+  ],
+  "source": {
+    "episode": "EP01_Whale_Fall",
+    "publishingPackage": "episodes/EP01_Whale_Fall/03_Episode_Cuts/publishing_package.json",
+    "transcript": "episodes/EP01_Whale_Fall/02_Transcription/EP01_Whale_Fall_transcript.json",
+    "timeMap": "episodes/EP01_Whale_Fall/03_Episode_Cuts/master_timeline_map.json",
+    "calibration": "episodes/EP01_Whale_Fall/01_Raw_Footage/spatial_framing_calibration.json",
+    "droppedTranscriptTurns": 53,
+    "transcriptTurns": 72
+  }
+}
