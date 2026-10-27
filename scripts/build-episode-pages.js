@@ -291,7 +291,7 @@ ${body}
   <footer class="site-foot">
     <div class="wrap">
       <span>&copy; ${new Date().getFullYear()} ${SITE_NAME} · ${escapeHtml(SITE_TAGLINE)}</span>
-      <span>Recorded in a BMW X5, Austin, Texas</span>
+      <span>Recorded in a parked car, Austin, Texas</span>
     </div>
   </footer>
 

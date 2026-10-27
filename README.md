@@ -2,10 +2,9 @@
 
 Film reviews recorded in a parked car, the moment the credits roll.
 
-Alex, Dave, and Shane watch a movie, head out to the car, and argue about it in a
-stationary BMW X5: first impressions, Rotten Tomatoes guesses, spoiler debate, and a score
-for every host on a tachometer. Episodes run about 20-25 minutes and are published on
-YouTube.
+Alex, Dave, and Shane watch a movie, head out to the car, and argue about it while the car
+is parked: first impressions, Rotten Tomatoes guesses, spoiler debate, and a score for
+every host on a tachometer. Episodes run about 20-25 minutes and are published on YouTube.
 
 * **Live site:** [carpoolcritics.com](https://carpoolcritics.com/)
 * **YouTube:** [@CarpoolCritics](https://www.youtube.com/@CarpoolCritics)
