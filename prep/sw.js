@@ -1,8 +1,11 @@
 /* Carpool Critics — In-Car Prep service worker.
    Keeps the prep sheet usable when the car has no signal.
-   Shell is cache-first; data is network-first so packs stay fresh. */
 
-const CACHE = 'ccprep-v1';
+   Strategy (v2): navigations and data are network-first so a deploy is picked
+   up on the next online visit; other assets are stale-while-revalidate so the
+   app opens instantly and still works offline. */
+
+const CACHE = 'ccprep-v2';
 const SHELL = [
   './',
   './index.html',
@@ -29,6 +32,13 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+function put(request, response) {
+  if (!response || !response.ok) return response;
+  const copy = response.clone();
+  caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+  return response;
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
@@ -38,25 +48,24 @@ self.addEventListener('fetch', (event) => {
   if (!url.pathname.includes('/prep/')) return;
 
   const isData = url.pathname.includes('/prep/data/');
+  const isNavigation = request.mode === 'navigate' || url.pathname.endsWith('/prep/');
+  const isSource = /\.(js|css)$/.test(url.pathname);
 
-  if (isData) {
+  if (isData || isNavigation || isSource) {
+    // Network first: fresh HTML, JS, CSS and packs whenever there is signal.
     event.respondWith(
       fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
-          return response;
-        })
-        .catch(() => caches.match(request).then((hit) => hit || Response.error()))
+        .then((response) => put(request, response))
+        .catch(() => caches.match(request, { ignoreSearch: true })
+          .then((hit) => hit || caches.match('./index.html')))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(request).then((hit) => hit || fetch(request).then((response) => {
-      const copy = response.clone();
-      caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
-      return response;
-    }).catch(() => caches.match('./index.html')))
+    caches.match(request, { ignoreSearch: true }).then((hit) => {
+      const network = fetch(request).then((response) => put(request, response)).catch(() => null);
+      return hit || network || Response.error();
+    })
   );
 });
