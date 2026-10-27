@@ -2,7 +2,7 @@
 
 An interactive film review dispatch recorded inside a car after watching a movie. Hosts Alex, Dave, and Shane debrief hot takes, cinematic pacing, creature effects, and coming-of-age films the moment the credits roll. Seats are measured per episode, so the site never assumes who is driving.
 
-* **Live Site**: [https://straughber.github.io/carpool-critics/](https://straughber.github.io/carpool-critics/)
+* **Live Site**: [https://carpoolcritics.com/](https://carpoolcritics.com/)
 * **Format**: Interactive Single-Page Web App (SPA) with On-Demand Transcripts and TMDb Movie Profiles
 
 ---

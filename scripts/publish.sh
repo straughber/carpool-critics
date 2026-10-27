@@ -25,7 +25,7 @@ MODE="manual"
 VERIFY=1
 DRY_RUN=0
 CUSTOM_MESSAGE=""
-SITE_URL="https://straughber.github.io/carpool-critics"
+SITE_URL="https://carpoolcritics.com"
 BRANCH="main"
 
 while [ $# -gt 0 ]; do

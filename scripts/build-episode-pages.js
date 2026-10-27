@@ -21,8 +21,10 @@ const path = require('path');
 // ========================================================
 // Absolute URLs are required for canonical/Open Graph/sitemap entries.
 // Local preview (http://localhost:8080) uses relative asset paths, so it works.
-const SITE_ORIGIN = 'https://straughber.github.io';
-const BASE_PATH = '/carpool-critics';
+// The site lives at the apex of its own domain (GitHub Pages custom domain),
+// so there is no repo subpath to prefix onto absolute URLs.
+const SITE_ORIGIN = 'https://carpoolcritics.com';
+const BASE_PATH = '';
 const SITE_NAME = 'Carpool Critics';
 const SITE_TAGLINE = 'Fresh Out the Doors, Straight to the Dash — Austin, TX';
 const OG_IMAGE_FALLBACK = `${SITE_ORIGIN}${BASE_PATH}/assets/images/cockpit/CurbsideCinema_Background.jpeg`;
