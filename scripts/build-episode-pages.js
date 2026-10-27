@@ -50,8 +50,9 @@ function readJson(file, fallback) {
 /** One payload per finished episode, written by tools/export_website_payload.py. */
 function readPipelinePayloads() {
   try {
-    return fs.readdirSync(PIPELINE_DIR)
+    const payloads = fs.readdirSync(PIPELINE_DIR)
       .filter(file => file.endsWith('.json'))
+      .sort()
       .map(file => {
         try {
           return JSON.parse(fs.readFileSync(path.join(PIPELINE_DIR, file), 'utf8'));
@@ -61,6 +62,15 @@ function readPipelinePayloads() {
         }
       })
       .filter(payload => payload && payload.siteId);
+    const seen = new Set();
+    return payloads.filter(payload => {
+      if (seen.has(payload.siteId)) {
+        console.warn(`[Pages] Duplicate pipeline payload for ${payload.siteId}; keeping the first`);
+        return false;
+      }
+      seen.add(payload.siteId);
+      return true;
+    });
   } catch {
     return [];
   }
@@ -89,6 +99,7 @@ function mergeCatalogs(catalog, payloads) {
 
   const merged = [];
   const seen = new Set();
+  const seenSlugs = new Set();
   for (const payload of payloads) {
     const base = (payload.youtubeId && byVideoId.get(payload.youtubeId))
       || byId.get(payload.siteId)
@@ -109,9 +120,16 @@ function mergeCatalogs(catalog, payloads) {
       ...base,
       ...payload,
       id: payload.siteId || base.id,
-      youtubeId: payload.youtubeId || base.youtubeId || null,
+      youtubeId: (status === 'live' && base.youtubeId)
+        ? base.youtubeId
+        : (payload.youtubeId || base.youtubeId || null),
       status,
-      title: payload.title || base.title,
+      // The live catalog is what YouTube actually shows. A package title is
+      // copy the pipeline proposed, not proof it shipped; it must not pin the
+      // page after the creator changes the title in Studio.
+      title: (status === 'live' && base.title)
+        ? base.title
+        : (payload.title || base.title),
       shortTitle: payload.shortTitle || base.shortTitle,
       description: payload.descriptionOverride || base.descriptionOverride || payload.description || base.description || '',
       descriptionOverride: payload.descriptionOverride || base.descriptionOverride || null,
@@ -119,14 +137,21 @@ function mergeCatalogs(catalog, payloads) {
       durationSeconds: base.durationSeconds || payload.durationSeconds,
       publishedAt: base.publishedAt || payload.publishedAt,
       publishAt: payload.publishAt || base.publishAt || null,
-      thumbnail: base.thumbnail || payload.thumbnail,
+      thumbnail: (status === 'live' && (base.youtubeId || payload.youtubeId))
+        ? `https://i.ytimg.com/vi/${base.youtubeId || payload.youtubeId}/hqdefault.jpg`
+        : (base.thumbnail || payload.thumbnail),
       ogImage: payload.ogImage || base.ogImage || null,
       chapters: payload.chapters && payload.chapters.length ? payload.chapters : (base.chapters || []),
       movieQuery: payload.movieQuery || base.movieQuery,
       movieYear: payload.movieYear || base.movieYear,
       transcriptFile: payload.transcriptFile || base.transcriptFile
     };
+    if (episode.slug && seenSlugs.has(episode.slug)) {
+      console.warn(`[Pages] Duplicate slug ${episode.slug}; keeping the first payload`);
+      continue;
+    }
     merged.push(episode);
+    if (episode.slug) seenSlugs.add(episode.slug);
     if (episode.id) seen.add(episode.id);
     if (episode.youtubeId) seen.add(episode.youtubeId);
   }
@@ -321,6 +346,10 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="${asset('assets/favicon.svg')}" type="image/svg+xml">
+  <link rel="icon" href="${asset('assets/favicon-32.png')}" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="${asset('assets/apple-touch-icon.png')}">
+  <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} episodes" href="${siteUrl('/feed.xml')}">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.1.0" />
   <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.0.0" />
@@ -383,7 +412,13 @@ function filmCard(movie) {
 }
 
 function chapterSection(episode, isLive) {
-  const chapters = (episode.chapters || []).filter(c => c && c.time);
+  const maxSeconds = Number(episode.durationSeconds) || null;
+  const chapters = (episode.chapters || [])
+    .filter(c => c && c.time)
+    .filter(c => {
+      const seconds = parseTimeToSeconds(c.time);
+      return maxSeconds == null || seconds == null || seconds < maxSeconds - 1;
+    });
   if (!chapters.length) return '';
   const items = chapters.map(chapter => {
     const seconds = parseTimeToSeconds(chapter.time);
@@ -423,7 +458,7 @@ function bestMomentSection(episode, isLive) {
   const moment = episode.bestMoment;
   if (!moment || !moment.quote) return '';
   const href = isLive && episode.youtubeId
-    ? watchUrl(episode.youtubeId, moment.seconds || 0)
+    ? watchUrl(episode.youtubeId, moment.seconds != null ? moment.seconds : 0)
     : null;
   return `
       <section class="section" aria-labelledby="moment-heading">
@@ -441,7 +476,13 @@ function formatClock(seconds) {
 }
 
 function shortsSection(episode) {
-  const shorts = (episode.shorts || []).filter(short => short && short.url);
+  const now = Date.now();
+  const shorts = (episode.shorts || []).filter(short => {
+    if (!short || !short.url) return false;
+    if (!short.publishAt) return true;
+    const at = new Date(short.publishAt).getTime();
+    return Number.isFinite(at) ? at <= now : true;
+  });
   if (!shorts.length) return '';
   const items = shorts.map(short => `        <li><a href="${escapeAttr(short.url)}" rel="noopener"><span class="chapter-time">${escapeHtml(short.duration ? formatClock(short.duration) : '')}</span><span>${escapeHtml(short.title || 'Short')}</span></a></li>`).join('\n');
   return `
@@ -463,8 +504,13 @@ function hostsByline(episode) {
   return `Hosts: ${joined}`;
 }
 
-function transcriptSection(transcript) {
+function transcriptSection(transcript, source) {
   if (!transcript || !Array.isArray(transcript.dialogue) || !transcript.dialogue.length) return '';
+  const dropped = Number(source && source.droppedTranscriptTurns) || 0;
+  const heading = dropped > 0 ? '◊ PARTIAL TRANSCRIPT' : '◊ FULL TRANSCRIPT';
+  const note = dropped > 0
+    ? `<p class="transcript-note">${dropped} raw turn(s) were cut from the master and are not shown. This is the dialogue that survived the edit.</p>`
+    : '';
   const turns = transcript.dialogue.map(turn => `      <div class="transcript-turn">
         <div class="turn-meta">
           <span class="turn-time">${escapeHtml(turn.time)}</span>
@@ -475,7 +521,8 @@ function transcriptSection(transcript) {
 
   return `
       <section class="section" aria-labelledby="transcript-heading">
-        <h2 class="section-title" id="transcript-heading">◊ FULL TRANSCRIPT</h2>
+        <h2 class="section-title" id="transcript-heading">${heading}</h2>
+        ${note}
 ${turns}
       </section>`;
 }
@@ -505,7 +552,9 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   const metaDescription = truncate(description || `${title}. A ${episode.duration || ''} film review recorded live from the car.`, 155);
 
   const year = movie && movie.year ? ` (${movie.year})` : '';
-  const h1 = movie ? `${movie.title}${year} Review` : title;
+  // The visible title must be the title the audience actually clicked on
+  // YouTube, not a second title invented by the site builder.
+  const h1 = title;
 
   const byline = [
     episode.number ? `<span>EPISODE ${escapeHtml(String(episode.number))}</span>` : '',
@@ -554,7 +603,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
       ${bestMomentSection(episode, isLive)}
       ${chapterSection(episode, isLive)}
       ${shortsSection(episode)}
-      ${transcriptSection(transcript)}
+      ${transcriptSection(transcript, episode.source)}
       ${pager}
     </article>`;
 
@@ -618,7 +667,11 @@ function buildArchivePage(episodes, movies) {
   const title = `All Episodes | ${SITE_NAME}`;
   const description = `Every ${SITE_NAME} episode: in-car film reviews recorded live in Austin, Texas. Full transcripts, chapters, and scorecards.`;
 
-  const items = episodes.map((ep, index) => {
+  // A scheduled page is a review surface for the creator, not a catalogue
+  // entry. Listing its title and thumbnail on an indexable archive leaks the
+  // premiere before YouTube does.
+  const archiveEpisodes = episodes.filter(isLiveEpisode);
+  const items = archiveEpisodes.map((ep, index) => {
     const movie = movies[ep.id];
     const isLive = isLiveEpisode(ep);
     const meta = isLive
@@ -653,7 +706,7 @@ function buildArchivePage(episodes, movies) {
       <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // HOV-3</p>
       <h1 class="ep-title">ALL EPISODES</h1>
       <div class="ep-byline">
-        <span>${episodes.length} EPISODE${episodes.length === 1 ? '' : 'S'}</span>
+        <span>${archiveEpisodes.length} EPISODE${archiveEpisodes.length === 1 ? '' : 'S'}</span>
         <span>IN-CAR FILM REVIEWS // AUSTIN, TX</span>
       </div>
     </header>
@@ -681,6 +734,43 @@ ${items || '        <li class="archive-item"><div class="archive-body"><div clas
     },
     body
   });
+}
+
+function escapeXml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function buildFeed(episodes) {
+  const live = episodes.filter(isLiveEpisode);
+  const items = live.map(ep => {
+    const url = siteUrl(`/episodes/${ep.slug}/`);
+    const date = ep.publishedAt ? new Date(ep.publishedAt) : null;
+    const pubDate = date && !Number.isNaN(date.getTime()) ? date.toUTCString() : '';
+    return `    <item>
+      <title>${escapeXml(ep.shortTitle || ep.title)}</title>
+      <link>${escapeXml(url)}</link>
+      <guid isPermaLink="true">${escapeXml(url)}</guid>
+      ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ''}
+      <description>${escapeXml(ep.description || '')}</description>
+    </item>`;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>${escapeXml(SITE_NAME)}</title>
+    <link>${escapeXml(siteUrl('/'))}</link>
+    <description>${escapeXml(SITE_TAGLINE)}</description>
+    <language>en-us</language>
+${items}
+  </channel>
+</rss>
+`;
 }
 
 function buildSitemap(episodes) {
@@ -715,6 +805,7 @@ function buildRobots() {
   return `User-agent: *
 Allow: /
 Disallow: /prep/
+Disallow: /data/
 
 Sitemap: ${siteUrl('/sitemap.xml')}
 `;
@@ -775,8 +866,9 @@ async function run() {
 
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), buildSitemap(episodes), 'utf8');
   fs.writeFileSync(path.join(ROOT, 'robots.txt'), buildRobots(), 'utf8');
+  fs.writeFileSync(path.join(ROOT, 'feed.xml'), buildFeed(episodes), 'utf8');
   const liveCount = episodes.filter(isLiveEpisode).length;
-  console.log(`[Pages] sitemap.xml (${liveCount + 2} urls, ${episodes.length - liveCount} pre-release excluded) + robots.txt`);
+  console.log(`[Pages] sitemap.xml (${liveCount + 2} urls, ${episodes.length - liveCount} pre-release excluded) + robots.txt + feed.xml`);
 }
 
 run().catch(err => {

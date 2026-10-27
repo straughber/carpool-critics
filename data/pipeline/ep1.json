@@ -14,7 +14,7 @@
   "uploadedAt": "2026-10-26T23:53:42.308962",
   "description": "Whalefall (2026): I at one point was thinking, is he going to get pooped out?",
   "descriptionOverride": null,
-  "thumbnail": "https://i.ytimg.com/vi/BpmHfoLEf70/hqdefault.jpg",
+  "thumbnail": "https://i.ytimg.com/vi/Be0RFbGbbSU/hqdefault.jpg",
   "ogImage": null,
   "chapters": [
     {
@@ -36,10 +36,6 @@
     {
       "time": "20:00",
       "label": "Scorecards Nobody Agreed To"
-    },
-    {
-      "time": "22:40",
-      "label": "Outro: The Car Survives"
     }
   ],
   "movieQuery": "Whalefall",
@@ -96,7 +92,8 @@
       "url": "https://youtube.com/shorts/qgG2QjiJQog",
       "duration": 15.1,
       "viralScore": 90,
-      "category": "content_reframing_structural_flips"
+      "category": "content_reframing_structural_flips",
+      "publishAt": "2026-11-08T16:00:00Z"
     },
     {
       "id": 7,
@@ -105,7 +102,8 @@
       "url": "https://youtube.com/shorts/YAnnYJKIZAI",
       "duration": 27.0,
       "viralScore": 90,
-      "category": "micro_cut_linguistic_gags"
+      "category": "micro_cut_linguistic_gags",
+      "publishAt": "2026-11-14T16:00:00Z"
     },
     {
       "id": 8,
@@ -114,7 +112,8 @@
       "url": "https://youtube.com/shorts/6aPLtgWZuG8",
       "duration": 15.8,
       "viralScore": 90,
-      "category": "micro_cut_linguistic_gags"
+      "category": "micro_cut_linguistic_gags",
+      "publishAt": "2026-11-16T16:00:00Z"
     },
     {
       "id": 9,
@@ -123,7 +122,8 @@
       "url": "https://youtube.com/shorts/WMT57_RO2qk",
       "duration": 35.3,
       "viralScore": 90,
-      "category": "content_reframing_structural_flips"
+      "category": "content_reframing_structural_flips",
+      "publishAt": "2026-11-11T16:00:00Z"
     },
     {
       "id": 1,
@@ -132,7 +132,8 @@
       "url": "https://youtube.com/shorts/uvCFbGh4EV4",
       "duration": 16.16,
       "viralScore": 60,
-      "category": "ai_viral_debate"
+      "category": "ai_viral_debate",
+      "publishAt": "2026-10-28T16:00:00Z"
     },
     {
       "id": 2,
@@ -141,7 +142,38 @@
       "url": "https://youtube.com/shorts/ZR7KUFCSskY",
       "duration": 10.42,
       "viralScore": 60,
-      "category": "ai_viral_debate"
+      "category": "ai_viral_debate",
+      "publishAt": "2026-10-30T16:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Shane's Whalefall score, argued at 0 mph",
+      "videoId": "nV7WOJ66TGc",
+      "url": "https://youtube.com/shorts/nV7WOJ66TGc",
+      "duration": 45.96,
+      "viralScore": 55,
+      "category": "ai_viral_debate",
+      "publishAt": "2026-11-02T16:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Whalefall, argued at 0 mph",
+      "videoId": "KO_rNAVytDY",
+      "url": "https://youtube.com/shorts/KO_rNAVytDY",
+      "duration": 17.48,
+      "viralScore": 50,
+      "category": "ai_viral_debate",
+      "publishAt": "2026-11-06T16:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "The father figure, you can tell, he was meaning well (Whalefall)",
+      "videoId": "bWauqApDPnE",
+      "url": "https://youtube.com/shorts/bWauqApDPnE",
+      "duration": 24.14,
+      "viralScore": 50,
+      "category": "ai_viral_debate",
+      "publishAt": "2026-11-05T16:00:00Z"
     }
   ],
   "source": {

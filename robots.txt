@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /prep/
+Disallow: /data/
 
 Sitemap: https://carpoolcritics.com/sitemap.xml

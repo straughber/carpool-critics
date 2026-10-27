@@ -55,7 +55,7 @@ echo $$ > "$LOCK/pid"
 trap 'rm -rf "$LOCK"' EXIT
 
 # ------------------------------------------------------------ working tree rule
-GENERATED_PATHS='^(episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/)'
+GENERATED_PATHS='^(episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/)'
 UNAPPROVED="$(git status --porcelain | cut -c4- | grep -vE "$GENERATED_PATHS" || true)"
 if [ "$MODE" = "auto" ] && [ -n "$UNAPPROVED" ]; then
   printf '%s\n' "$UNAPPROVED" | sed 's/^/  /'
@@ -82,6 +82,7 @@ node -e '
 [ -f episodes/index.html ] || fail "episodes/index.html missing (build-episode-pages.js did not run?)" 1
 [ -f sitemap.xml ] || fail "sitemap.xml missing" 1
 [ -f robots.txt ] || fail "robots.txt missing" 1
+[ -f feed.xml ] || fail "feed.xml missing (build-episode-pages.js did not run?)" 1
 
 EPISODE_COUNT="$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/episodes.json","utf8")).length)')"
 # Scheduled episodes are rendered but intentionally absent from the public

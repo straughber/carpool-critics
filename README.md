@@ -25,6 +25,9 @@ Highlights:
 * **Cached catalog data** so visitors never call YouTube or TMDb for metadata
 * **Scheduled episodes** get a real page before release, kept out of search until the
   video is public
+* **An RSS feed** (`feed.xml`) and a brand favicon for discovery and link previews
+* **Live YouTube metadata wins**: the scraped title/thumbnail cannot be pinned by an
+  older pipeline package
 
 ---
 

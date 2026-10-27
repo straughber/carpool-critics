@@ -198,7 +198,7 @@ function applyPipelinePayload(episode, payload) {
     id: first(payload.siteId, episode.id),
     number: first(payload.number, episode.number),
     slug: first(payload.slug, episode.slug),
-    title: first(payload.title, episode.title),
+    title: first(episode.title, payload.title),
     shortTitle: first(payload.shortTitle, episode.shortTitle),
     // YouTube's own duration wins for a public video; the pipeline's master
     // duration is the fallback for scheduled/draft episodes.
@@ -207,7 +207,7 @@ function applyPipelinePayload(episode, payload) {
     publishedAt: first(episode.publishedAt, payload.publishedAt),
     description: first(payload.descriptionOverride, payload.description, episode.description),
     descriptionOverride: first(payload.descriptionOverride, episode.descriptionOverride),
-    thumbnail: first(payload.thumbnail, episode.thumbnail),
+    thumbnail: first(episode.thumbnail, payload.thumbnail),
     chapters: payload.chapters && payload.chapters.length ? payload.chapters : episode.chapters,
     movieQuery: first(payload.movieQuery, episode.movieQuery),
     movieYear: first(payload.movieYear, episode.movieYear),
@@ -311,7 +311,9 @@ async function run() {
     }
 
     const prior = previousByVideoId.get(entry.videoId) || {};
-    const title = prior.title || details.title || entry.title || 'Untitled Episode';
+    // The live channel is authoritative for the title. The previous catalog is
+    // a fallback for a transient scrape failure, never a pin.
+    const title = details.title || prior.title || entry.title || 'Untitled Episode';
     const publishedAt = details.publishedAt || entry.publishedAt || null;
     const description = details.description || '';
     const chapters = parseChapters(description);
@@ -370,6 +372,17 @@ async function run() {
     if (seenVideoIds.has(payload.youtubeId)) continue;
     console.log(`[YouTube] Adding ${payload.siteId} from pipeline payload (not seen in scrape).`);
     episodes.push(applyPipelinePayload(emptyEpisode(payload.youtubeId), payload));
+  }
+
+  // A partial scrape (RSS returns ~15 items, /videos returns one page) must not
+  // delete the rest of the catalogue or 404 its already-indexed pages. Keep
+  // previous live episodes the current scrape did not mention; a deliberate
+  // prune can be done with a later, explicit flag once the API sync is in place.
+  for (const prior of previous) {
+    if (!prior.youtubeId || seenVideoIds.has(prior.youtubeId)) continue;
+    console.warn(`[YouTube] ${prior.id || prior.youtubeId} missing from this scrape; keeping the previous live record`);
+    episodes.push({ ...prior });
+    seenVideoIds.add(prior.youtubeId);
   }
 
   // Number chronologically so the oldest upload is Episode 1. Existing episodes

@@ -455,6 +455,17 @@ h2.section-title {
 }
 
 /* ---------- Transcript ---------- */
+.transcript-note {
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(142, 141, 138, 0.55);
+  background: rgba(18, 19, 22, 0.72);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .transcript-turn {
   padding: 10px 0 10px 14px;
   border-bottom: 1px dashed rgba(142, 141, 138, 0.35);
