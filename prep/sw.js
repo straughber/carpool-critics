@@ -1,16 +1,17 @@
 /* Carpool Critics — In-Car Prep service worker.
    Keeps the prep sheet usable when the car has no signal.
 
-   Strategy (v2): navigations and data are network-first so a deploy is picked
+   Strategy (v3): navigations and data are network-first so a deploy is picked
    up on the next online visit; other assets are stale-while-revalidate so the
    app opens instantly and still works offline. */
 
-const CACHE = 'ccprep-v2';
+const CACHE = 'ccprep-v3';
 const SHELL = [
   './',
   './index.html',
   './app.css',
   './app.js',
+  '../assets/css/site-bar.css',
   './data/index.enc.json',
   './data/leaderboard.json'
 ];
@@ -45,7 +46,10 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-  if (!url.pathname.includes('/prep/')) return;
+
+  // The shared brand bar is the one asset this app loads from outside /prep/.
+  const isSiteBar = url.pathname === '/assets/css/site-bar.css';
+  if (!url.pathname.includes('/prep/') && !isSiteBar) return;
 
   const isData = url.pathname.includes('/prep/data/');
   const isNavigation = request.mode === 'navigate' || url.pathname.endsWith('/prep/');

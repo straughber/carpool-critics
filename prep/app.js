@@ -20,7 +20,7 @@ const SEGMENTS = [
   { key: 'intro',   name: 'Movie Intro & IMDb Read',          start: 0,    end: 120  },
   { key: 'rt',      name: "Last Episode's RT Scoreboard",     start: 120,  end: 270  },
   { key: 'nonspoil',name: 'Non-Spoiler, RT Guesses, Rec',     start: 270,  end: 570  },
-  { key: 'spoiler', name: '🚨 Spoiler Deep-Dive',              start: 570,  end: 1230 },
+  { key: 'spoiler', name: 'Spoiler Deep-Dive',                start: 570,  end: 1230 },
   { key: 'scores',  name: 'Final Tachometer Scores',          start: 1230, end: 1350 },
   { key: 'bits',    name: 'Humorous Bits for Shorts',         start: 1350, end: 1650 },
   { key: 'outro',   name: 'Outro & 20s End-Screen Hold',      start: 1650, end: 1680 }
@@ -413,8 +413,8 @@ function rtBlock(recap) {
     const a = g.audience != null ? `${g.audience}%` : '—';
     const cd = g.critics_diff != null ? `<span class="rt-diff">off by ${g.critics_diff}</span>` : '';
     const ad = g.audience_diff != null ? `<span class="rt-diff">off by ${g.audience_diff}</span>` : '';
-    const cw = (recap.critics_winners || []).includes(host) ? '<span class="win">🏆 CLOSEST</span>' : '';
-    const aw = (recap.audience_winners || []).includes(host) ? '<span class="win">🏆 CLOSEST</span>' : '';
+    const cw = (recap.critics_winners || []).includes(host) ? '<span class="win">◊ CLOSEST</span>' : '';
+    const aw = (recap.audience_winners || []).includes(host) ? '<span class="win">◊ CLOSEST</span>' : '';
     const pts = (recap.points_awarded || {})[host] || 0;
     return `<tr>
       <td>${esc(host)}</td>
@@ -428,8 +428,8 @@ function rtBlock(recap) {
     <div class="rt-top">
       <div>Last movie: <strong>${esc(recap.movie_title || '—')}</strong></div>
       <div class="rt-actuals">
-        <span>🍅 <strong>${recap.actual_critics != null ? recap.actual_critics + '%' : '—'}</strong></span>
-        <span>🍿 <strong>${recap.actual_audience != null ? recap.actual_audience + '%' : '—'}</strong></span>
+        <span class="rt-actual">Critics <strong>${recap.actual_critics != null ? recap.actual_critics + '%' : '—'}</strong></span>
+        <span class="rt-actual">Audience <strong>${recap.actual_audience != null ? recap.actual_audience + '%' : '—'}</strong></span>
       </div>
     </div>
     <table class="rt-table">
@@ -528,12 +528,12 @@ function render(pack) {
 
   const html = `
     <div class="card">
-      <h2 class="card-title" style="font-size:19px;">${esc(movie.title || 'Untitled')} ${movie.release_year ? `<span style="color:var(--ink-dim);font-weight:600;">(${esc(movie.release_year)})</span>` : ''}</h2>
+      <h2 class="card-title card-title-lg">${esc(movie.title || 'Untitled')} ${movie.release_year ? `<span class="title-year">(${esc(movie.release_year)})</span>` : ''}</h2>
       ${movieHeader(movie, recap, standings)}
       ${standings ? standingsBlock(standings) : ''}
       <div class="actions">
         <button class="btn" id="export-btn">Export notes</button>
-        ${movie.imdb_url ? `<a class="btn" href="${esc(movie.imdb_url)}" target="_blank" rel="noopener">IMDb ↗</a>` : ''}
+        ${movie.imdb_url ? `<a class="btn" href="${esc(movie.imdb_url)}" target="_blank" rel="noopener">[ IMDb ]</a>` : ''}
       </div>
     </div>
 
@@ -558,7 +558,7 @@ function render(pack) {
       qItem(`${pack.key}:rec:follow`, 'Audience recommendation', deck.recommendation_prompt.follow_up || '')
     )}
 
-    ${seg('spoiler', 4, '🚨 Spoiler Deep-Dive', '9:30–20:30',
+    ${seg('spoiler', 4, 'Spoiler Deep-Dive', '9:30–20:30',
       `<div class="callout">Say the spoiler warning out loud: <strong>“Spoiler warning in three, two, one.”</strong> The editor cuts Act 3 on that line.</div>` +
       deck.spoiler_questions.map((q, i) => qItem(`${pack.key}:sp:${i}`, q.tag, q.question)).join('') +
       qItem(`${pack.key}:sp:wild`, 'Free square', 'Best line, biggest laugh, or the thing you will still be arguing about in the car next week.')
@@ -583,7 +583,7 @@ function render(pack) {
 
   $('#pane-packs').innerHTML = `
     <div class="actions" style="margin:0 0 12px;">
-      <button class="btn" id="back-btn" style="flex:0 0 auto;">‹ Packs</button>
+      <button class="btn" id="back-btn" style="flex:0 0 auto;">[ Back to packs ]</button>
       <button class="btn" id="collapse-btn" style="flex:0 0 auto;">Collapse all</button>
     </div>
     <div id="pack-output">${html}</div>`;
@@ -727,7 +727,7 @@ function animateTimer() {
 
   const active = SEGMENTS.find((s) => seconds < s.end) || SEGMENTS[SEGMENTS.length - 1];
   phaseEl.textContent = seconds >= 1680
-    ? '⬛ Over target — wrap it up'
+    ? '● Over target — wrap it up'
     : `${active.name} · ends ${fmtClock(active.end)}`;
 
   const pct = Math.min(100, (seconds / 1680) * 100);
@@ -873,6 +873,10 @@ function packKeyFor(pack, file) {
 
 async function loadPackList({ restore = true } = {}) {
   $('#pane-packs').innerHTML = `
+    <div class="pane-head">
+      <p class="pane-eyebrow">VIEW // 01</p>
+      <h2 class="pane-title">◊ Prep Packs</h2>
+    </div>
     <p class="hint">Prep packs generated on the Mac. Tap one to load it in the car.</p>
     <div id="pack-list" class="pack-list"><div class="skeleton">Loading packs…</div></div>`;
   showPane('packs');
@@ -888,10 +892,10 @@ async function loadPackList({ restore = true } = {}) {
       <button class="pack" data-pack="${esc(p.file)}">
         <span class="pack-ep">EP${String(p.episode_number).padStart(2, '0')}</span>
         <span class="pack-body">
-          <span class="pack-title">${esc(p.movie_title)}${p.release_year ? ` <span style="color:var(--ink-dim)">(${esc(p.release_year)})</span>` : ''}</span>
+          <span class="pack-title">${esc(p.movie_title)}${p.release_year ? ` <span class="title-year">(${esc(p.release_year)})</span>` : ''}</span>
           <span class="pack-meta">${esc(p.subtitle || [p.runtime, p.rating].filter(Boolean).join(' · ') || 'Prep pack')}</span>
         </span>
-        <span class="pack-chev">›</span>
+        <span class="pack-chev" aria-hidden="true">&gt;</span>
       </button>`).join('');
   }
 
@@ -929,12 +933,12 @@ async function loadPackList({ restore = true } = {}) {
       const btn = document.createElement('button');
       btn.className = 'pack';
       btn.innerHTML = `
-        <span class="pack-ep" style="color:var(--purple);font-size:10px;letter-spacing:0.06em;">PHONE</span>
+        <span class="pack-ep is-phone">PHONE</span>
         <span class="pack-body">
-          <span class="pack-title">${esc(pack.movie?.title || 'Untitled')}${pack.movie?.release_year ? ` <span style="color:var(--ink-dim)">(${esc(pack.movie.release_year)})</span>` : ''}</span>
+          <span class="pack-title">${esc(pack.movie?.title || 'Untitled')}${pack.movie?.release_year ? ` <span class="title-year">(${esc(pack.movie.release_year)})</span>` : ''}</span>
           <span class="pack-meta">${esc([pack.movie?.runtime, pack.movie?.content_rating, 'on this phone'].filter(Boolean).join(' · '))}</span>
         </span>
-        <span class="pack-chev">›</span>`;
+        <span class="pack-chev" aria-hidden="true">&gt;</span>`;
       btn.addEventListener('click', () => {
         pack.fallback_recap = pack.previous_episode_rt_recap || leaderboard.last_recap;
         pack.fallback_standings = pack.season_leaderboard || leaderboard.standings;
@@ -1035,10 +1039,10 @@ function renderMore() {
   }
 
   el.innerHTML = HOSTS.map((h) =>
-    `<span class="standing" style="margin:0 6px 8px 0;display:inline-block;">${esc(h)}: <strong>${standings[h] || 0}</strong> pts</span>`).join('') +
-    (recap ? `<div style="margin-top:10px;font-size:13px;color:var(--ink-dim);">
-      Last scored: <strong style="color:var(--ink)">${esc(recap.movie_title || '')}</strong> —
-      🍅 ${recap.actual_critics ?? '—'}% · 🍿 ${recap.actual_audience ?? '—'}%</div>` : '');
+    `<span class="standing">${esc(h)}: <strong>${standings[h] || 0}</strong> pts</span>`).join('') +
+    (recap ? `<div style="margin-top:10px;font-size:12px;color:var(--text-muted);">
+      Last scored: <strong style="color:var(--text-ticket)">${esc(recap.movie_title || '')}</strong> —
+      critics ${recap.actual_critics ?? '—'}% · audience ${recap.actual_audience ?? '—'}%</div>` : '');
 }
 
 function wireMore() {
