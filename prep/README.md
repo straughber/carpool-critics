@@ -1,5 +1,11 @@
 # In-car prep app
 
+The prep app is a `BRAND.md` surface, not a separate product: asphalt shell,
+scanline plane, Archivo Black / JetBrains Mono, 0px corners, hard offset
+shadows and thermal-ticket cards. It loads `../assets/css/site-bar.css` for the
+wordmark, deck nav and HUD, so the top menu has one authority. Keep the tokens
+in `app.css` identical to `website/style.css`.
+
 The prep pack contains the unreleased film, question deck and run-of-show. It is
 encrypted before it is published.
 

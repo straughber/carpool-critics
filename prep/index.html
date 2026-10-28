@@ -5,34 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="robots" content="noindex, nofollow, noarchive" />
 <meta name="referrer" content="no-referrer" />
+<meta name="theme-color" content="#0A0A0C" />
+<meta name="color-scheme" content="dark" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="theme-color" content="#0b0f17" />
-<link rel="apple-touch-icon" href="../assets/images/hosts/shane.svg" />
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
 <title>Carpool Critics — In-Car Prep</title>
-<link rel="stylesheet" href="app.css?v=4" />
+
+<!-- Brand fonts: Archivo Black (marquee) + JetBrains Mono (HUD). See BRAND.md. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+
+<!-- The one top menu. Shared with the cockpit and every generated page. -->
+<link rel="stylesheet" href="../assets/css/site-bar.css?v=1.0.0" />
+<link rel="stylesheet" href="app.css?v=6" />
 </head>
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <span class="brand-mark">🚗</span>
-    <div>
-      <div class="brand-title">Carpool Critics</div>
-      <div class="brand-sub">In-Car Prep · unlisted</div>
+<!-- CRT / VFD scanline plane. Decorative, never interactive. -->
+<div class="scanline-plane" aria-hidden="true"></div>
+
+<!-- ======================================================== -->
+<!-- BRAND BAR: WORDMARK, DECK NAV, PREP HUD                  -->
+<!-- ======================================================== -->
+<header class="brand-bar is-sticky">
+  <div class="wordmark" aria-hidden="true">
+    <span class="wordmark-bar">═══════</span>
+    <span class="wordmark-diamond">◊</span>
+    <span class="wordmark-name">Carpool Critics</span>
+    <span class="wordmark-diamond">◊</span>
+    <span class="wordmark-bar">═══════</span>
+  </div>
+  <h1 class="sr-only">Carpool Critics — In-Car Prep</h1>
+
+  <div class="brand-row">
+    <nav class="deck-nav" role="tablist" aria-label="Prep sections">
+      <button class="deck-btn tab is-active" data-tab="packs" role="tab" aria-selected="true" aria-controls="pane-packs">[ PACKS ]</button>
+      <button class="deck-btn tab" data-tab="new" role="tab" aria-selected="false" aria-controls="pane-new">[ NEW MOVIE ]</button>
+      <button class="deck-btn tab" data-tab="more" role="tab" aria-selected="false" aria-controls="pane-more">[ MORE ]</button>
+    </nav>
+
+    <div class="hud-strip" aria-hidden="true">
+      <span class="hud-item">◊ HOV-3</span>
+      <span class="hud-item hud-prep"><span class="rec-dot">●</span> PREP // UNLISTED</span>
     </div>
   </div>
-  <nav class="tabs" role="tablist">
-    <button class="tab is-active" data-tab="packs" role="tab" aria-selected="true">Packs</button>
-    <button class="tab" data-tab="new" role="tab" aria-selected="false">New Movie</button>
-    <button class="tab" data-tab="more" role="tab" aria-selected="false">More</button>
-  </nav>
 </header>
 
 <main class="wrap">
 
   <!-- ============================ PACK PICKER ============================ -->
-  <section class="pane" id="pane-packs" role="tabpanel">
+  <section class="pane" id="pane-packs" role="tabpanel" aria-label="Prep packs">
+    <div class="pane-head">
+      <p class="pane-eyebrow">VIEW // 01</p>
+      <h2 class="pane-title">◊ Prep Packs</h2>
+    </div>
     <p class="hint">Prep packs generated on the Mac. Tap one to load it in the car.</p>
     <div id="pack-list" class="pack-list">
       <div class="skeleton">Loading packs…</div>
@@ -40,9 +69,14 @@
   </section>
 
   <!-- ============================== NEW MOVIE ============================= -->
-  <section class="pane is-hidden" id="pane-new" role="tabpanel">
+  <section class="pane is-hidden" id="pane-new" role="tabpanel" aria-label="New movie">
+    <div class="pane-head">
+      <p class="pane-eyebrow">VIEW // 02</p>
+      <h2 class="pane-title">◊ New Movie</h2>
+    </div>
+
     <div class="card">
-      <h2 class="card-title">Generate a prep sheet on your phone</h2>
+      <h3 class="card-title">Generate a prep sheet on your phone</h3>
       <p class="hint">Paste an IMDb link, an IMDb ID (tt…), or just the movie title.</p>
       <div class="field-row">
         <input id="movie-input" type="text" inputmode="url" autocomplete="off" autocapitalize="off"
@@ -59,28 +93,33 @@
   </section>
 
   <!-- =============================== MORE =============================== -->
-  <section class="pane is-hidden" id="pane-more" role="tabpanel">
+  <section class="pane is-hidden" id="pane-more" role="tabpanel" aria-label="More">
+    <div class="pane-head">
+      <p class="pane-eyebrow">VIEW // 03</p>
+      <h2 class="pane-title">◊ More</h2>
+    </div>
+
     <div class="card">
-      <h2 class="card-title">Season RT standings</h2>
+      <h3 class="card-title">Season RT standings</h3>
       <div id="standings"></div>
     </div>
     <div class="card">
-      <h2 class="card-title">Install on your phone</h2>
+      <h3 class="card-title">Install on your phone</h3>
       <ol class="steps">
         <li>Open this page in Safari (iPhone) or Chrome (Android).</li>
-        <li>Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>.</li>
+        <li>Tap <strong>Share</strong> then <strong>Add to Home Screen</strong>.</li>
         <li>It opens full-screen and keeps working with no signal in the car.</li>
       </ol>
     </div>
     <div class="card">
-      <h2 class="card-title">Send notes back to the Mac</h2>
+      <h3 class="card-title">Send notes back to the Mac</h3>
       <p class="hint">Your guesses, scores and checkmarks save on this phone. When you get home,
       copy the episode JSON and drop it into the episode folder, or just re-type the numbers.</p>
       <button class="btn" id="copy-all-btn">Copy all saved notes</button>
       <pre id="notes-out" class="notes-out" hidden></pre>
     </div>
     <div class="card">
-      <h2 class="card-title">Console</h2>
+      <h3 class="card-title">Console</h3>
       <p class="hint">Clear local data on this phone. Prep packs on the Mac are untouched.</p>
       <button class="btn btn-danger" id="clear-btn">Clear this phone's saved prep data</button>
     </div>
@@ -88,19 +127,31 @@
 
 </main>
 
-<!-- ============================== TIMER ============================== -->
+<!-- ============================================================ -->
+<!-- STATUS BAR                                                    -->
+<!-- ============================================================ -->
+<footer class="status-bar">
+  <span class="status-item">◊ HOV-3 // IN-CAR PREP</span>
+  <span class="status-mid">PACKS BUILT ON THE MAC // READ IN THE CAR</span>
+  <a class="status-link" href="../">[ ← DASH ]</a>
+</footer>
+
+<!-- ============================== REC TIMER ============================== -->
 <div class="timer-bar" id="timer-bar" hidden>
   <button class="timer-clock" id="timer-clock" aria-label="Start or pause the recording timer">
-    <span id="timer-time">00:00</span>
+    <span class="timer-readout">
+      <span class="timer-rec" aria-hidden="true">●</span>
+      <span id="timer-time">00:00</span>
+    </span>
     <span class="timer-state" id="timer-state">start</span>
   </button>
   <div class="timer-phase" id="timer-phase">Ready</div>
   <button class="timer-reset" id="timer-reset" type="button" hidden aria-label="Reset the recording timer">Reset</button>
-  <div class="timer-progress"><span id="timer-fill"></span></div>
+  <div class="timer-progress" aria-hidden="true"><span id="timer-fill"></span></div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="app.js?v=7" defer></script>
+<script src="app.js?v=8" defer></script>
 </body>
 </html>
