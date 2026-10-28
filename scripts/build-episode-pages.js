@@ -35,6 +35,11 @@ const EPISODES_DIR = path.join(ROOT, 'episodes');
 const PIPELINE_DIR = path.join(ROOT, 'data/pipeline');
 const GENERATED_MARKER = '.generated';
 
+// The cockpit's live feed shows exactly this many cameras, newest first.
+// CAM 01 is always the latest dispatch; older episodes drop off the feed and
+// only exist here. Keep in step with FEED_SIZE in /script.js.
+const FEED_SIZE = 5;
+
 const siteUrl = p => `${SITE_ORIGIN}${BASE_PATH}${p}`;
 
 // ========================================================
@@ -354,7 +359,7 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <link rel="apple-touch-icon" href="${asset('assets/apple-touch-icon.png')}">
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} episodes" href="${siteUrl('/feed.xml')}">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.1.0" />
+  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.2.0" />
   <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.0.0" />
   ${jsonLdBlocks}
 </head>
@@ -665,61 +670,138 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
   });
 }
 
+// A sealed premiere shows a mosaic instead of a poster. The asset is a real
+// 32x18 PNG produced by tools/export_website_payload.py, so the detail is not
+// in the file at all. This ASCII field is the no-Pillow fallback.
+const SEALED_STATIC = '▒░▓░▒▓░▒░▓▒░▓░▒░▒▓░▒▓░▒░▓▒░▓░'.repeat(8);
+
+function sealedStub(ep) {
+  const number = escapeHtml(episodeNumber(ep, ''));
+  const premiere = ep.publishAt
+    ? formatLongDate(ep.publishAt).toUpperCase()
+    : 'DATE TO BE ANNOUNCED';
+  const plate = ep.sealedThumb
+    ? `<img src="${escapeAttr(pageAsset(ep.sealedThumb, 1))}" alt="" class="sealed-plate"
+             width="132" height="74" loading="lazy" decoding="async" />`
+    : `<span class="sealed-plate sealed-static" aria-hidden="true">${SEALED_STATIC}</span>`;
+
+  // Nothing identifiable may reach this markup: no title, no shortTitle, no
+  // description and no real thumbnail. The archive is indexable and the film
+  // is the whole premise of the episode.
+  return `        <li class="archive-item archive-item--sealed ticket">
+          <div class="ticket-head">
+            <span>ADMIT ONE // EP #${number}</span>
+            <span class="ticket-head-right">[ SEALED ]</span>
+          </div>
+          <div class="archive-row">
+            ${plate}
+            <div class="archive-body">
+              <div class="archive-title">PREMIERES ${escapeHtml(premiere)}</div>
+              <div class="archive-meta">TITLE // TAKE // SCORE WITHHELD</div>
+              <p class="archive-desc">The film, the takes and the scores stay in the glovebox until the premiere.</p>
+            </div>
+          </div>
+        </li>`;
+}
+
 function buildArchivePage(episodes, movies) {
   const depth = 1; // episodes/index.html
   const canonical = siteUrl('/episodes/');
   const title = `All Episodes | ${SITE_NAME}`;
   const description = `Every ${SITE_NAME} episode: in-car film reviews recorded live in Austin, Texas. Full transcripts, chapters, and scorecards.`;
 
-  // A scheduled page is a review surface for the creator, not a catalogue
-  // entry. Listing its title and thumbnail on an indexable archive leaks the
-  // premiere before YouTube does.
+  // A scheduled page is a creator review surface, not a catalogue entry.
+  // It may appear here only as a sealed stub: date and episode number, never a
+  // title or thumbnail that would leak the premiere before YouTube does.
   const archiveEpisodes = episodes.filter(isLiveEpisode);
-  const items = archiveEpisodes.map((ep, index) => {
-    const movie = movies[ep.id] || ep.movie;
-    const isLive = isLiveEpisode(ep);
-    const meta = isLive
-      ? [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? asciiGauge(movie.rating) : '']
-        .filter(Boolean).map(escapeHtml).join(' // ')
-      : `PREMIERES ${escapeHtml((ep.publishAt ? formatLongDate(ep.publishAt) : 'SOON').toUpperCase())}`;
-    const badge = isLive ? 'LIVE' : '<span class="pill pill-rating">[ PREMIERES ]</span>';
-    const description = applyCanonicalYear(ep.description, movie && movie.year);
-    const thumbnail = ep.thumbnail && !/^https?:/.test(ep.thumbnail)
-      ? pageAsset(ep.thumbnail, depth)
-      : pickSocialImage(ep.youtubeId, ep.thumbnail);
-    return `      <li class="archive-item ticket">
-        <div class="ticket-head">
-          <span>ADMIT ONE // EP #${escapeHtml(episodeNumber(ep, String(index + 1).padStart(2, '0')))}</span>
-          <span class="ticket-head-right">${badge}</span>
-        </div>
-        <div class="archive-row">
-          <a href="./${escapeAttr(ep.slug)}/" aria-label="${escapeAttr(ep.shortTitle || ep.title)}">
-            <img src="${escapeAttr(thumbnail)}" alt="" width="132" height="74" loading="lazy" decoding="async" />
-          </a>
-          <div class="archive-body">
-            <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a></div>
-            <div class="archive-meta">${meta}</div>
-            ${description ? `<p class="archive-desc">${escapeHtml(truncate(description, 130))}</p>` : ''}
+  const sealedEpisodes = episodes
+    .filter(ep => !isLiveEpisode(ep) && ep.publishAt)
+    .sort((a, b) => new Date(a.publishAt) - new Date(b.publishAt));
+
+  // The live feed claims the newest five. Anything past that is archive-only,
+  // and says so on the stub. That status is the whole difference between the
+  // two tabs: the feed is a broadcast, this page is the record.
+  const feedIndex = new Map();
+  archiveEpisodes.slice(0, FEED_SIZE).forEach((ep, index) => {
+    feedIndex.set(ep.id, index + 1);
+  });
+
+  const years = new Map();
+  archiveEpisodes.forEach((ep, index) => {
+    const stamp = ep.publishedAt || ep.publishAt;
+    const parsed = stamp ? new Date(stamp) : null;
+    const year = parsed && !Number.isNaN(parsed.getTime())
+      ? String(parsed.getFullYear())
+      : 'UNDATED';
+    if (!years.has(year)) years.set(year, []);
+    years.get(year).push({ ep, index });
+  });
+
+  const groups = [...years.entries()].map(([year, entries]) => {
+    const items = entries.map(({ ep, index }) => {
+      const movie = movies[ep.id] || ep.movie;
+      const meta = [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? asciiGauge(movie.rating) : '']
+        .filter(Boolean).map(escapeHtml).join(' // ');
+      const cam = feedIndex.get(ep.id);
+      const badge = cam
+        ? `<span class="archive-cam">CAM ${String(cam).padStart(2, '0')}</span>`
+        : 'ON FILE';
+      const description = applyCanonicalYear(ep.description, movie && movie.year);
+      const thumbnail = ep.thumbnail && !/^https?:/.test(ep.thumbnail)
+        ? pageAsset(ep.thumbnail, depth)
+        : pickSocialImage(ep.youtubeId, ep.thumbnail);
+      return `        <li class="archive-item ticket">
+          <div class="ticket-head">
+            <span>ADMIT ONE // EP #${escapeHtml(episodeNumber(ep, String(index + 1).padStart(2, '0')))}</span>
+            <span class="ticket-head-right">${badge}</span>
           </div>
-        </div>
-      </li>`;
-  }).join('\n');
+          <div class="archive-row">
+            <a href="./${escapeAttr(ep.slug)}/" aria-label="${escapeAttr(ep.shortTitle || ep.title)}">
+              <img src="${escapeAttr(thumbnail)}" alt="" width="132" height="74" loading="lazy" decoding="async" />
+            </a>
+            <div class="archive-body">
+              <div class="archive-title"><a href="./${escapeAttr(ep.slug)}/">${escapeHtml(ep.shortTitle || ep.title)}</a></div>
+              <div class="archive-meta">${meta}</div>
+              ${description ? `<p class="archive-desc">${escapeHtml(truncate(description, 130))}</p>` : ''}
+            </div>
+          </div>
+        </li>`;
+    }).join('\n');
+
+    return `      <section class="archive-year" aria-label="${escapeHtml(year)}">
+        <h2 class="archive-year-label">${escapeHtml(year)}</h2>
+        <ol class="archive-list">
+${items}
+        </ol>
+      </section>`;
+  }).join('\n\n');
+
+  const sealedBlock = sealedEpisodes.length
+    ? `      <section class="archive-year archive-year--next" aria-label="Next dispatch">
+        <h2 class="archive-year-label">◊ NEXT DISPATCH // SEALED</h2>
+        <ol class="archive-list">
+${sealedEpisodes.map(sealedStub).join('\n')}
+        </ol>
+      </section>`
+    : '';
+
+  const onFile = `${archiveEpisodes.length} EPISODE${archiveEpisodes.length === 1 ? '' : 'S'} ON FILE`;
 
   const body = `
     <header class="ep-head">
-      <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // HOV-3</p>
+      <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // The Record</p>
       <h1 class="ep-title">ALL EPISODES</h1>
       <div class="ep-byline">
-        <span>${archiveEpisodes.length} EPISODE${archiveEpisodes.length === 1 ? '' : 'S'}</span>
-        <span>IN-CAR FILM REVIEWS // AUSTIN, TX</span>
+        <span>${onFile}${sealedEpisodes.length ? ` // ${sealedEpisodes.length} SEALED` : ''}</span>
+        <span>NEWEST FIRST // AUSTIN, TX</span>
       </div>
+      <p class="archive-feed-link">
+        <a href="../#episodes">[ ◊ THE LIVE FEED CARRIES THE LATEST ${FEED_SIZE} ]</a>
+      </p>
     </header>
 
-    <section class="section">
-      <ol class="archive-list">
-${items || '        <li class="archive-item"><div class="archive-body"><div class="archive-title">No episodes published yet.</div></div></li>'}
-      </ol>
-    </section>`;
+${sealedBlock}${sealedBlock ? '\n\n' : ''}${groups || '    <section class="section"><p class="ep-description">No episodes published yet.</p></section>'}
+`;
 
   return pageShell({
     title,

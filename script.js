@@ -1,25 +1,20 @@
 /* ========================================================
    CARPOOL CRITICS - MASTER INTERACTION LOGIC
-   Version: 5.0.0 - Dash-Cam Brutalism
+   Version: 6.0.0 - Dash-Cam Brutalism
    Contract: /BRAND.md
    ======================================================== */
 
 // ========================================================
-// 1. IN-MEMORY CACHES & OFFLINE FALLBACK DATA
+// 1. STATE & TIMERS
 // ========================================================
-const transcriptCache = {};
-let movieCatalogCache = null;
 let contactFeedbackTimer = null;
 let hudClockTimer = null;
 let signalRollTimer = null;
 let signalGlitchTimer = null;
 const bootTime = Date.now();
 
-// Template placeholder episodes were removed; the live catalog is generated
-// from the YouTube channel into data/episodes.json by scripts/fetch-youtube.js.
-const fallbackTranscripts = {};
-const fallbackMovies = {};
-
+// The live catalog is generated from the YouTube channel into
+// data/episodes.json by scripts/fetch-youtube.js.
 const SECTIONS = ['home', 'about', 'episodes', 'contact'];
 
 // ========================================================
@@ -190,11 +185,17 @@ function triggerSignalSurge() {
 }
 
 // ========================================================
-// 6. EPISODE CATALOG, PLAYLIST & CLICK-TO-LOAD VIDEO FACADE
+// 6. LIVE FEED: CAM DECK, CHANNEL SELECT, CLICK-TO-LOAD PLAYER
 // ========================================================
+// EPISODES is a broadcast, not a catalogue. Five cameras, newest first:
+// CAM 01 is always the latest dispatch. When the sixth episode lands, CAM 01
+// rolls over to it and the oldest drops off the feed into the archive only.
+const FEED_SIZE = 5;
+
 let episodeCatalogCache = null;
 let episodesViewReady = false;
 let activeVideoId = null;
+let camTuneTimer = null;
 
 /** data/episodes.json is generated from the YouTube channel by scripts/fetch-youtube.js */
 async function getEpisodeCatalog() {
@@ -240,20 +241,42 @@ async function initEpisodesView() {
   if (episodesViewReady) return;
   episodesViewReady = true;
 
-  const stack = document.getElementById('episode-playlist');
-  const episodes = await getEpisodeCatalog();
+  const feed = feedEpisodes(await getEpisodeCatalog());
 
-  if (!episodes.length) {
-    if (stack) {
-      stack.innerHTML = '<div class="transcript-loading-msg">NO EPISODES PUBLISHED YET // CHECK BACK AFTER THE NEXT DISPATCH.</div>';
-    }
-    const titleEl = document.getElementById('current-video-title');
-    if (titleEl) titleEl.innerText = 'No episodes yet';
-    return;
+  renderCamRail(feed);
+
+  if (feed.length) {
+    selectEpisode(feed[0], { camNumber: 1 });
+  } else {
+    renderDeadFeed();
   }
 
-  renderEpisodePlaylist(episodes, stack);
-  selectEpisode(episodes[0]);
+  // A deep link (#episodes) can resolve before the feed mounts. Pin the view to
+  // its own heading instead of wherever the fragment scroll landed.
+  const scroller = document.querySelector('#view-episodes .subpage-scroll-container');
+  if (scroller) scroller.scrollTop = 0;
+}
+
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function episodeStamp(ep) {
+  const parsed = Date.parse(ep.publishedAt || ep.publishAt || '');
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+/** Newest first. CAM 01 is the newest dispatch, always. */
+function feedEpisodes(episodes) {
+  return [...episodes]
+    // A scheduled episode has a page but no public video yet. It is not live
+    // television, so it does not get a camera.
+    .filter(ep => ep.youtubeId && ep.status !== 'scheduled' && ep.status !== 'draft')
+    .sort((a, b) => (
+      (episodeStamp(b) - episodeStamp(a))
+      || ((Number(b.number) || 0) - (Number(a.number) || 0))
+    ))
+    .slice(0, FEED_SIZE);
 }
 
 function formatEpisodeNumber(ep, index) {
@@ -262,54 +285,94 @@ function formatEpisodeNumber(ep, index) {
   return String(value).padStart(2, '0');
 }
 
-function renderEpisodePlaylist(episodes, stack) {
-  if (!stack) return;
-  stack.innerHTML = episodes.map((ep, index) => {
-    const meta = [escapeHtml(ep.duration || ''), escapeHtml(relativeDate(ep.publishedAt))]
-      .filter(Boolean).join(' // ');
-    const number = formatEpisodeNumber(ep, index);
-    return `
-      <div class="playlist-card" role="button" tabindex="0"
-           data-ep="${escapeHtml(ep.id)}" data-video="${escapeHtml(ep.youtubeId)}">
-        <div class="ticket-head">
-          <span>ADMIT ONE // EP #${number}</span>
-          <span class="ticket-head-right">HOV-3</span>
-        </div>
-        <div class="pl-ticket-body">
-          <div>
-            <div class="pl-ep-title">${escapeHtml(ep.shortTitle || ep.title)}</div>
-            <div class="pl-ep-meta">${meta || 'DISPATCH'}</div>
-          </div>
-        </div>
-        <div class="ticket-foot">
-          <span>HOV-3: SHANE, ALEX, DAVE</span>
-          <span class="pl-play-tag">[ ▶ PLAY ]</span>
-        </div>
-      </div>`;
-  }).join('');
+/**
+ * Five slots, always. A slot with no episode is a dead camera: visible,
+ * labelled NO SIGNAL, and not clickable. The console does not pretend.
+ */
+function renderCamRail(feed) {
+  const rail = document.getElementById('cam-rail');
+  if (!rail) return;
 
-  const cards = [...stack.querySelectorAll('.playlist-card')];
-  cards.forEach(card => {
-    const activate = () => {
-      const ep = episodes.find(e => e.id === card.getAttribute('data-ep'));
-      if (ep) selectEpisode(ep, { autoplay: true });
-    };
-    card.addEventListener('click', activate);
-    card.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        activate();
-      }
+  const slots = [];
+  for (let cam = 1; cam <= FEED_SIZE; cam += 1) {
+    const ep = feed[cam - 1];
+    if (!ep || !ep.youtubeId) {
+      slots.push(`
+        <button type="button" class="cam-btn is-offline" disabled>
+          <span class="cam-btn-id">CAM ${pad2(cam)}</span>
+          <span class="cam-btn-title">NO SIGNAL</span>
+          <span class="cam-btn-state" aria-hidden="true">▒░▒▓░▒▓░▒░</span>
+        </button>`);
+      continue;
+    }
+
+    const number = formatEpisodeNumber(ep, cam - 1);
+    slots.push(`
+      <button type="button" class="cam-btn" data-ep="${escapeHtml(ep.id)}" data-cam="${cam}"
+              aria-current="false"
+              aria-label="CAM ${pad2(cam)}, EP ${number}: ${escapeHtml(ep.shortTitle || ep.title)}">
+        <span class="cam-btn-id">CAM ${pad2(cam)} // EP ${number}</span>
+        <span class="cam-btn-title">${escapeHtml(ep.shortTitle || ep.title)}</span>
+        <span class="cam-btn-state">[ ● LIVE ] ${escapeHtml(ep.duration || 'CABIN')}</span>
+      </button>`);
+  }
+
+  rail.innerHTML = slots.join('');
+
+  rail.querySelectorAll('.cam-btn[data-ep]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ep = feed.find(item => item.id === btn.getAttribute('data-ep'));
+      if (!ep) return;
+      // Once the player is open, a channel change is a real cut and the new
+      // feed plays. Before that the poster swaps and PLAY stays explicit.
+      const playerMounted = Boolean(document.querySelector('#video-facade-box iframe'));
+      selectEpisode(ep, {
+        camNumber: Number(btn.getAttribute('data-cam')),
+        autoplay: playerMounted
+      });
     });
   });
+}
+
+/** No episodes at all: the console sits on a dead channel. */
+function renderDeadFeed() {
+  const monitor = document.getElementById('cam-monitor');
+  if (monitor) monitor.classList.add('is-offline');
+
+  setText('cam-osd-cam', '--');
+  setText('cam-osd-episode', 'EP --');
+  setText('cam-osd-runtime', '--:--');
+  setText('cam-osd-label', 'NO DISPATCH ON FILE');
+  setText('current-video-title', 'NO SIGNAL');
+
+  const subEl = document.getElementById('current-video-sub');
+  if (subEl) subEl.innerText = 'Nothing has cleared the feed yet // the archive keeps the record.';
+
+  const permalink = document.getElementById('episode-permalink');
+  if (permalink) permalink.style.display = 'none';
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
 }
 
 function selectEpisode(ep, options = {}) {
   if (!ep || !ep.youtubeId) return;
   activeVideoId = ep.youtubeId;
 
-  const titleEl = document.getElementById('current-video-title');
-  if (titleEl) titleEl.innerText = ep.title || ep.shortTitle || '';
+  const camNumber = options.camNumber || 1;
+  const cam = pad2(camNumber);
+  const number = formatEpisodeNumber(ep, camNumber - 1);
+
+  const monitor = document.getElementById('cam-monitor');
+  if (monitor) monitor.classList.remove('is-offline');
+
+  setText('cam-osd-cam', cam);
+  setText('cam-osd-episode', `EP ${number}`);
+  setText('cam-osd-runtime', ep.duration || '--:--');
+  setText('cam-osd-label', `CAM ${cam} // CABIN FEED`);
+  setText('current-video-title', ep.title || ep.shortTitle || '');
 
   const subEl = document.getElementById('current-video-sub');
   if (subEl) {
@@ -325,7 +388,8 @@ function selectEpisode(ep, options = {}) {
   }
 
   // Point at the pre-rendered static page so the episode is shareable and
-  // crawlable (built by scripts/build-episode-pages.js).
+  // crawlable (built by scripts/build-episode-pages.js). The archive owns the
+  // full record; the feed only hands you off to it.
   const permalink = document.getElementById('episode-permalink');
   if (permalink) {
     if (ep.slug) {
@@ -336,28 +400,27 @@ function selectEpisode(ep, options = {}) {
     }
   }
 
-  document.querySelectorAll('.playlist-card').forEach(card => {
-    card.classList.toggle('active', card.getAttribute('data-ep') === ep.id);
+  document.querySelectorAll('.cam-btn[data-ep]').forEach(btn => {
+    btn.setAttribute('aria-current', btn.getAttribute('data-ep') === ep.id ? 'true' : 'false');
   });
 
-  if (options.autoplay) mountVideoPlayer(true);
+  tuneFeed();
 
-  // Only request a transcript when one is actually registered for the episode.
-  if (ep.id) {
-    if (ep.transcriptFile) {
-      loadEpisodeTranscript(ep.id);
-    } else {
-      showTranscriptPlaceholder();
-    }
-    renderMovieProfile(ep.id);
-  }
+  if (options.autoplay) mountVideoPlayer(true);
 }
 
-function showTranscriptPlaceholder() {
-  const body = document.getElementById('transcript-body');
-  if (body) {
-    body.innerHTML = '<div class="transcript-loading-msg">TRANSCRIPT COMING SOON // NO CAPTION TRACK YET.</div>';
-  }
+/** Channel change: two stepped frames of interference, then the new feed. */
+function tuneFeed() {
+  const monitor = document.getElementById('cam-monitor');
+  if (!monitor) return;
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+  monitor.classList.remove('is-tuning');
+  void monitor.offsetWidth;
+  monitor.classList.add('is-tuning');
+
+  if (camTuneTimer) clearTimeout(camTuneTimer);
+  camTuneTimer = setTimeout(() => monitor.classList.remove('is-tuning'), 160);
 }
 
 /**
@@ -390,161 +453,7 @@ function activateVideoPlayer() {
 }
 
 // ========================================================
-// 7. ON-DEMAND TRANSCRIPT LOADER
-// ========================================================
-async function loadEpisodeTranscript(epId) {
-  const transcriptBody = document.getElementById('transcript-body');
-  if (!transcriptBody) return;
-
-  transcriptCache['current'] = epId;
-
-  if (transcriptCache[epId]) {
-    renderTranscript(transcriptCache[epId]);
-    return;
-  }
-
-  transcriptBody.innerHTML = '<div class="transcript-loading-msg">READING TRANSCRIPT // ON-DEMAND FETCH...</div>';
-
-  try {
-    const response = await fetch(`data/transcripts/${encodeURIComponent(epId)}.json`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    transcriptCache[epId] = data;
-    renderTranscript(data);
-  } catch (err) {
-    console.warn('Transcript fetch fallback:', err);
-    if (fallbackTranscripts[epId]) {
-      transcriptCache[epId] = fallbackTranscripts[epId];
-      renderTranscript(fallbackTranscripts[epId]);
-    } else {
-      transcriptBody.innerHTML = '<div class="transcript-loading-msg">TRANSCRIPT COMING SOON // NO CAPTION TRACK YET.</div>';
-    }
-  }
-}
-
-function renderTranscript(data) {
-  const transcriptBody = document.getElementById('transcript-body');
-  if (!transcriptBody) return;
-
-  if (!data.dialogue || data.dialogue.length === 0) {
-    transcriptBody.innerHTML = '<div class="transcript-loading-msg">NO TRANSCRIPT AVAILABLE.</div>';
-    return;
-  }
-
-  const html = data.dialogue.map(entry => {
-    const speakerKey = (entry.speaker || '').toLowerCase();
-    return `
-      <article class="transcript-entry">
-        <div class="transcript-meta">
-          <time class="transcript-time">${escapeHtml(entry.time || '00:00:00')}</time>
-          <span class="speaker-pill speaker-${speakerKey}">◊ ${escapeHtml(entry.speaker)} // ${escapeHtml(entry.role || 'HOST')}</span>
-        </div>
-        <p class="transcript-text">${escapeHtml(entry.text)}</p>
-      </article>
-    `;
-  }).join('');
-
-  transcriptBody.innerHTML = html;
-}
-
-function toggleTranscript() {
-  const body = document.getElementById('transcript-body');
-  const btn = document.getElementById('btn-toggle-transcript');
-  const text = document.getElementById('txt-toggle-transcript');
-  const icon = document.getElementById('ico-toggle-transcript');
-
-  if (!body) return;
-
-  const isCollapsed = body.classList.toggle('collapsed');
-  if (btn) btn.setAttribute('aria-expanded', !isCollapsed);
-  if (text) text.innerText = isCollapsed ? '[ SHOW ]' : '[ HIDE ]';
-  if (icon) icon.innerText = isCollapsed ? '▼' : '▲';
-}
-
-// ========================================================
-// 8. TMDB MOVIE PROFILE RENDERER
-// ========================================================
-async function getMovieCatalog() {
-  if (movieCatalogCache) return movieCatalogCache;
-  try {
-    const res = await fetch('data/movies.json');
-    if (res.ok) {
-      movieCatalogCache = await res.json();
-      return movieCatalogCache;
-    }
-  } catch (err) {
-    console.warn('Could not load data/movies.json, using fallback.', err);
-  }
-  movieCatalogCache = fallbackMovies;
-  return movieCatalogCache;
-}
-
-function upper(value) {
-  return String(value == null ? '' : value).toUpperCase();
-}
-
-async function renderMovieProfile(epId) {
-  const card = document.getElementById('movie-profile-card');
-  if (!card) return;
-
-  const catalog = await getMovieCatalog();
-  const movie = catalog[epId];
-
-  // Silent fallback if no movie is linked to the episode
-  if (!movie) {
-    card.style.display = 'none';
-    return;
-  }
-
-  card.style.display = 'block';
-
-  const posterImg = document.getElementById('movie-poster-img');
-  if (posterImg) {
-    posterImg.src = movie.posterPath || '';
-    posterImg.alt = `${movie.title} (${movie.year || ''}) Poster`;
-  }
-
-  const titleEl = document.getElementById('movie-title');
-  if (titleEl) {
-    const yearHtml = movie.year
-      ? ` <span class="movie-year">(${escapeHtml(movie.year)})</span>`
-      : '';
-    titleEl.innerHTML = `${escapeHtml(upper(movie.title))}${yearHtml}`;
-  }
-
-  // The rating is always a tachometer, never a star badge.
-  const gaugeEl = document.getElementById('movie-rating-gauge');
-  if (gaugeEl) {
-    gaugeEl.innerText = asciiGauge(movie.rating);
-  }
-
-  const pillsEl = document.getElementById('movie-meta-pills');
-  if (pillsEl) {
-    let html = '';
-    if (movie.runtime) html += `<span class="meta-pill pill-runtime">${escapeHtml(upper(movie.runtime))}</span>`;
-    if (movie.certification) html += `<span class="meta-pill pill-cert">${escapeHtml(upper(movie.certification))}</span>`;
-    if (movie.genres && Array.isArray(movie.genres)) {
-      movie.genres.forEach(g => {
-        html += `<span class="meta-pill pill-genre">${escapeHtml(upper(g))}</span>`;
-      });
-    }
-    pillsEl.innerHTML = html;
-  }
-
-  const synopsisEl = document.getElementById('movie-synopsis');
-  if (synopsisEl) {
-    synopsisEl.innerText = movie.overview || '';
-  }
-
-  const linkEl = document.getElementById('movie-tmdb-link');
-  if (linkEl) {
-    linkEl.href = movie.tmdbUrl || '#';
-    linkEl.style.display = movie.tmdbUrl ? 'inline-block' : 'none';
-  }
-}
-
-// ========================================================
-// 9. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
+// 7. CONTACT: PLAIN EMAIL, NO FORM, NO PUBLIC ENDPOINT
 // ========================================================
 // There is no form and no third-party submit endpoint, so there is nothing for
 // bots to POST to. The address is assembled at runtime from data attributes so
@@ -614,7 +523,7 @@ function copyContactEmailFallback(address, onCopied) {
 }
 
 // ========================================================
-// 10. UTILITIES & INITIALIZATION
+// 8. UTILITIES & INITIALIZATION
 // ========================================================
 function escapeHtml(str) {
   if (!str) return '';

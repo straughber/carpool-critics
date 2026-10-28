@@ -529,6 +529,97 @@ h2.section-title {
   color: var(--text-ticket);
 }
 
+/* ---------- Archive: filed by year ---------- */
+/* The archive is the paper record: dated groups, not a feed. */
+.archive-year {
+  margin: 26px 0 34px;
+}
+
+.archive-year-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--text-ticket);
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A stub still riding the live feed names its camera. */
+.archive-cam {
+  color: var(--accent-amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-feed-link {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.archive-feed-link a {
+  color: var(--accent-amber);
+  border-bottom: 2px solid rgba(255, 176, 0, 0.45);
+  padding-bottom: 1px;
+}
+
+.archive-feed-link a:hover {
+  background: var(--accent-amber);
+  color: var(--bg-asphalt);
+}
+
+/* ---------- Sealed premiere ---------- */
+/* An embargoed dispatch gets a stub, never a poster. See BRAND.md §4. */
+.archive-year--next .archive-year-label {
+  color: var(--accent-amber);
+  border-bottom-color: var(--accent-amber);
+}
+
+.archive-item--sealed {
+  border-style: dashed;
+}
+
+/* A sealed stub is not a link. It must not lift like one. */
+.archive-item.archive-item--sealed:hover {
+  border-color: var(--text-muted);
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.sealed-plate {
+  width: 132px;
+  height: 74px;
+  flex: 0 0 auto;
+  border: 2px solid var(--text-muted);
+  background: var(--bg-asphalt);
+  object-fit: cover;
+  /* The asset is 32x18 pixels. Upscale it in hard squares; never smooth it. */
+  image-rendering: pixelated;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+.sealed-static {
+  display: block;
+  overflow: hidden;
+  padding: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 0.95;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.archive-item--sealed .archive-title {
+  color: var(--accent-amber);
+}
+
 /* ---------- Archive list ---------- */
 .archive-list {
   list-style: none;

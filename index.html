@@ -70,7 +70,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 
   <!-- Production Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=5.1.5" />
+  <link rel="stylesheet" href="style.css?v=6.0.1" />
 
   <!-- The one top menu. Shared with every generated episode/archive page. -->
   <link rel="stylesheet" href="assets/css/site-bar.css?v=1.0.0" />
@@ -82,7 +82,7 @@
   </style>
 
   <!-- Defer Script Execution for Non-Blocking Initial Paint -->
-  <script src="script.js?v=5.1.2" defer></script>
+  <script src="script.js?v=6.0.1" defer></script>
 </head>
 <body>
 
@@ -308,44 +308,59 @@
       </section>
 
       <!-- ====================================================== -->
-      <!-- VIEW 3: EPISODES & REVIEWS                             -->
+      <!-- VIEW 3: LIVE FEED / CAM DECK                           -->
       <!-- ====================================================== -->
       <section class="view-panel" id="view-episodes">
         <div class="subpage-scroll-container">
           <div class="subpage-nav-bar">
             <div class="view-heading-group">
               <p class="view-eyebrow">FILE // 02</p>
-              <h2 class="subpage-heading">◊ REVIEWS</h2>
+              <h2 class="subpage-heading">◊ LIVE FEED</h2>
             </div>
             <button type="button" class="btn-back-car" data-section="home">[ ← BACK TO DASH ]</button>
           </div>
 
-          <div class="episodes-container-layout">
-            <div>
-              <div class="youtube-responsive-box" id="video-facade-box">
-                <button
-                  type="button"
-                  class="video-facade"
-                  id="video-facade"
-                  onclick="activateVideoPlayer()"
-                >
-                  <img
-                    class="video-facade-poster"
-                    id="video-facade-poster"
-                    src="assets/images/cockpit/CurbsideCinema_Background.webp"
-                    alt=""
-                    width="1280"
-                    height="720"
-                    decoding="async"
-                    onerror="this.style.display='none'"
-                  />
-                  <span class="video-facade-corners" aria-hidden="true"></span>
-                  <span class="video-facade-play">[ ▶ PLAY ]</span>
-                  <span class="video-facade-rec" aria-hidden="true"><span class="rec-dot">●</span> REC</span>
-                </button>
+          <section class="cam-deck" aria-labelledby="cam-deck-heading">
+            <h2 class="sr-only" id="cam-deck-heading">Live cabin feed: the five most recent episodes</h2>
+
+            <div class="cam-stage">
+              <!-- MONITOR: one feed, channel number burned into the frame -->
+              <div class="cam-monitor" id="cam-monitor">
+                <div class="youtube-responsive-box" id="video-facade-box">
+                  <button
+                    type="button"
+                    class="video-facade"
+                    id="video-facade"
+                    onclick="activateVideoPlayer()"
+                  >
+                    <img
+                      class="video-facade-poster"
+                      id="video-facade-poster"
+                      src="assets/images/cockpit/CurbsideCinema_Background.webp"
+                      alt=""
+                      width="1280"
+                      height="720"
+                      decoding="async"
+                      onerror="this.style.display='none'"
+                    />
+                    <span class="video-facade-corners" aria-hidden="true"></span>
+                    <span class="video-facade-play">[ ▶ PLAY ]</span>
+                  </button>
+                </div>
+
+                <div class="cam-osd" aria-hidden="true">
+                  <span class="cam-osd-slot">◊ HOV-3 // CAM <span id="cam-osd-cam">01</span></span>
+                  <span class="cam-osd-live"><span class="rec-dot">●</span> LIVE</span>
+                </div>
+
+                <div class="cam-osd-foot" aria-hidden="true">
+                  <span id="cam-osd-episode">EP --</span>
+                  <span id="cam-osd-label">CABIN FEED // WIDE</span>
+                  <span id="cam-osd-runtime">--:--</span>
+                </div>
               </div>
 
-              <div class="video-meta-box">
+              <div class="video-meta-box cam-readout">
                 <p class="video-kicker">NOW PLAYING // ADMIT ONE</p>
                 <h3 id="current-video-title" class="video-title">Loading episode…</h3>
                 <p class="video-sub" id="current-video-sub">Fetching the latest dispatch from the car.</p>
@@ -353,79 +368,20 @@
                   <a class="video-permalink" id="episode-permalink" href="episodes/">[ FULL EPISODE PAGE / CHAPTERS / TRANSCRIPT ↗ ]</a>
                 </p>
               </div>
-
-              <!-- Auto-Generated Movie Profile Card (TMDb Enriched) -->
-              <article class="movie-profile-card ticket" id="movie-profile-card" aria-label="Featured Movie Profile" style="display:none">
-                <div class="ticket-head">
-                  <span>CARPOOL CRITICS // RECEIPT</span>
-                  <span class="ticket-head-right">FILM FILE</span>
-                </div>
-
-                <div class="movie-card-body">
-                  <div class="movie-poster-wrap">
-                    <img
-                      id="movie-poster-img"
-                      src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20300%22%3E%3Crect%20width%3D%22200%22%20height%3D%22300%22%20fill%3D%22%23121316%22%2F%3E%3C%2Fsvg%3E"
-                      alt=""
-                      class="movie-poster-img"
-                      loading="lazy"
-                    />
-                  </div>
-
-                  <div class="movie-profile-details">
-                    <header class="movie-header-row">
-                      <h4 class="movie-title" id="movie-title"></h4>
-                    </header>
-
-                    <div class="movie-rating-badge" id="movie-rating-badge" title="TMDb User Rating">
-                      <span class="rating-gauge" id="movie-rating-gauge"></span>
-                      <span class="rating-source">TMDb</span>
-                    </div>
-
-                    <div class="movie-meta-pills" id="movie-meta-pills" aria-label="Movie Metadata"></div>
-
-                    <p class="movie-synopsis" id="movie-synopsis"></p>
-
-                    <div class="ticket-tear" aria-hidden="true"></div>
-
-                    <footer class="movie-card-footer">
-                      <span class="barcode" aria-hidden="true">▌▐▌▌▐▌▐▐▌▌▐▌▌▐▌▐▐▌</span>
-                      <a
-                        href="https://www.themoviedb.org/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="tmdb-quick-link"
-                        id="movie-tmdb-link"
-                      >
-                        [ VIEW ON TMDB ↗ ]
-                      </a>
-                    </footer>
-                  </div>
-                </div>
-              </article>
-
-              <!-- On-Demand Episode Transcript Section (Accessibility & SEO) -->
-              <section class="transcript-container" aria-labelledby="transcript-header">
-                <div class="transcript-bar">
-                  <div class="transcript-badge-group">
-                    <h4 id="transcript-header" class="transcript-heading-text">TRANSCRIPT.LOG</h4>
-                    <span class="transcript-status" aria-hidden="true">◊ LIVE TEXT</span>
-                  </div>
-                  <button type="button" class="transcript-toggle" id="btn-toggle-transcript" onclick="toggleTranscript()" aria-expanded="true">
-                    <span id="txt-toggle-transcript">[ HIDE ]</span>
-                    <span id="ico-toggle-transcript">▲</span>
-                  </button>
-                </div>
-                <div class="transcript-scroll-box" id="transcript-body" role="region" aria-live="polite">
-                  <!-- Populated on-demand from data/transcripts/ -->
-                </div>
-              </section>
             </div>
 
-            <div class="episodes-playlist-stack" id="episode-playlist" aria-label="Episode playlist">
-              <!-- Populated at runtime from data/episodes.json (synced from YouTube) -->
+            <!-- CHANNEL SELECT: five feeds, newest first. Empty slots are dead cameras. -->
+            <div class="cam-rail-wrap">
+              <p class="cam-rail-label">CAMERA SELECT // NEWEST FIRST</p>
+              <div class="cam-rail" id="cam-rail" role="group" aria-label="Camera feeds">
+                <!-- Populated at runtime from data/episodes.json (synced from YouTube) -->
+              </div>
+              <p class="cam-rail-foot">
+                <span>ONLY THE FIVE MOST RECENT DISPATCHES RIDE THE FEED.</span>
+                <a class="cam-archive-link" href="episodes/">[ OLDER DISPATCHES → ARCHIVE ]</a>
+              </p>
             </div>
-          </div>
+          </section>
         </div>
       </section>
 
