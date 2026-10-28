@@ -1,6 +1,10 @@
 # macOS
 .DS_Store
 
+# Prep packs are encrypted before publishing; never commit plaintext packs
+prep/data/ep*-*.json
+!prep/data/ep*-*.enc.json
+
 # Node
 node_modules/
 npm-debug.log*

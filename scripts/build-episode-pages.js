@@ -27,7 +27,8 @@ const SITE_ORIGIN = 'https://carpoolcritics.com';
 const BASE_PATH = '';
 const SITE_NAME = 'Carpool Critics';
 const SITE_TAGLINE = 'Fresh Out the Doors, Straight to the Dash · Austin, TX';
-const OG_IMAGE_FALLBACK = `${SITE_ORIGIN}${BASE_PATH}/assets/images/cockpit/CurbsideCinema_Background.jpeg`;
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || '';
+const OG_IMAGE_FALLBACK = `${SITE_ORIGIN}${BASE_PATH}/assets/images/og-cover.jpg`;
 
 const ROOT = path.join(__dirname, '..');
 const EPISODES_DIR = path.join(ROOT, 'episodes');
@@ -144,6 +145,7 @@ function mergeCatalogs(catalog, payloads) {
       chapters: payload.chapters && payload.chapters.length ? payload.chapters : (base.chapters || []),
       movieQuery: payload.movieQuery || base.movieQuery,
       movieYear: payload.movieYear || base.movieYear,
+      movie: payload.movie || base.movie,
       transcriptFile: payload.transcriptFile || base.transcriptFile
     };
     if (episode.slug && seenSlugs.has(episode.slug)) {
@@ -328,6 +330,7 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeAttr(description)}" />
   <meta name="robots" content="${escapeAttr(robots)}" />
+  ${GOOGLE_SITE_VERIFICATION ? `<meta name="google-site-verification" content="${escapeAttr(GOOGLE_SITE_VERIFICATION)}" />` : ''}
   <meta name="theme-color" content="#0A0A0C" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="${canonical}" />
@@ -400,6 +403,7 @@ function filmCard(movie) {
             ${movie.posterPath ? `<img src="${escapeAttr(movie.posterPath)}" alt="${escapeAttr(`${movie.title} poster`)}" width="116" height="174" loading="lazy" decoding="async" />` : ''}
             <div class="film-body">
               <h3 class="film-title">${escapeHtml(String(movie.title).toUpperCase())}${movie.year ? ` <span class="movie-year">(${escapeHtml(movie.year)})</span>` : ''}</h3>
+              ${movie.director ? `<p class="film-director">DIRECTED BY ${escapeHtml(String(movie.director).toUpperCase())}</p>` : ''}
               <div class="pills">
             ${pills}
               </div>
@@ -672,7 +676,7 @@ function buildArchivePage(episodes, movies) {
   // premiere before YouTube does.
   const archiveEpisodes = episodes.filter(isLiveEpisode);
   const items = archiveEpisodes.map((ep, index) => {
-    const movie = movies[ep.id];
+    const movie = movies[ep.id] || ep.movie;
     const isLive = isLiveEpisode(ep);
     const meta = isLive
       ? [ep.duration, formatLongDate(ep.publishedAt), movie && movie.rating ? asciiGauge(movie.rating) : '']
@@ -839,7 +843,7 @@ async function run() {
   const written = new Set();
   for (const episode of episodes) {
     const transcript = episode.transcriptFile ? readJson(episode.transcriptFile, null) : null;
-    const html = await buildEpisodePage(episode, movies[episode.id], transcript, episodes);
+    const html = await buildEpisodePage(episode, movies[episode.id] || episode.movie, transcript, episodes);
 
     const dir = path.join(EPISODES_DIR, episode.slug);
     fs.mkdirSync(dir, { recursive: true });

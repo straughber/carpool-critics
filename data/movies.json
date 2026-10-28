@@ -2,7 +2,7 @@
   "ep1": {
     "id": 1255833,
     "title": "Whalefall",
-    "year": "2026",
+    "year": 2026,
     "rating": "6.6",
     "runtime": "1h 46m",
     "certification": "PG-13",
@@ -11,6 +11,7 @@
     ],
     "overview": "Following the death of his father, Jay Gardiner goes diving off the central Coast of California in search of his remains, but is swallowed by a massive sperm whale. While trapped inside its belly with only one hour of oxygen left, Jay comes to realize that the hard-earned lessons his father imparted may be the key to his escape.",
     "posterPath": "https://image.tmdb.org/t/p/w300/vjTYUTgh9nO88i6HZ4YPRhiFL05.jpg",
-    "tmdbUrl": "https://www.themoviedb.org/movie/1255833"
+    "tmdbUrl": "https://www.themoviedb.org/movie/1255833",
+    "source": "tmdb"
   }
 }

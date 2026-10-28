@@ -811,10 +811,60 @@ let leaderboard = { standings: {}, last_recap: null };
 
 async function loadJson(path, fallback = null) {
   try {
+    if (path.endsWith('.enc.json')) {
+      const pack = await loadEncryptedJson(path);
+      return pack ?? fallback;
+    }
     const res = await fetch(path, { cache: 'no-cache' });
     if (!res.ok) return fallback;
     return await res.json();
   } catch { return fallback; }
+}
+
+function b64ToBytes(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+async function loadEncryptedJson(path) {
+  if (!globalThis.crypto?.subtle) {
+    toast('This browser cannot decrypt the prep pack');
+    return null;
+  }
+  let passphrase = sessionStorage.getItem('cc-prep-passphrase');
+  if (!passphrase) {
+    passphrase = window.prompt('Prep passphrase');
+    if (!passphrase) return null;
+    sessionStorage.setItem('cc-prep-passphrase', passphrase);
+  }
+  const res = await fetch(path, { cache: 'no-cache' });
+  if (!res.ok) return null;
+  const envelope = await res.json();
+  const encoder = new TextEncoder();
+  const material = await crypto.subtle.importKey(
+    'raw', encoder.encode(passphrase), 'PBKDF2', false, ['deriveKey']
+  );
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: b64ToBytes(envelope.salt), iterations: envelope.iterations, hash: 'SHA-256' },
+    material,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt']
+  );
+  try {
+    const plain = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: b64ToBytes(envelope.iv) },
+      key,
+      b64ToBytes(envelope.data)
+    );
+    return JSON.parse(new TextDecoder().decode(plain));
+  } catch {
+    sessionStorage.removeItem('cc-prep-passphrase');
+    toast('Wrong prep passphrase');
+    return null;
+  }
 }
 
 function packKeyFor(pack, file) {

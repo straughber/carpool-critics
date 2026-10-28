@@ -3,9 +3,8 @@
    Dash-Cam Brutalism. Contract: /BRAND.md
    Document-flow pages (not the cockpit viewport). Shares the
    tokens with style.css but nothing else.
+   Fonts are loaded by the page <link>, not by a blocking @import.
    ======================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap');
 
 :root {
   --bg-asphalt: #0A0A0C;
@@ -330,6 +329,14 @@ h2.section-title {
   font-size: 15px;
   font-family: var(--font-mono);
   font-weight: 400;
+}
+
+.film-director {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 
 .pills {
