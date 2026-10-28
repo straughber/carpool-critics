@@ -3,7 +3,7 @@
    Runs entirely in the browser. No build step, no server.
    ------------------------------------------------------------
    Data sources:
-     data/index.json      packs exported from the Mac tool
+     data/index.enc.json      packs exported from the Mac tool
      data/*.json          one full prep pack per episode
      data/leaderboard.json  season RT standings + last recap
      Wikipedia API        movie facts for on-the-go generation
@@ -877,7 +877,7 @@ async function loadPackList({ restore = true } = {}) {
     <div id="pack-list" class="pack-list"><div class="skeleton">Loading packs…</div></div>`;
   showPane('packs');
 
-  const index = await loadJson('data/index.json', { packs: [] });
+  const index = await loadJson('data/index.enc.json', { packs: [] });
   const packs = (index.packs || []).filter((p) => p.enabled !== false);
   const listEl = $('#pack-list');
 
@@ -1075,7 +1075,7 @@ async function boot() {
   wireMore();
 
   leaderboard = await loadJson('data/leaderboard.json', { standings: {}, last_recap: null });
-  const index = await loadJson('data/index.json', { packs: [] });
+  const index = await loadJson('data/index.enc.json', { packs: [] });
   window.__packIndex = index.packs || [];
   renderMore();
 

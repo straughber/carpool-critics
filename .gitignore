@@ -4,6 +4,7 @@
 # Prep packs are encrypted before publishing; never commit plaintext packs
 prep/data/ep*-*.json
 !prep/data/ep*-*.enc.json
+prep/data/index.json
 
 # Node
 node_modules/
