@@ -11,7 +11,7 @@ const SHELL = [
   './index.html',
   './app.css',
   './app.js',
-  './data/index.json',
+  './data/index.enc.json',
   './data/leaderboard.json'
 ];
 

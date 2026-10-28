@@ -10,8 +10,9 @@ PREP_PASSPHRASE="<shared passphrase>" \
 ```
 
 - Plaintext `prep/data/ep*-*.json` packs are gitignored.
-- `prep/data/index.json` and `prep/data/leaderboard.json` stay plain because they
-  contain no pack content.
+- `prep/data/index.json` is encrypted too, because its movie title and year are
+  also pre-release information.
+- `prep/data/leaderboard.json` stays plain because it contains no pack content.
 - The browser prompts for the passphrase once per session and decrypts with
   WebCrypto (PBKDF2-SHA256 + AES-256-GCM).
 - Update `prep/data/index.json` to point at the `.enc.json` file.
