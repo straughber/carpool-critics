@@ -20,8 +20,12 @@ catalogs. There is no framework, bundler, or runtime dependency.
 Highlights:
 
 * **Per-episode pages** with canonical URLs, Open Graph tags, and Schema.org metadata
+* **A live feed** of the five most recent episodes: one monitor, five camera slots, and the
+  rest filed in a year-grouped archive
 * **Click-to-load player** so no YouTube iframe loads until someone presses play
-* **On-demand transcripts** with speaker labels, loaded only when opened
+* **Transcripts on every episode page**, with speaker labels and the turns that survived the cut
+* **Sealed premieres** go up as a stub with the date and a 16×9 pixel mosaic of the cover:
+  no title, no film, no link, and nothing pre-release in the sitemap or RSS
 * **Cached catalog data** so visitors never call YouTube or TMDb for metadata
 * **Scheduled episodes** get a real page before release, kept out of search until the
   video is public
@@ -60,10 +64,10 @@ loaded by `index.html` and by every generated page, so it never reshapes between
 
 ```text
 carpool-critics/
-├── index.html                   # SPA shell: home cockpit, reviews, about, contact
+├── index.html                   # SPA shell: home cockpit, live feed, hosts, contact
 ├── style.css                    # Site styles
 ├── assets/css/site-bar.css      # The one top menu (shared by every page)
-├── script.js                    # View router, transcript loader, movie profiles
+├── script.js                    # View router, live-feed channel select, contact helpers
 ├── assets/                      # Cockpit plate, host cutouts, per-episode thumbnails
 ├── data/
 │   ├── episodes.json            # GENERATED public catalog
