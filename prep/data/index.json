@@ -3,7 +3,7 @@
   "packs": [
     {
       "key": "ep02-club-kid",
-      "file": "ep02-club-kid.json",
+      "file": "ep02-club-kid.enc.json",
       "episode_number": 2,
       "movie_title": "Club Kid",
       "release_year": "2026",

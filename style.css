@@ -1,11 +1,10 @@
 /* ========================================================
    CARPOOL CRITICS - DASH-CAM BRUTALISM STYLESHEET
-   Version: 5.0.0
+   Version: 5.0.1
    The contract lives in /BRAND.md. No radius. No blur. No gradients
    except the black letterbox vignette and the scanline plane.
+   Fonts are loaded by the page <link>, not by a blocking @import.
    ======================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap');
 
 /* ========================================================
    1. DESIGN TOKENS
