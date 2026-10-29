@@ -577,6 +577,27 @@ button {
   box-shadow: var(--hard-shadow);
 }
 
+/* Episode 2 screen grabs. The show's own cabin, not a stock portrait: a frame
+   pulled from the 4K wide, undistorted and re-framed at the host's measured
+   seat anchor (tools/virtual_camera.py), so all three read as one set of stills
+   from the same night. 4:5 keeps a face-and-shoulders crop without a second
+   aspect ratio in the card. */
+.bio-photo {
+  margin: 12px 14px 2px;
+  border: 2px solid var(--text-ticket);
+  background: var(--bg-asphalt);
+  overflow: hidden;
+}
+
+.bio-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
 .seat-badge {
   display: inline-block;
   align-self: flex-start;
