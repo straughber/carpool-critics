@@ -79,6 +79,48 @@ node -e '
     JSON.parse(fs.readFileSync(f, "utf8"));
   }
 ' || fail "invalid JSON in data/" 1
+
+# A Short is a clip cut from an episode, never an episode. A leaked Short once
+# took "Ep. 2" and a page beside the real episode, so this is a hard gate: no
+# uploaded Short id and nothing under five minutes may appear in the catalogue.
+node -e '
+  const fs = require("fs");
+  const path = require("path");
+  const ids = new Set();
+  const collect = node => {
+    if (!node) return;
+    if (Array.isArray(node)) return node.forEach(collect);
+    if (typeof node !== "object") return;
+    for (const [key, value] of Object.entries(node)) {
+      if ((key === "video_id" || key === "videoId") && typeof value === "string") ids.add(value);
+      else collect(value);
+    }
+  };
+  const read = file => {
+    try { collect(JSON.parse(fs.readFileSync(file, "utf8"))); } catch {}
+  };
+  read(path.join("..", "logs", "shorts_schedule_ledger.json"));
+  const episodesRoot = path.join("..", "episodes");
+  try {
+    for (const dir of fs.readdirSync(episodesRoot)) {
+      const shorts = path.join(episodesRoot, dir, "04_Shorts");
+      if (!fs.existsSync(shorts)) continue;
+      for (const file of fs.readdirSync(shorts)) {
+        if (file.endsWith(".json")) read(path.join(shorts, file));
+      }
+    }
+  } catch {}
+  const catalog = JSON.parse(fs.readFileSync("data/episodes.json", "utf8"));
+  const leaked = catalog.filter(ep => ep.youtubeId && ids.has(ep.youtubeId));
+  const shortRuntime = catalog.filter(ep => Number(ep.durationSeconds) > 0 && Number(ep.durationSeconds) < 300);
+  if (leaked.length || shortRuntime.length) {
+    for (const ep of leaked) console.error(`  ✗ ${ep.id} (${ep.youtubeId}) is an uploaded Short, not an episode`);
+    for (const ep of shortRuntime) console.error(`  ✗ ${ep.id} (${ep.durationSeconds}s) is too short to be an episode`);
+    process.exit(1);
+  }
+  console.log(`  no Shorts in the catalogue (${catalog.length} Eps, ${ids.size} Short id(s) known)`);
+' || fail "a YouTube Short is in the episode catalogue" 1
+node scripts/test-shorts-filter.js || fail "Shorts filter regressed — a Short can become an episode" 1
 [ -f episodes/index.html ] || fail "episodes/index.html missing (build-episode-pages.js did not run?)" 1
 [ -f sitemap.xml ] || fail "sitemap.xml missing" 1
 [ -f robots.txt ] || fail "robots.txt missing" 1

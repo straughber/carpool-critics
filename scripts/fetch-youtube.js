@@ -314,6 +314,110 @@ function emptyEpisode(videoId) {
 }
 
 // ========================================================
+// 2c. SHORTS ARE NOT EPISODES
+// ========================================================
+// The site is a catalogue of full-length episodes. A Short is a vertical clip
+// cut from an approved episode - it has no act structure, no film and no
+// transcript - so it must never take an "Ep. N", a slug or a page. The runtime
+// check alone has already let one through in production: the watch-page scrape
+// returned no `lengthSeconds` for the Short, the guard was skipped, and
+// "Ep. 2: Dave's Whalefall score, argued at 0 mph" went live. So there are three
+// independent tests, and a video is only catalogued when it passes all of them:
+//
+//   1. measured runtime    - every Short on this channel is under five minutes
+//   2. /shorts/<id> probe  - YouTube redirects a normal video to /watch, so an
+//                            unknown runtime can still be resolved
+//   3. the Shorts ledgers  - the exact video ids this pipeline uploaded
+//
+// A video that cannot be proven full-length is never added, and is never
+// deleted either: it is deferred to the next build, where a real episode's
+// runtime will be readable.
+const SHORT_MAX_SECONDS = 300;
+const WORKSPACE_ROOT = path.join(__dirname, '..', '..');
+
+/** Every 11-character video id stored under a video_id/videoId key. */
+function collectVideoIds(node, ids = new Set()) {
+  if (!node) return ids;
+  if (Array.isArray(node)) {
+    for (const item of node) collectVideoIds(item, ids);
+    return ids;
+  }
+  if (typeof node !== 'object') return ids;
+  for (const [key, value] of Object.entries(node)) {
+    if ((key === 'video_id' || key === 'videoId') && typeof value === 'string' && /^[A-Za-z0-9_-]{11}$/.test(value)) {
+      ids.add(value);
+    } else if (value && typeof value === 'object') {
+      collectVideoIds(value, ids);
+    }
+  }
+  return ids;
+}
+
+/**
+ * The Shorts this pipeline actually uploaded: the channel-wide release ledger,
+ * every episode's Shorts manifests/drafts, and any payload that still lists them.
+ * This is the one check that cannot be fooled by a failed scrape, because the
+ * uploader wrote these ids down itself.
+ */
+function loadKnownShortVideoIds(payloads = []) {
+  const ids = new Set();
+  const readInto = file => {
+    try {
+      collectVideoIds(JSON.parse(fs.readFileSync(file, 'utf8')), ids);
+    } catch {
+      // Absent or malformed ledger: no contribution.
+    }
+  };
+  readInto(path.join(WORKSPACE_ROOT, 'logs', 'shorts_schedule_ledger.json'));
+  for (const payload of payloads) collectVideoIds(payload && payload.shorts, ids);
+  try {
+    const episodesRoot = path.join(WORKSPACE_ROOT, 'episodes');
+    for (const entry of fs.readdirSync(episodesRoot, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const shortsDir = path.join(episodesRoot, entry.name, '04_Shorts');
+      if (!fs.existsSync(shortsDir)) continue;
+      for (const file of fs.readdirSync(shortsDir)) {
+        if (file.endsWith('.json')) readInto(path.join(shortsDir, file));
+      }
+    }
+  } catch {
+    // No episodes directory (a bare site checkout): the ledgers above still apply.
+  }
+  return ids;
+}
+
+/** True when YouTube serves this id at /shorts/; a normal video redirects to /watch. */
+async function probeIsShort(videoId) {
+  try {
+    const res = await fetch(`https://www.youtube.com/shorts/${videoId}`, {
+      headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en' }
+    });
+    if (!res.ok) return null;
+    return /\/shorts\//.test(res.url || '');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Why this video is not a full-length episode, or null when it is one.
+ * `UNPROVEN` means neither the runtime nor the probe could answer: the caller
+ * defers the video instead of guessing.
+ */
+const UNPROVEN = 'unproven';
+async function shortReasonFor(videoId, lengthSeconds, knownShortIds) {
+  if (knownShortIds.has(videoId)) return 'listed in the Shorts ledger';
+  const seconds = Number(lengthSeconds);
+  if (Number.isFinite(seconds) && seconds > 0) {
+    return seconds < SHORT_MAX_SECONDS ? `${seconds}s runtime` : null;
+  }
+  const probe = await probeIsShort(videoId);
+  if (probe === true) return 'YouTube serves it at /shorts/';
+  if (probe === null) return UNPROVEN;
+  return null;
+}
+
+// ========================================================
 // 3. BUILD
 // ========================================================
 async function run() {
@@ -333,6 +437,10 @@ async function run() {
     pipeline.filter(payload => payload.youtubeId).map(payload => [payload.youtubeId, payload])
   );
   const pipelineLive = pipeline.filter(payload => payload.status === 'live' && payload.youtubeId);
+  const knownShortIds = loadKnownShortVideoIds(pipeline);
+  if (knownShortIds.size) {
+    console.log(`[YouTube] ${knownShortIds.size} known Short id(s) will never be catalogued as episodes.`);
+  }
   if (pipeline.length) {
     console.log(`[YouTube] ${pipeline.length} pipeline payload(s), ${pipelineLive.length} live.`);
   }
@@ -383,6 +491,10 @@ async function run() {
   }
 
   const episodes = [];
+  // Videos this build positively identified as Shorts. They are not catalogued,
+  // and they are not "kept from the previous catalog" either, so a leaked Short
+  // is evicted on the next build instead of being pinned forever.
+  const excludedVideoIds = new Set();
   for (const entry of entries) {
     const payload = pipelineByVideoId.get(entry.videoId) || null;
     let details;
@@ -397,8 +509,16 @@ async function run() {
       }
     }
 
-    if (details.lengthSeconds && details.lengthSeconds < 300) {
-      console.log(`[YouTube] Skipping ${entry.videoId}: Shorts-length video (${details.lengthSeconds}s)`);
+    // A Short is never an episode: it has no act structure, no film and no
+    // transcript, and it must never take an "Ep. N" next to the real episodes.
+    const shortReason = await shortReasonFor(entry.videoId, details.lengthSeconds, knownShortIds);
+    if (shortReason === UNPROVEN) {
+      console.warn(`[YouTube] Deferring ${entry.videoId}: runtime unknown and the /shorts/ probe failed (will retry next build)`);
+      continue;
+    }
+    if (shortReason) {
+      console.log(`[YouTube] Skipping ${entry.videoId}: Short, not an episode (${shortReason})`);
+      excludedVideoIds.add(entry.videoId);
       continue;
     }
 
@@ -462,19 +582,60 @@ async function run() {
   const seenVideoIds = new Set(episodes.map(ep => ep.youtubeId));
   for (const payload of pipelineLive) {
     if (seenVideoIds.has(payload.youtubeId)) continue;
+    if (knownShortIds.has(payload.youtubeId)) continue;
     console.log(`[YouTube] Adding ${payload.siteId} from pipeline payload (not seen in scrape).`);
     episodes.push(applyPipelinePayload(emptyEpisode(payload.youtubeId), payload));
+    seenVideoIds.add(payload.youtubeId);
   }
 
   // A partial scrape (RSS returns ~15 items, /videos returns one page) must not
   // delete the rest of the catalogue or 404 its already-indexed pages. Keep
   // previous live episodes the current scrape did not mention; a deliberate
   // prune can be done with a later, explicit flag once the API sync is in place.
+  //
+  // The exception is a Short. Once it is in the catalog it would otherwise be
+  // kept on every build - it is never "seen in the scrape", because the scrape
+  // rejects it - so a leaked Short would be pinned forever. It is evicted here.
   for (const prior of previous) {
     if (!prior.youtubeId || seenVideoIds.has(prior.youtubeId)) continue;
+    if (excludedVideoIds.has(prior.youtubeId)) {
+      console.warn(`[YouTube] Dropping ${prior.id || prior.youtubeId} from the catalogue: Short, not an episode`);
+      continue;
+    }
+    const priorReason = await shortReasonFor(prior.youtubeId, prior.durationSeconds, knownShortIds);
+    if (priorReason && priorReason !== UNPROVEN) {
+      console.warn(`[YouTube] Dropping ${prior.id || prior.youtubeId} from the catalogue: Short, not an episode (${priorReason})`);
+      continue;
+    }
     console.warn(`[YouTube] ${prior.id || prior.youtubeId} missing from this scrape; keeping the previous live record`);
     episodes.push({ ...prior });
     seenVideoIds.add(prior.youtubeId);
+  }
+
+  // Belt and braces: nothing measured as Short-length survives to numbering,
+  // whatever source added it.
+  for (const ep of episodes.slice()) {
+    const seconds = Number(ep.durationSeconds);
+    if (Number.isFinite(seconds) && seconds > 0 && seconds < SHORT_MAX_SECONDS) {
+      console.warn(`[YouTube] Dropping ${ep.id || ep.youtubeId} from the catalogue: ${seconds}s is a Short, not an episode`);
+      episodes.splice(episodes.indexOf(ep), 1);
+      seenVideoIds.delete(ep.youtubeId);
+    }
+  }
+
+  // One number per episode. A dropped Short can leave a gap (numbers are stable,
+  // so gaps stay gaps), but a duplicate number is always a bug: two pages would
+  // both claim "Ep. 2". The later upload takes the next free number instead.
+  const claimedNumbers = new Map();
+  for (const ep of episodes) {
+    if (!ep.number) continue;
+    if (!claimedNumbers.has(ep.number)) {
+      claimedNumbers.set(ep.number, ep);
+      continue;
+    }
+    console.warn(`[YouTube] Episode number ${ep.number} is already claimed; ${ep.id || ep.youtubeId} takes the next free number`);
+    ep.number = null;
+    ep.id = null;
   }
 
   // Number chronologically so the oldest upload is Episode 1. Existing episodes
@@ -519,7 +680,18 @@ async function run() {
   ordered.forEach(ep => console.log(`  - ${ep.id} | ${ep.duration || '?:??'} | ${ep.shortTitle}`));
 }
 
-run().catch(err => {
-  console.error('[YouTube] Fatal:', err);
-  process.exit(1);
-});
+module.exports = {
+  SHORT_MAX_SECONDS,
+  UNPROVEN,
+  shortReasonFor,
+  probeIsShort,
+  loadKnownShortVideoIds,
+  run
+};
+
+if (require.main === module) {
+  run().catch(err => {
+    console.error('[YouTube] Fatal:', err);
+    process.exit(1);
+  });
+}

@@ -88,8 +88,9 @@ function isLiveEpisode(episode) {
 
 /**
  * Pipeline payloads carry content that the YouTube scrape cannot know (host
- * seats, scorecards, the ranked best moment, uploaded shorts). The public
- * catalog remains authoritative for live state and YouTube's own duration.
+ * seats, scorecards, the ranked best moment). The public catalog remains
+ * authoritative for live state and YouTube's own duration. Shorts are never
+ * part of either: the site publishes full-length episodes only.
  */
 function mergeCatalogs(catalog, payloads) {
   const byVideoId = new Map();
@@ -479,28 +480,32 @@ function bestMomentSection(episode, isLive) {
       </section>`;
 }
 
-function formatClock(seconds) {
-  const total = Math.max(0, Math.round(Number(seconds) || 0));
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+// ========================================================
+// 3b. FULL-LENGTH ONLY
+// ========================================================
+// The site is a catalogue of full-length episodes, nothing else. A YouTube Short
+// is not an episode: no act structure, no movie, no transcript, and no business
+// being an "Ep. N" beside the real ones. Every Short is under five minutes, so a
+// measured runtime decides this - never a title, never a guess. A record with no
+// duration yet (a scheduled episode whose master has not landed) is not a Short;
+// it is gated by its own status instead.
+const SHORT_MAX_SECONDS = 300;
+
+function measuredSeconds(episode) {
+  const seconds = Number(episode && episode.durationSeconds);
+  if (Number.isFinite(seconds) && seconds > 0) return seconds;
+  const label = String((episode && episode.duration) || '');
+  if (!label) return null;
+  const hours = label.match(/(\d+(?:\.\d+)?)\s*h/i);
+  const minutes = label.match(/(\d+(?:\.\d+)?)\s*m/i);
+  if (!hours && !minutes) return null;
+  const total = (hours ? parseFloat(hours[1]) : 0) * 3600 + (minutes ? parseFloat(minutes[1]) : 0) * 60;
+  return total > 0 ? total : null;
 }
 
-function shortsSection(episode) {
-  const now = Date.now();
-  const shorts = (episode.shorts || []).filter(short => {
-    if (!short || !short.url) return false;
-    if (!short.publishAt) return true;
-    const at = new Date(short.publishAt).getTime();
-    return Number.isFinite(at) ? at <= now : true;
-  });
-  if (!shorts.length) return '';
-  const items = shorts.map(short => `        <li><a href="${escapeAttr(short.url)}" rel="noopener"><span class="chapter-time">${escapeHtml(short.duration ? formatClock(short.duration) : '')}</span><span>${escapeHtml(short.title || 'Short')}</span></a></li>`).join('\n');
-  return `
-      <section class="section" aria-labelledby="shorts-heading">
-        <h2 class="section-title" id="shorts-heading">◊ CLIPS FROM THIS EPISODE</h2>
-        <ol class="chapter-list">
-${items}
-        </ol>
-      </section>`;
+function isShortForm(episode) {
+  const seconds = measuredSeconds(episode);
+  return seconds != null && seconds < SHORT_MAX_SECONDS;
 }
 
 function hostsByline(episode) {
@@ -611,7 +616,6 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
       ${scorecardSection(episode)}
       ${bestMomentSection(episode, isLive)}
       ${chapterSection(episode, isLive)}
-      ${shortsSection(episode)}
       ${transcriptSection(transcript, episode.source)}
       ${pager}
     </article>`;
@@ -903,7 +907,17 @@ Sitemap: ${siteUrl('/sitemap.xml')}
 async function run() {
   const catalog = readJson('data/episodes.json', []);
   const payloads = readPipelinePayloads();
-  const episodes = mergeCatalogs(catalog, payloads);
+  // Full-length episodes only. This is the one choke point that feeds every
+  // page, the archive, sitemap.xml and feed.xml, so a Short that somehow reaches
+  // a catalog or payload record can never become an "Ep. N" anywhere on the site.
+  const merged = mergeCatalogs(catalog, payloads);
+  const episodes = merged.filter(episode => {
+    if (!isShortForm(episode)) return true;
+    console.warn(`[Pages] Rejecting ${episode.id || episode.youtubeId}: ${episode.duration} is a Short, not an episode`);
+    return false;
+  });
+  const shorts = merged.length - episodes.length;
+  if (shorts > 0) console.warn(`[Pages] ${shorts} Short(s) excluded from the catalogue`);
   const movies = readJson('data/movies.json', {});
 
   if (!episodes.length) {
