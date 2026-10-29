@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "siteId": "ep2",
+  "number": 2,
+  "slug": "ep2-club-kid",
+  "status": "draft",
+  "title": "Club Kid: Notes We Took in a Parked Car | Review",
+  "shortTitle": "Ep. 2: Club Kid",
+  "youtubeId": null,
+  "duration": "21m",
+  "durationSeconds": 1292,
+  "publishedAt": null,
+  "publishAt": null,
+  "uploadedAt": null,
+  "description": "Club Kid (2026): Shane and Shane GPT",
+  "descriptionOverride": null,
+  "thumbnail": "assets/images/episodes/ep2-club-kid/thumbnail.png",
+  "ogImage": "https://carpoolcritics.com/assets/images/episodes/ep2-club-kid/thumbnail.png",
+  "sealedThumb": "assets/images/episodes/sealed/ep2.png",
+  "chapters": [
+    {
+      "time": "00:00",
+      "label": "The Hook: The Worst Possible Question"
+    },
+    {
+      "time": "00:23",
+      "label": "The Hook: The Worst Possible Question"
+    },
+    {
+      "time": "01:43",
+      "label": "Guessing the Rotten Tomatoes Number, Unearned"
+    },
+    {
+      "time": "11:59",
+      "label": "Spoilers and One Unnecessary Theory"
+    },
+    {
+      "time": "18:24",
+      "label": "Scorecards Nobody Agreed To"
+    },
+    {
+      "time": "21:12",
+      "label": "Outro: The Car Survives"
+    }
+  ],
+  "movieQuery": "Club Kid",
+  "movieYear": 2026,
+  "movie": {
+    "title": "Club Kid",
+    "year": 2026,
+    "overview": "A hard-partying New York City club promoter sees his whirlwind lifestyle upended by the arrival of the 10-year-old son he never knew he had.",
+    "runtimeMinutes": 126,
+    "runtime": "2h 06m",
+    "certification": "R",
+    "genres": [
+      "Comedy",
+      "Drama"
+    ],
+    "director": "Jordan Firstman",
+    "imdbUrl": "https://www.imdb.com/title/tt38058097/",
+    "tmdbUrl": "https://www.themoviedb.org/movie/1585239",
+    "source": "tmdb"
+  },
+  "transcriptFile": "data/transcripts/ep2.json",
+  "hosts": [
+    {
+      "name": "Shane",
+      "seat": "driver",
+      "role": "Driver",
+      "seatPosition": "front_left",
+      "faceX": 0.6521,
+      "faceY": 0.3337,
+      "detected": true,
+      "description": "Shane / Driver punch-in"
+    },
+    {
+      "name": "Alex",
+      "seat": "passenger",
+      "role": "Passenger",
+      "seatPosition": "front_right",
+      "faceX": 0.3937,
+      "faceY": 0.3701,
+      "detected": true,
+      "description": "Alex / Passenger punch-in"
+    },
+    {
+      "name": "Dave",
+      "seat": "backseat",
+      "role": "Back Seat",
+      "seatPosition": "back_center",
+      "faceX": 0.5,
+      "faceY": 0.4,
+      "detected": false,
+      "description": "Dave / Backseat center punch-in"
+    }
+  ],
+  "scorecards": {
+    "Shane": 1.0,
+    "Alex": 9.0,
+    "Dave": 4.0
+  },
+  "bestMoment": {
+    "time": "00:00:24",
+    "seconds": 24,
+    "label": "explosive clash",
+    "quote": "Shane and Shane GPT. Shane and his bots. Shane GPT. Okay so welcome back to Carpool Critics episode 2. Today we have our wonderful Alex. Ale..."
+  },
+  "shorts": [],
+  "source": {
+    "episode": "EP02_Club_Kid",
+    "publishingPackage": "episodes/EP02_Club_Kid/03_Episode_Cuts/publishing_package.json",
+    "transcript": "episodes/EP02_Club_Kid/02_Transcription/EP02_Club_Kid_transcript.json",
+    "timeMap": "episodes/EP02_Club_Kid/03_Episode_Cuts/master_timeline_map.json",
+    "calibration": "episodes/EP02_Club_Kid/01_Raw_Footage/spatial_framing_calibration.json",
+    "droppedTranscriptTurns": 45,
+    "transcriptTurns": 76
+  }
+}

@@ -13,5 +13,21 @@
     "posterPath": "https://image.tmdb.org/t/p/w300/vjTYUTgh9nO88i6HZ4YPRhiFL05.jpg",
     "tmdbUrl": "https://www.themoviedb.org/movie/1255833",
     "source": "tmdb"
+  },
+  "ep2": {
+    "title": "Club Kid",
+    "year": 2026,
+    "overview": "A hard-partying New York City club promoter sees his whirlwind lifestyle upended by the arrival of the 10-year-old son he never knew he had.",
+    "runtimeMinutes": 126,
+    "runtime": "2h 06m",
+    "certification": "R",
+    "genres": [
+      "Comedy",
+      "Drama"
+    ],
+    "director": "Jordan Firstman",
+    "imdbUrl": "https://www.imdb.com/title/tt38058097/",
+    "tmdbUrl": "https://www.themoviedb.org/movie/1585239",
+    "source": "tmdb"
   }
 }

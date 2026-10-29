@@ -16,6 +16,7 @@
   "descriptionOverride": null,
   "thumbnail": "https://i.ytimg.com/vi/Be0RFbGbbSU/hqdefault.jpg",
   "ogImage": null,
+  "sealedThumb": null,
   "chapters": [
     {
       "time": "00:00",
@@ -53,10 +54,10 @@
     "overview": "Following the death of his father, Jay Gardiner goes diving off the central Coast of California in search of his remains, but is swallowed by a massive sperm whale. While trapped inside its belly with only one hour of oxygen left, Jay comes to realize that the hard-earned lessons his father imparted may be the key to his escape.",
     "posterPath": "https://image.tmdb.org/t/p/w300/vjTYUTgh9nO88i6HZ4YPRhiFL05.jpg",
     "tmdbUrl": "https://www.themoviedb.org/movie/1255833",
+    "source": "tmdb",
     "runtimeMinutes": null,
     "director": null,
-    "imdbUrl": null,
-    "source": "tmdb"
+    "imdbUrl": null
   },
   "transcriptFile": "data/transcripts/ep1.json",
   "hosts": [
@@ -102,98 +103,6 @@
     "label": "absurd comedic analogy",
     "quote": "I at one point was thinking, is he going to get pooped out? And I was just wondering how far they would end up taking the whale's guts. Yeah..."
   },
-  "shorts": [
-    {
-      "id": 6,
-      "title": "The Ultra-Fast Speedrun | Whalefall",
-      "videoId": "qgG2QjiJQog",
-      "url": "https://youtube.com/shorts/qgG2QjiJQog",
-      "duration": 15.1,
-      "viralScore": 90,
-      "category": "content_reframing_structural_flips",
-      "publishAt": "2026-11-08T16:00:00Z"
-    },
-    {
-      "id": 7,
-      "title": "Reverse Monologue | Whalefall",
-      "videoId": "YAnnYJKIZAI",
-      "url": "https://youtube.com/shorts/YAnnYJKIZAI",
-      "duration": 27.0,
-      "viralScore": 90,
-      "category": "micro_cut_linguistic_gags",
-      "publishAt": "2026-11-14T16:00:00Z"
-    },
-    {
-      "id": 8,
-      "title": "Alphabetical Sentence Stitch | Whalefall",
-      "videoId": "6aPLtgWZuG8",
-      "url": "https://youtube.com/shorts/6aPLtgWZuG8",
-      "duration": 15.8,
-      "viralScore": 90,
-      "category": "micro_cut_linguistic_gags",
-      "publishAt": "2026-11-16T16:00:00Z"
-    },
-    {
-      "id": 9,
-      "title": "The Unfinished Thought Supercut | Whalefall",
-      "videoId": "WMT57_RO2qk",
-      "url": "https://youtube.com/shorts/WMT57_RO2qk",
-      "duration": 35.3,
-      "viralScore": 90,
-      "category": "content_reframing_structural_flips",
-      "publishAt": "2026-11-11T16:00:00Z"
-    },
-    {
-      "id": 1,
-      "title": "Dave's Whalefall score, argued at 0 mph",
-      "videoId": "uvCFbGh4EV4",
-      "url": "https://youtube.com/shorts/uvCFbGh4EV4",
-      "duration": 16.16,
-      "viralScore": 60,
-      "category": "ai_viral_debate",
-      "publishAt": "2026-10-28T16:00:00Z"
-    },
-    {
-      "id": 2,
-      "title": "Whalefall: What do you call that?",
-      "videoId": "ZR7KUFCSskY",
-      "url": "https://youtube.com/shorts/ZR7KUFCSskY",
-      "duration": 10.42,
-      "viralScore": 60,
-      "category": "ai_viral_debate",
-      "publishAt": "2026-10-30T16:00:00Z"
-    },
-    {
-      "id": 3,
-      "title": "Shane's Whalefall score, argued at 0 mph",
-      "videoId": "nV7WOJ66TGc",
-      "url": "https://youtube.com/shorts/nV7WOJ66TGc",
-      "duration": 45.96,
-      "viralScore": 55,
-      "category": "ai_viral_debate",
-      "publishAt": "2026-11-02T16:00:00Z"
-    },
-    {
-      "id": 4,
-      "title": "Whalefall, argued at 0 mph",
-      "videoId": "KO_rNAVytDY",
-      "url": "https://youtube.com/shorts/KO_rNAVytDY",
-      "duration": 17.48,
-      "viralScore": 50,
-      "category": "ai_viral_debate",
-      "publishAt": "2026-11-06T16:00:00Z"
-    },
-    {
-      "id": 5,
-      "title": "The father figure, you can tell, he was meaning well (Whalefall)",
-      "videoId": "bWauqApDPnE",
-      "url": "https://youtube.com/shorts/bWauqApDPnE",
-      "duration": 24.14,
-      "viralScore": 50,
-      "category": "ai_viral_debate",
-      "publishAt": "2026-11-05T16:00:00Z"
-    }
-  ],
   "source": {
     "episode": "EP01_Whale_Fall",
     "publishingPackage": "episodes/EP01_Whale_Fall/03_Episode_Cuts/publishing_package.json",
