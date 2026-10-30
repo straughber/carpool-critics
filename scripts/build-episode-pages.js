@@ -360,7 +360,7 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <link rel="apple-touch-icon" href="${asset('assets/apple-touch-icon.png')}">
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} episodes" href="${siteUrl('/feed.xml')}">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.2.0" />
+  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.3.0" />
   <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.0.0" />
   ${jsonLdBlocks}
 </head>
@@ -792,13 +792,18 @@ ${sealedEpisodes.map(sealedStub).join('\n')}
   const onFile = `${archiveEpisodes.length} EPISODE${archiveEpisodes.length === 1 ? '' : 'S'} ON FILE`;
 
   const body = `
-    <header class="ep-head">
-      <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // The Record</p>
-      <h1 class="ep-title">ALL EPISODES</h1>
-      <div class="ep-byline">
+    <header class="archive-head">
+      <div class="subpage-nav-bar">
+        <div class="view-heading-group">
+          <p class="view-eyebrow">FILE // 04</p>
+          <h1 class="subpage-heading">◊ THE ARCHIVE</h1>
+        </div>
+        <a class="btn-back-car" href="../">[ ← BACK TO DASH ]</a>
+      </div>
+      <p class="archive-status">
         <span>${onFile}${sealedEpisodes.length ? ` // ${sealedEpisodes.length} SEALED` : ''}</span>
         <span>NEWEST FIRST // AUSTIN, TX</span>
-      </div>
+      </p>
       <p class="archive-feed-link">
         <a href="../#episodes">[ ◊ THE LIVE FEED CARRIES THE LATEST ${FEED_SIZE} ]</a>
       </p>

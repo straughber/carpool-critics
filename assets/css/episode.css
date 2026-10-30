@@ -76,6 +76,21 @@ a:hover { text-decoration: none; }
   padding: 0 24px;
 }
 
+/* ---------- Page frame ----------
+   Document pages are short (one archive stub) or long (an episode). Flexing the
+   body keeps the footer on the floor of the viewport instead of floating it
+   halfway up a short page, which is what made the archive read as a bare list
+   rather than a page of the site. */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrap { flex: 1 0 auto; }
+
+.site-foot { flex: 0 0 auto; }
+
 /* ---------- Top bar ----------
    The site bar lives in assets/css/site-bar.css and is shared with
    index.html. Only footer specifics belong here. */
@@ -96,6 +111,81 @@ a:hover { text-decoration: none; }
 
 /* ---------- Article head ---------- */
 .ep-head { padding: 34px 0 10px; }
+
+/* ---------- Subpage header bar ----------
+   The archive wears the same head as the in-app subpages: FILE // NN eyebrow,
+   the section heading, and a back-to-dash button on the same rule. Values are
+   deliberately identical to style.css .subpage-nav-bar / .subpage-heading, so
+   the document page and the cockpit views read as one site. */
+.subpage-nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  border-bottom: var(--rule);
+  padding-bottom: 12px;
+  margin: 30px 0 18px;
+}
+
+.view-heading-group { min-width: 0; }
+
+.view-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.subpage-heading {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+  color: var(--text-ticket);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-back-car {
+  border: 2px solid var(--text-ticket);
+  background: var(--bg-asphalt);
+  color: var(--text-ticket);
+  min-height: 44px;
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.btn-back-car:hover,
+.btn-back-car:focus-visible {
+  background: var(--accent-amber);
+  border-color: var(--accent-amber);
+  color: var(--bg-asphalt);
+  box-shadow: var(--hard-shadow-ink);
+}
+
+.archive-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -748,6 +838,18 @@ h2.section-title {
 
 @media (max-width: 720px) {
   body { font-size: 14px; }
+
+  .subpage-nav-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 22px 0 14px;
+  }
+
+  .btn-back-car {
+    font-size: 9px;
+    padding: 7px 10px;
+  }
 
   .ep-head { padding: 24px 0 8px; }
 
