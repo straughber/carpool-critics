@@ -73,7 +73,7 @@
   <link rel="stylesheet" href="style.css?v=6.0.2" />
 
   <!-- The one top menu. Shared with every generated episode/archive page. -->
-  <link rel="stylesheet" href="assets/css/site-bar.css?v=1.0.0" />
+  <link rel="stylesheet" href="assets/css/site-bar.css?v=1.1.0" />
 
   <!-- Critical Above-the-Fold Styling (Prevents FOUC) -->
   <style>
@@ -105,13 +105,20 @@
       <h1 class="sr-only">Carpool Critics | Austin, TX Film Review Podcast</h1>
 
       <div class="brand-row">
-        <nav class="deck-nav" aria-label="Primary">
+        <div class="nav-group">
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu" />
+          <label class="nav-burger" for="nav-toggle" aria-hidden="true">
+            <span class="nav-burger-text"><span class="when-closed">MENU</span><span class="when-open">CLOSE</span></span>
+            <span class="nav-burger-glyph">≡</span>
+          </label>
+          <nav class="deck-nav" aria-label="Primary">
           <button type="button" class="deck-btn" data-section="home">[ DASH ]</button>
           <button type="button" class="deck-btn" data-section="episodes">[ EPISODES ]</button>
           <button type="button" class="deck-btn" data-section="about">[ HOSTS ]</button>
           <a class="deck-btn" href="episodes/">[ ARCHIVE ]</a>
           <button type="button" class="deck-btn" data-section="contact">[ CONTACT ]</button>
-        </nav>
+          </nav>
+        </div>
 
         <div class="hud-strip" aria-hidden="true">
           <span class="hud-item">◊ HOV-3</span>

@@ -89,7 +89,10 @@ function setHover(hostKey, isHovered) {
 // also get Enter/Space handling instead of relying on synthetic clicks.
 function initNavigation() {
   document.querySelectorAll('[data-section]').forEach(el => {
-    const go = () => switchSection(el.dataset.section);
+    const go = () => {
+      closeDeckMenu();
+      switchSection(el.dataset.section);
+    };
     el.addEventListener('click', go);
 
     if (el.tagName !== 'BUTTON') {
@@ -101,6 +104,14 @@ function initNavigation() {
       });
     }
   });
+}
+
+// The phone menu is a checkbox (the bar folds into a disclosure below 720px).
+// Picking a view must fold it back up, otherwise the stack stays open over the
+// panel the visitor just chose.
+function closeDeckMenu() {
+  const toggle = document.getElementById('nav-toggle');
+  if (toggle && toggle.checked) toggle.checked = false;
 }
 
 // ========================================================
