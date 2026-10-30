@@ -277,9 +277,25 @@
   .nav-toggle:checked + .nav-burger .when-closed { display: none; }
   .nav-toggle:checked + .nav-burger .when-open { display: inline; }
 
-  /* The stack: one item per row, dashed separators, active item owned in amber. */
+  /* The stack: one item per row, dashed separators, active item owned in amber.
+     It drops as an overlay under the MENU ticket, so opening the menu never
+     shoves the view down and closing it never moves the page either. */
+  .brand-bar {
+    position: relative;
+    z-index: 60;
+  }
+
+  .nav-group {
+    position: relative;
+  }
+
   .deck-nav {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 70;
     width: 100%;
     flex-direction: column;
     align-items: stretch;

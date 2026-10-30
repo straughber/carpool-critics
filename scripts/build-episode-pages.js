@@ -368,7 +368,8 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} episodes" href="${siteUrl('/feed.xml')}">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.4.0" />
-  <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.1.0" />
+  <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.2.0" />
+  <script src="${asset('assets/js/site-bar.js')}?v=1.0.0" defer></script>
   ${jsonLdBlocks}
 </head>
 <body>
