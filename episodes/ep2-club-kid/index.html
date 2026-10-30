@@ -31,8 +31,8 @@
   <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="Carpool Critics episodes" href="https://carpoolcritics.com/feed.xml">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/episode.css?v=5.3.0" />
-  <link rel="stylesheet" href="../../assets/css/site-bar.css?v=1.0.0" />
+  <link rel="stylesheet" href="../../assets/css/episode.css?v=5.4.0" />
+  <link rel="stylesheet" href="../../assets/css/site-bar.css?v=1.1.0" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -79,6 +79,7 @@
 
   <div class="scanline-plane" aria-hidden="true"></div>
 
+  <div class="page-frame">
   <header class="brand-bar is-sticky">
     <div class="wordmark" aria-hidden="true">
       <span class="wordmark-bar">═══════</span>
@@ -88,13 +89,20 @@
       <span class="wordmark-bar">═══════</span>
     </div>
     <div class="brand-row">
-      <nav class="deck-nav" aria-label="Primary">
-        <a class="deck-btn" href="../../">[ DASH ]</a>
-        <a class="deck-btn" href="../../#episodes">[ EPISODES ]</a>
-        <a class="deck-btn" href="../../#about">[ HOSTS ]</a>
-        <a class="deck-btn" href="../../episodes/" aria-current="page">[ ARCHIVE ]</a>
-        <a class="deck-btn" href="../../#contact">[ CONTACT ]</a>
-      </nav>
+      <div class="nav-group">
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu" />
+        <label class="nav-burger" for="nav-toggle" aria-hidden="true">
+          <span class="nav-burger-text"><span class="when-closed">MENU</span><span class="when-open">CLOSE</span></span>
+          <span class="nav-burger-glyph">≡</span>
+        </label>
+        <nav class="deck-nav" aria-label="Primary">
+          <a class="deck-btn" href="../../">[ DASH ]</a>
+          <a class="deck-btn" href="../../#episodes">[ EPISODES ]</a>
+          <a class="deck-btn" href="../../#about">[ HOSTS ]</a>
+          <a class="deck-btn" href="../../episodes/" aria-current="page">[ ARCHIVE ]</a>
+          <a class="deck-btn" href="../../#contact">[ CONTACT ]</a>
+        </nav>
+      </div>
       <div class="hud-strip" aria-hidden="true">
         <span class="hud-item">◊ HOV-3</span>
         <span class="hud-item hud-rpm">RPM [▓▓▓▓▓▓░░░░]</span>
@@ -729,6 +737,7 @@
       <a class="foot-link" href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ↗ ]</a>
     </div>
   </footer>
+  </div>
 
 </body>
 </html>

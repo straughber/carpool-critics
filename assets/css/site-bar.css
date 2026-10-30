@@ -143,6 +143,23 @@
   color: var(--accent-amber);
 }
 
+/* ---------- Menu toggle ----------
+   The bar is five buttons wide, which is one button too many for a phone. Under
+   the small breakpoint the nav folds into a disclosure: a ticket-styled MENU
+   button that opens the same five items, stacked, one per row.
+
+   It is a checkbox and a label, not JavaScript: the menu is chrome, and chrome
+   that stops working when a script fails is not chrome. The input is display:none
+   on desktop (so it is not a tab stop) and sr-only-but-focusable on mobile, so the
+   keyboard reaches the label through its own focus ring. */
+.nav-toggle { display: none; }
+.nav-burger { display: none; }
+
+/* Transparent on desktop, so .deck-nav stays a grid child of .brand-row and keeps
+   its centred column. Below the breakpoint it becomes the stack's container,
+   which is what lets the MENU ticket and the open menu share one border. */
+.nav-group { display: contents; }
+
 .rec-dot {
   color: var(--accent-brake);
   animation: rec-blink 1s steps(1, end) infinite;
@@ -183,17 +200,122 @@
     gap: 6px;
   }
 
-  .deck-nav {
+  /* The toggle: a ticket of its own, above the stack it opens. */
+  .nav-group {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    gap: 4px;
-    justify-content: center;
+    gap: 0;
   }
 
-  .deck-btn {
-    min-height: 44px;
-    padding: 5px 5px;
-    font-size: 8.5px;
-    letter-spacing: 0.02em;
+  .nav-toggle {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-burger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 46px;
+    padding: 8px 12px;
+    border: 2px solid var(--text-ticket);
+    background: var(--bg-asphalt);
+    color: var(--text-ticket);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: none;
+  }
+
+  .nav-burger::before {
+    content: "◊";
+    color: var(--accent-amber);
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .nav-burger:hover,
+  .nav-toggle:focus-visible + .nav-burger {
+    border-color: var(--accent-amber);
+    color: var(--accent-amber);
+  }
+
+  .nav-toggle:focus-visible + .nav-burger {
+    outline: 2px solid var(--accent-amber);
+    outline-offset: 2px;
+  }
+
+  .nav-toggle:checked + .nav-burger {
+    background: var(--accent-amber);
+    border-color: var(--accent-amber);
+    color: var(--bg-asphalt);
+    box-shadow: var(--hard-shadow-ink);
+  }
+
+  .nav-toggle:checked + .nav-burger::before {
+    color: var(--bg-asphalt);
+  }
+
+  .nav-burger-glyph {
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: 0.06em;
+  }
+
+  .nav-burger .when-open { display: none; }
+  .nav-toggle:checked + .nav-burger .when-closed { display: none; }
+  .nav-toggle:checked + .nav-burger .when-open { display: inline; }
+
+  /* The stack: one item per row, dashed separators, active item owned in amber. */
+  .deck-nav {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    border: 2px solid var(--text-ticket);
+    border-top: none;
+    background: var(--bg-asphalt);
+  }
+
+  .nav-toggle:checked ~ .deck-nav { display: flex; }
+
+  .deck-nav .deck-btn {
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 2px dashed rgba(244, 240, 234, 0.28);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    box-shadow: none;
+  }
+
+  .deck-nav .deck-btn:last-child { border-bottom: none; }
+
+  .deck-nav .deck-btn[aria-current="page"] {
+    background: var(--accent-amber);
+    color: var(--bg-asphalt);
+  }
+
+  .deck-nav .deck-btn:hover,
+  .deck-nav .deck-btn:focus-visible {
+    background: var(--accent-amber);
+    border-color: var(--accent-amber);
+    color: var(--bg-asphalt);
+    box-shadow: none;
   }
 
   .hud-strip {

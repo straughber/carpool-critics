@@ -305,13 +305,20 @@ function siteBar(asset, current) {
       <span class="wordmark-bar">═══════</span>
     </div>
     <div class="brand-row">
-      <nav class="deck-nav" aria-label="Primary">
-        ${button(home, 'DASH', 'home')}
-        ${button(`${home}#episodes`, 'EPISODES', 'episodes')}
-        ${button(`${home}#about`, 'HOSTS', 'hosts')}
-        ${button(asset('episodes/'), 'ARCHIVE', 'archive')}
-        ${button(`${home}#contact`, 'CONTACT', 'contact')}
-      </nav>
+      <div class="nav-group">
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu" />
+        <label class="nav-burger" for="nav-toggle" aria-hidden="true">
+          <span class="nav-burger-text"><span class="when-closed">MENU</span><span class="when-open">CLOSE</span></span>
+          <span class="nav-burger-glyph">≡</span>
+        </label>
+        <nav class="deck-nav" aria-label="Primary">
+          ${button(home, 'DASH', 'home')}
+          ${button(`${home}#episodes`, 'EPISODES', 'episodes')}
+          ${button(`${home}#about`, 'HOSTS', 'hosts')}
+          ${button(asset('episodes/'), 'ARCHIVE', 'archive')}
+          ${button(`${home}#contact`, 'CONTACT', 'contact')}
+        </nav>
+      </div>
       <div class="hud-strip" aria-hidden="true">
         <span class="hud-item">◊ HOV-3</span>
         <span class="hud-item hud-rpm">RPM [▓▓▓▓▓▓░░░░]</span>
@@ -320,7 +327,7 @@ function siteBar(asset, current) {
   </header>`;
 }
 
-function pageShell({ title, description, canonical, ogImage, ogType = 'article', jsonLd, depth, body, current = 'archive', robots = 'index, follow' }) {
+function pageShell({ title, description, canonical, ogImage, ogType = 'article', jsonLd, depth, body, current = 'archive', robots = 'index, follow', wide = false }) {
   const asset = p => `${'../'.repeat(depth)}${p}`;
   const jsonLdBlocks = (Array.isArray(jsonLd) ? jsonLd : [jsonLd])
     .filter(Boolean)
@@ -360,17 +367,18 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <link rel="apple-touch-icon" href="${asset('assets/apple-touch-icon.png')}">
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} episodes" href="${siteUrl('/feed.xml')}">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.3.0" />
-  <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.0.0" />
+  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.4.0" />
+  <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.1.0" />
   ${jsonLdBlocks}
 </head>
 <body>
 
   <div class="scanline-plane" aria-hidden="true"></div>
 
+  <div class="page-frame">
 ${siteBar(asset, current)}
 
-  <main class="wrap">
+  <main class="wrap${wide ? ' wrap--wide' : ''}">
 ${body}
   </main>
 
@@ -381,6 +389,7 @@ ${body}
       <a class="foot-link" href="https://www.youtube.com/@CarpoolCritics" rel="noopener">[ YOUTUBE ↗ ]</a>
     </div>
   </footer>
+  </div>
 
 </body>
 </html>
@@ -819,6 +828,7 @@ ${sealedBlock}${sealedBlock ? '\n\n' : ''}${groups || '    <section class="secti
     ogImage: OG_IMAGE_FALLBACK,
     ogType: 'website',
     depth,
+    wide: true,
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',

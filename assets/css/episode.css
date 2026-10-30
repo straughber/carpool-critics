@@ -109,6 +109,33 @@ body {
   color: var(--accent-amber);
 }
 
+/* ---------- Page frame ----------
+   Document pages wear the same 1600px frame as the cockpit (.cinema-viewport):
+   same max width, same side rules, same centred window. Without it the archive
+   was a full-bleed strip of background with a 1000px column floating in it,
+   while every other surface stopped at the frame. */
+.page-frame {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-asphalt);
+  border-left: 2px solid var(--bg-dash);
+  border-right: 2px solid var(--bg-dash);
+}
+
+.page-frame > .wrap { flex: 1 0 auto; }
+
+/* The archive is a list of horizontal tickets, not prose, so it uses the frame's
+   full content width with the cockpit's gutters. Episode pages keep the 1000px
+   reading column: a transcript at 1500px is a bus ride. */
+.wrap--wide {
+  max-width: 1600px;
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+
 /* ---------- Article head ---------- */
 .ep-head { padding: 34px 0 10px; }
 
