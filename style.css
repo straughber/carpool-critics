@@ -1477,9 +1477,15 @@ pre.ascii-viz {
   color: var(--accent-amber);
 }
 
-/* ---- dispatch ticket: the one card on the home page ---- */
+/* ---- dispatch ticket: the one card on the home page ----
+   The card fills its rail rather than floating at 358px inside a 780px column.
+   A receipt is tall: the film sits at the top, the tachometer takes the slack,
+   and the REC stamp is pinned to the foot, so the emptiness is inside a piece
+   of furniture instead of around a floating box. */
 .hero-ticket {
   align-self: center;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-dash);
   border: var(--rule);
   box-shadow: var(--hard-shadow-ink);
@@ -1499,7 +1505,12 @@ pre.ascii-viz {
 
 .hero-ticket-state { color: var(--accent-amber); }
 .hero-ticket-perf { border-top: var(--rule-dashed); }
-.hero-ticket-body { padding: clamp(18px, 1.6vw, 26px) 18px clamp(16px, 1.4vw, 22px); }
+.hero-ticket-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(18px, 1.6vw, 26px) 18px clamp(16px, 1.4vw, 22px);
+}
 
 .hero-ticket-film {
   font-family: var(--font-display);
@@ -1507,6 +1518,16 @@ pre.ascii-viz {
   line-height: 1;
   letter-spacing: -0.01em;
   text-transform: uppercase;
+}
+
+.hero-ticket-still {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 18px;
+  border: 2px solid rgba(244, 240, 234, 0.32);
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .hero-ticket-meta {
@@ -1547,7 +1568,7 @@ pre.ascii-viz {
 }
 
 .hero-ticket-foot {
-  margin-top: 18px;
+  margin-top: 0;
   padding-top: 14px;
   border-top: var(--rule-dashed);
   display: flex;
@@ -1592,7 +1613,11 @@ pre.ascii-viz {
 }
 
 .hero-rack {
-  font-size: clamp(16px, 2.1vw, 34px);
+  margin: 0;
+  font-family: var(--font-mono);
+  /* 32 bands at the file's own width: the strip is as wide as the renderer
+     draws it, so the type carries the band rather than inventing columns. */
+  font-size: clamp(18px, 2.4vw, 46px);
   line-height: 1;
   letter-spacing: 0.04em;
   white-space: nowrap;

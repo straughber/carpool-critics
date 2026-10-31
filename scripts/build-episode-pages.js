@@ -1068,6 +1068,14 @@ function heroTicket(ep) {
     : '';
 
   const meta = [year, minutes, hostLabel].filter(Boolean).join(' // ');
+  // The episode's own still gives the card its mass. A 16:9 rectangle needs no
+  // matte, so this cannot repeat the cut-out failure the old hero had. Prefer the
+  // stored 1920x1080 cover: YouTube's `hqdefault` is 4:3 with the bars baked in,
+  // so cropping it to 16:9 would crop the show's own artwork.
+  const storedStill = ep.slug ? `assets/images/episodes/${ep.slug}/thumbnail.png` : '';
+  const still = (storedStill && fs.existsSync(path.join(ROOT, storedStill)))
+    ? storedStill
+    : String(ep.thumbnail || '').replace(/(hq|sd|mq)default/, 'maxresdefault');
 
   return `      <aside class="hero-ticket" aria-label="Latest dispatch">
         <div class="hero-ticket-head">
@@ -1077,7 +1085,8 @@ function heroTicket(ep) {
         <div class="hero-ticket-perf" aria-hidden="true"></div>
         <div class="hero-ticket-body">
           <div class="hero-ticket-film">${escapeHtml(film)}</div>
-          <div class="hero-ticket-meta">${escapeHtml(meta)}</div>${tach}
+          <div class="hero-ticket-meta">${escapeHtml(meta)}</div>
+          ${still ? `<img class="hero-ticket-still" src="${escapeAttr(pageAsset(still, 0))}" alt="" width="1280" height="720" loading="lazy" decoding="async" />` : ''}${tach}
           <div class="hero-ticket-foot">
             <span>● REC [${escapeHtml(runtime)}]</span>
             <span>AUSTIN, TX</span>
@@ -1096,15 +1105,16 @@ function heroPlayButton(ep) {
 }
 
 /**
- * A static frame set of the episode's own baked envelope, labelled SIGNAL //
- * ARCHIVE. The bytes are the ones tools/export_website_payload.py wrote: one
- * byte per band per frame at 12fps, and each byte is already an index into the
- * glyph table the payload carries (`signal.glyphs`), which is why the site reads
- * the table instead of assuming it. Each column is the loudest band of an evenly
- * sampled frame, so the strip is the episode's audio, not a decorative waveform.
+ * The episode's own baked envelope, rendered two ways from one source.
+ *
+ * The <pre> carries the same `[data-ascii-viz]` attributes the episode pages
+ * use, so `assets/js/ascii-visualizer.js` animates it at the file's own 12fps —
+ * the homepage used to bake a still frame and never mount the renderer, which is
+ * why the bars sat frozen. The baked glyphs stay as the no-JS fallback and as
+ * the frame reduced-motion freezes on, and they are exactly `width` glyphs so
+ * the strip does not change width when the script takes over.
  */
 function heroSignal(ep) {
-  const COLUMNS = 120;
   if (!ep || !ep.signal || !ep.signal.url) return '';
   const glyphs = [...String(ep.signal.glyphs || '')];
   if (!glyphs.length) return '';
@@ -1118,26 +1128,26 @@ function heroSignal(ep) {
   const frames = Math.floor(bin.length / width);
   if (!frames) return '';
 
-  // Two passes: the mean of the 32 band indices is the level, then the episode
-  // is normalized against its own loudest sampled frame. Without that, speech
-  // sits at 2-3 of 8 in every column and the strip is a flat line; the
-  // normalization is per file, exactly how ascii_visualizer ranks its glyphs.
-  const levels = [];
-  for (let column = 0; column < COLUMNS; column++) {
-    const frame = Math.round((column / (COLUMNS - 1)) * (frames - 1));
+  // One representative frame: the loudest sampled one, so the still a visitor
+  // sees before the script runs is the busiest moment rather than a silence.
+  let best = 0;
+  let bestLevel = -1;
+  for (let frame = 0; frame < frames; frame += 1) {
     let sum = 0;
-    for (let band = 0; band < width; band++) {
-      sum += bin[frame * width + band];
+    for (let band = 0; band < width; band++) sum += bin[frame * width + band];
+    if (sum > bestLevel) {
+      bestLevel = sum;
+      best = frame;
     }
-    levels.push(sum / width);
   }
-  const loudest = Math.max(...levels, 1);
-  const rack = levels
-    .map(level => glyphs[Math.min(glyphs.length - 1, Math.round((level / loudest) * (glyphs.length - 1)))])
-    .join('');
+  let baked = '';
+  for (let band = 0; band < width; band += 1) {
+    const index = Math.min(glyphs.length - 1, bin[best * width + band]);
+    baked += glyphs[index];
+  }
 
   return `<div class="hero-signal-label"><b>◊ SIGNAL</b>ARCHIVE // EP. ${escapeHtml(episodeNumber(ep, '--'))}</div>
-<div class="hero-rack" aria-hidden="true">${rack}</div>`;
+<pre class="hero-rack" data-ascii-viz data-style="bars" data-width="${width}" data-fps="${escapeAttr(Number(ep.signal.fps) || 12)}" data-envelope="${escapeAttr(ep.signal.url)}" aria-hidden="true">${baked}</pre>`;
 }
 
 /** Swap the contents of one marked region. A missing marker is a hard failure:
