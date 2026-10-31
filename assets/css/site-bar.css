@@ -357,3 +357,22 @@
     animation: none;
   }
 }
+
+/* Tablet band: five deck buttons plus the HUD do not fit on one row at 768px, so
+   [ CONTACT ] wrapped onto a line of its own. Tightening the label spacing keeps
+   the bar one row without shrinking the 44px hit target or dropping an item. */
+@media (min-width: 721px) and (max-width: 1080px) {
+  .brand-bar {
+    padding: 10px 12px 6px;
+  }
+
+  .deck-nav {
+    gap: 2px;
+  }
+
+  .deck-btn {
+    padding: 6px 7px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+}

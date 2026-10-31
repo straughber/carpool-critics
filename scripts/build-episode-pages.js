@@ -414,7 +414,7 @@ function filmCard(movie) {
   ].filter(Boolean).join('\n          ');
 
   return `
-      <section class="section" aria-labelledby="film-heading">
+      <section class="section section--film" aria-labelledby="film-heading">
         <h2 class="section-title" id="film-heading">◊ THE FILM</h2>
         <div class="film-card ticket">
           <div class="ticket-head">
@@ -456,7 +456,7 @@ function chapterSection(episode, isLive) {
   }).join('\n');
 
   return `
-      <section class="section" aria-labelledby="chapters-heading">
+      <section class="section section--chapters" aria-labelledby="chapters-heading">
         <h2 class="section-title" id="chapters-heading">◊ CHAPTERS</h2>
         <ol class="chapter-list">
 ${items}
@@ -472,7 +472,7 @@ function scorecardSection(episode) {
     `<div class="score-row"><strong>◊ ${escapeHtml(String(name).toUpperCase())}</strong><span class="gauge">${escapeHtml(asciiGauge(scores[name]))}</span></div>`
   ).join('\n          ');
   return `
-      <section class="section" aria-labelledby="scores-heading">
+      <section class="section section--scores" aria-labelledby="scores-heading">
         <h2 class="section-title" id="scores-heading">◊ FINAL TACHOMETER</h2>
         <div class="scorecard ds-scoreboard">
           ${rows}
@@ -487,7 +487,7 @@ function bestMomentSection(episode, isLive) {
     ? watchUrl(episode.youtubeId, moment.seconds != null ? moment.seconds : 0)
     : null;
   return `
-      <section class="section" aria-labelledby="moment-heading">
+      <section class="section section--moment" aria-labelledby="moment-heading">
         <h2 class="section-title" id="moment-heading">◊ BEST MOMENT</h2>
         <blockquote class="best-moment">
           <p>“${escapeHtml(moment.quote)}”</p>
@@ -550,7 +550,7 @@ function transcriptSection(transcript, source) {
       </div>`).join('\n');
 
   return `
-      <section class="section" aria-labelledby="transcript-heading">
+      <section class="section section--transcript" aria-labelledby="transcript-heading">
         <h2 class="section-title" id="transcript-heading">${heading}</h2>
         ${note}
 ${turns}
@@ -624,7 +624,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
     : '';
 
   const body = `
-    <article>
+    <article class="ep-article">
       <header class="ep-head ds-page-header">
         <p class="eyebrow ds-eyebrow">◊ ${escapeHtml(SITE_NAME)} // EPISODE ${escapeHtml(String(episode.number || ''))}</p>
         <h1 class="ep-title">${escapeHtml(h1)}</h1>
@@ -636,12 +636,19 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
       ${poster}
       ${signalStrip}
 
-      ${description ? `<section class="section"><p class="ep-description">${escapeHtml(description)}</p></section>` : ''}
-      ${filmCard(movie)}
-      ${scorecardSection(episode)}
-      ${bestMomentSection(episode, isLive)}
-      ${chapterSection(episode, isLive)}
-      ${transcriptSection(transcript, episode.source)}
+      <div class="ep-body">
+        <aside class="ep-rail" aria-label="Film and verdict">
+${[filmCard(movie), scorecardSection(episode)].filter(Boolean).join('\n')}
+        </aside>
+        <div class="ep-main">
+${[
+  description ? `<section class="section section--description"><p class="ep-description">${escapeHtml(description)}</p></section>` : '',
+  bestMomentSection(episode, isLive),
+  chapterSection(episode, isLive),
+  transcriptSection(transcript, episode.source),
+].filter(Boolean).join('\n')}
+        </div>
+      </div>
       ${pager}
     </article>`;
 
@@ -947,7 +954,195 @@ Sitemap: ${siteUrl('/sitemap.xml')}
 }
 
 // ========================================================
-// 4. RUN
+// 4. HOME HERO (GENERATED REGIONS INSIDE index.html)
+// ========================================================
+// index.html is hand-authored except for three marked regions: the dispatch
+// ticket, the PLAY button and the signal strip. They are rendered here from the
+// same catalogue the archive reads, so the front door cannot advertise last
+// week's episode, and a pre-release episode can never be promoted into it:
+// `isLiveEpisode` excludes `scheduled` and `draft`, exactly as `sealedStub` does.
+// Nothing below is invented. A missing field renders as absent, never as a
+// plausible number, because the ticket is the one place a viewer reads a score
+// before clicking anything.
+const HERO_REGIONS = {
+  ticket: ['<!-- HERO-TICKET:START -->', '<!-- HERO-TICKET:END -->'],
+  button: ['<!-- HERO-BUTTON:START -->', '<!-- HERO-BUTTON:END -->'],
+  signal: ['<!-- HERO-SIGNAL:START -->', '<!-- HERO-SIGNAL:END -->'],
+};
+
+
+/** HH:MM:SS — the REC stamp, derived from the measured runtime. */
+function clockStamp(seconds) {
+  const total = Math.max(0, Math.round(seconds));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+/** The newest episode a viewer can actually watch. Null when there is none. */
+function newestLiveEpisode(episodes) {
+  return episodes.find(isLiveEpisode) || null;
+}
+
+function heroTicket(ep) {
+  if (!ep) {
+    return `      <aside class="hero-ticket is-empty" aria-label="Latest dispatch">
+        <div class="hero-ticket-head">
+          <span>ADMIT ONE // --</span>
+          <span class="hero-ticket-state">AWAITING</span>
+        </div>
+        <div class="hero-ticket-perf" aria-hidden="true"></div>
+        <div class="hero-ticket-body">
+          <div class="hero-ticket-film">No dispatch on file</div>
+          <div class="hero-ticket-meta">The archive carries every episode.</div>
+        </div>
+      </aside>`;
+  }
+
+  const number = episodeNumber(ep, '--');
+  const movie = ep.movie || {};
+  const film = movie.title || ep.title || 'Untitled';
+  const year = movie.year ? String(movie.year) : '';
+  const seconds = measuredSeconds(ep);
+  const runtime = seconds != null ? clockStamp(seconds) : '';
+  const minutes = seconds != null ? `${Math.floor(seconds / 60)} MIN` : '';
+  const scores = ep.scorecards || {};
+  const names = Object.keys(scores);
+  const hostNames = Array.isArray(ep.hosts) ? ep.hosts.filter(host => host && host.name) : [];
+  const hostCount = hostNames.length || names.length;
+  const hostLabel = hostCount ? `${hostCount} HOST${hostCount === 1 ? '' : 'S'}` : '';
+
+  // A score is only ever a value someone said on the tape. `asciiGauge` renders
+  // an unknown as `--/--`, so a missing host cannot become a fabricated number.
+  const tach = names.length
+    ? `
+          <div class="hero-ticket-tach">
+            <div class="hero-ticket-tach-label">
+              <span>◊ FINAL TACHOMETER</span>
+              <span>${hostLabel}</span>
+            </div>
+            ${names.map(name =>
+              `<div class="hero-ticket-score"><strong>${escapeHtml(String(name).toUpperCase())}</strong><span>${escapeHtml(asciiGauge(scores[name]))}</span></div>`
+            ).join('\n            ')}
+          </div>`
+    : '';
+
+  const meta = [year, minutes, hostLabel].filter(Boolean).join(' // ');
+
+  return `      <aside class="hero-ticket" aria-label="Latest dispatch">
+        <div class="hero-ticket-head">
+          <span>ADMIT ONE // EP. ${escapeHtml(number)}</span>
+          <span class="hero-ticket-state">ON FILE</span>
+        </div>
+        <div class="hero-ticket-perf" aria-hidden="true"></div>
+        <div class="hero-ticket-body">
+          <div class="hero-ticket-film">${escapeHtml(film)}</div>
+          <div class="hero-ticket-meta">${escapeHtml(meta)}</div>${tach}
+          <div class="hero-ticket-foot">
+            <span>● REC [${escapeHtml(runtime)}]</span>
+            <span>AUSTIN, TX</span>
+          </div>
+        </div>
+      </aside>`;
+}
+
+function heroPlayButton(ep) {
+  if (!ep || !ep.slug) {
+    return `<a class="btn-hero-primary" href="episodes/">[ ▶ LATEST ]</a>`;
+  }
+  const number = episodeNumber(ep, '');
+  const label = number ? `[ ▶ PLAY EP. ${escapeHtml(number)} ]` : '[ ▶ PLAY ]';
+  return `<a class="btn-hero-primary" href="${escapeAttr(pageAsset(`episodes/${ep.slug}/`, 0))}">${label}</a>`;
+}
+
+/**
+ * A static frame set of the episode's own baked envelope, labelled SIGNAL //
+ * ARCHIVE. The bytes are the ones tools/export_website_payload.py wrote: one
+ * byte per band per frame at 12fps, and each byte is already an index into the
+ * glyph table the payload carries (`signal.glyphs`), which is why the site reads
+ * the table instead of assuming it. Each column is the loudest band of an evenly
+ * sampled frame, so the strip is the episode's audio, not a decorative waveform.
+ */
+function heroSignal(ep) {
+  const COLUMNS = 120;
+  if (!ep || !ep.signal || !ep.signal.url) return '';
+  const glyphs = [...String(ep.signal.glyphs || '')];
+  if (!glyphs.length) return '';
+  let bin;
+  try {
+    bin = fs.readFileSync(path.join(ROOT, ep.signal.url));
+  } catch {
+    return '';
+  }
+  const width = Number(ep.signal.width) || 32;
+  const frames = Math.floor(bin.length / width);
+  if (!frames) return '';
+
+  // Two passes: the mean of the 32 band indices is the level, then the episode
+  // is normalized against its own loudest sampled frame. Without that, speech
+  // sits at 2-3 of 8 in every column and the strip is a flat line; the
+  // normalization is per file, exactly how ascii_visualizer ranks its glyphs.
+  const levels = [];
+  for (let column = 0; column < COLUMNS; column++) {
+    const frame = Math.round((column / (COLUMNS - 1)) * (frames - 1));
+    let sum = 0;
+    for (let band = 0; band < width; band++) {
+      sum += bin[frame * width + band];
+    }
+    levels.push(sum / width);
+  }
+  const loudest = Math.max(...levels, 1);
+  const rack = levels
+    .map(level => glyphs[Math.min(glyphs.length - 1, Math.round((level / loudest) * (glyphs.length - 1)))])
+    .join('');
+
+  return `<div class="hero-signal-label"><b>◊ SIGNAL</b>ARCHIVE // EP. ${escapeHtml(episodeNumber(ep, '--'))}</div>
+<div class="hero-rack" aria-hidden="true">${rack}</div>`;
+}
+
+/** Swap the contents of one marked region. A missing marker is a hard failure:
+ *  silently skipping it would ship a hero frozen on an old episode. */
+function replaceHeroRegion(html, name, block) {
+  const [start, end] = HERO_REGIONS[name];
+  const from = html.indexOf(start);
+  const to = html.indexOf(end, from === -1 ? 0 : from);
+  if (from === -1 || to === -1) {
+    throw new Error(`index.html is missing the ${name} hero markers (${start} … ${end})`);
+  }
+  // Match the marker's own indentation so the generated block sits in the tree
+  // like the hand-authored lines around it: dedent the generator's output first,
+  // then indent it once, so a template's own base indent cannot compound.
+  const lineStart = html.lastIndexOf('\n', from) + 1;
+  const indent = html.slice(lineStart, from);
+  const endLineStart = html.lastIndexOf('\n', to) + 1;
+  const endIndent = html.slice(endLineStart, to);
+  const lines = block.split('\n');
+  const widths = lines.filter(line => line.trim()).map(line => line.match(/^[ \t]*/)[0].length);
+  const common = widths.length ? Math.min(...widths) : 0;
+  const indented = lines
+    .map(line => (line.trim() ? indent + line.slice(common) : line))
+    .join('\n');
+  // The end marker's own indentation sits inside the replaced span, so it is
+  // re-emitted rather than silently stripped on every build.
+  return `${html.slice(0, from + start.length)}\n${indented}\n${endIndent}${html.slice(to)}`;
+}
+
+function writeHomepage(episodes) {
+  const file = path.join(ROOT, 'index.html');
+  const latest = newestLiveEpisode(episodes);
+
+  let html = fs.readFileSync(file, 'utf8');
+  html = replaceHeroRegion(html, 'ticket', heroTicket(latest));
+  html = replaceHeroRegion(html, 'button', heroPlayButton(latest));
+  html = replaceHeroRegion(html, 'signal', heroSignal(latest));
+  fs.writeFileSync(file, html, 'utf8');
+
+  console.log(`[Pages] index.html (hero ticket: ${latest ? `${latest.id} ${latest.movie ? latest.movie.title : ''}`.trim() : 'no live episode'})`);
+}
+
+// ========================================================
+// 5. RUN
 // ========================================================
 async function run() {
   const catalog = readJson('data/episodes.json', []);
@@ -1012,6 +1207,9 @@ async function run() {
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), buildSitemap(episodes), 'utf8');
   fs.writeFileSync(path.join(ROOT, 'robots.txt'), buildRobots(), 'utf8');
   fs.writeFileSync(path.join(ROOT, 'feed.xml'), buildFeed(episodes), 'utf8');
+  // The hero is regenerated from the same catalogue, so the front door and the
+  // archive cannot disagree about what the latest episode is.
+  writeHomepage(episodes);
   const liveCount = episodes.filter(isLiveEpisode).length;
   console.log(`[Pages] sitemap.xml (${liveCount + 2} urls, ${episodes.length - liveCount} pre-release excluded) + robots.txt + feed.xml`);
 }
@@ -1023,4 +1221,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { sealedStub, buildArchivePage, buildEpisodePage, mergeCatalogs };
+module.exports = { sealedStub, buildArchivePage, buildEpisodePage, mergeCatalogs, heroTicket, heroPlayButton, heroSignal, newestLiveEpisode, replaceHeroRegion, HERO_REGIONS };
