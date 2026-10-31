@@ -127,6 +127,46 @@ node -e '
   console.log(`  no Shorts in the catalogue (${catalog.length} Eps, ${ids.size} Short id(s) known)`);
 ' || fail "a YouTube Short is in the episode catalogue" 1
 node scripts/test-shorts-filter.js || fail "Shorts filter regressed — a Short can become an episode" 1
+
+# An asset's ?v= must be the hash of its own bytes. A hand-maintained version
+# string is how new HTML shipped against a stylesheet every returning visitor
+# already had cached (2026-10-30): the page rendered unstyled, and the deploy
+# check still passed because it fetched with a random ?cb= that always misses
+# the cache. This gate compares the URL in the page to the file on disk.
+node -e '
+  const fs = require("fs"), path = require("path"), crypto = require("crypto");
+  const pages = [];
+  const walk = dir => {
+    if (!fs.existsSync(dir)) return;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name === "index.html") pages.push(p);
+    }
+  };
+  walk("episodes");
+  pages.push("index.html");
+  let bad = 0;
+  for (const page of pages) {
+    const html = fs.readFileSync(page, "utf8");
+    const re = /(?:href|src)="([^"?]+?\.(?:css|js))(?:\?v=([^"]*))?"/g;
+    const pageDir = path.dirname(page);
+    let m;
+    while ((m = re.exec(html))) {
+      const url = m[1];
+      if (/^(https?:)?\/\//.test(url)) continue;
+      const file = path.join(pageDir, url);
+      if (!fs.existsSync(file)) continue;
+      const hash = crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex").slice(0, 8);
+      if (m[2] !== hash) {
+        console.error(`  x ${page} links ${url}?v=${m[2] || "(none)"} but the file is ${hash}`);
+        bad = 1;
+      }
+    }
+  }
+  if (!bad) console.log("  asset versions match their files");
+  process.exit(bad);
+' || fail "an asset version does not match its file — returning visitors would get a stale sheet" 1
 [ -f episodes/index.html ] || fail "episodes/index.html missing (build-episode-pages.js did not run?)" 1
 [ -f sitemap.xml ] || fail "sitemap.xml missing" 1
 [ -f robots.txt ] || fail "robots.txt missing" 1

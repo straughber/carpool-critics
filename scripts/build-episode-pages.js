@@ -15,6 +15,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 // ========================================================
 // 1. SITE CONFIGURATION
@@ -177,6 +178,44 @@ function pageAsset(value, depth) {
   if (!value) return value;
   if (/^(https?:)?\/\//.test(value)) return value;
   return `${'../'.repeat(depth)}${String(value).replace(/^\/+/, '')}`;
+}
+
+/**
+ * The first 8 hex of an asset's own bytes.
+ *
+ * A stylesheet was linked as `style.css?v=6.3.0`, a string maintained by hand.
+ * Changing the CSS without bumping it served the new HTML against a sheet every
+ * returning visitor already had in cache, and the publish check could not see it
+ * because it fetched with a random `?cb=` that always misses the cache. Deriving
+ * the version from the file makes the stale-sheet case impossible: the bytes
+ * change, so the URL changes.
+ */
+function assetVersion(rootRelativePath) {
+  try {
+    const digest = crypto.createHash('sha256')
+      .update(fs.readFileSync(path.join(ROOT, rootRelativePath)))
+      .digest('hex');
+    return digest.slice(0, 8);
+  } catch {
+    return null;
+  }
+}
+
+/** Stamp every local .css/.js reference with its content hash, per page depth. */
+function stampAssetVersions(html, depth = 0) {
+  return html.replace(
+    /(href|src)="([^"?]+?\.(?:css|js))(?:\?v=[^"]*)?"/g,
+    (match, attr, url) => {
+      if (/^(https?:)?\/\//.test(url)) return match;
+      let rootRelative = url;
+      for (let i = 0; i < depth; i++) {
+        if (!rootRelative.startsWith('../')) return match;
+        rootRelative = rootRelative.slice(3);
+      }
+      const version = assetVersion(rootRelative);
+      return version ? `${attr}="${url}?v=${version}"` : match;
+    }
+  );
 }
 
 function escapeHtml(value) {
@@ -1136,7 +1175,8 @@ function writeHomepage(episodes) {
   html = replaceHeroRegion(html, 'ticket', heroTicket(latest));
   html = replaceHeroRegion(html, 'button', heroPlayButton(latest));
   html = replaceHeroRegion(html, 'signal', heroSignal(latest));
-  fs.writeFileSync(file, html, 'utf8');
+  // depth 0: index.html sits at the site root.
+  fs.writeFileSync(file, stampAssetVersions(html, 0), 'utf8');
 
   console.log(`[Pages] index.html (hero ticket: ${latest ? `${latest.id} ${latest.movie ? latest.movie.title : ''}`.trim() : 'no live episode'})`);
 }
@@ -1183,7 +1223,8 @@ async function run() {
 
     const dir = path.join(EPISODES_DIR, episode.slug);
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf8');
+    // depth 2: episodes/<slug>/ -> ../../
+    fs.writeFileSync(path.join(dir, 'index.html'), stampAssetVersions(html, 2), 'utf8');
     fs.writeFileSync(path.join(dir, GENERATED_MARKER), '', 'utf8');
     written.add(episode.slug);
 
@@ -1191,7 +1232,8 @@ async function run() {
   }
 
   fs.mkdirSync(EPISODES_DIR, { recursive: true });
-  fs.writeFileSync(path.join(EPISODES_DIR, 'index.html'), buildArchivePage(episodes, movies), 'utf8');
+  // depth 1: episodes/ -> ../
+  fs.writeFileSync(path.join(EPISODES_DIR, 'index.html'), stampAssetVersions(buildArchivePage(episodes, movies), 1), 'utf8');
   console.log('[Pages] episodes/index.html');
 
   // Prune pages for episodes that no longer exist (only ones we generated).
