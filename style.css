@@ -1590,7 +1590,9 @@ pre.ascii-viz {
 /* ---- signal strip: the episode's own baked envelope ---- */
 .hero-signal {
   border-top: var(--rule);
-  padding: clamp(12px, 1.4vw, 18px) var(--page-margin) clamp(12px, 1.6vw, 20px);
+  /* The strip sizes itself to the cell width, so its height follows the frame:
+     the band needs its own room or the tallest glyphs sit on the footer rule. */
+  padding: clamp(14px, 1.6vw, 24px) var(--page-margin) clamp(20px, 2.2vw, 34px);
   display: grid;
   grid-template-columns: clamp(140px, 14vw, 240px) minmax(0, 1fr);
   gap: clamp(16px, 2vw, 32px);
@@ -1612,14 +1614,23 @@ pre.ascii-viz {
   letter-spacing: 0.2em;
 }
 
+/* The strip is 32 glyphs, one per band, and it should reach the frame edge.
+   JetBrains Mono advances 0.6em per glyph, so 32 bands occupy 19.2em: sizing the
+   type at 1/19.2 of the cell makes the last band land on the right edge at every
+   width, instead of stopping short at one fixed font size. */
+.hero-rack-wrap {
+  container-type: inline-size;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .hero-rack {
   margin: 0;
   font-family: var(--font-mono);
-  /* 32 bands at the file's own width: the strip is as wide as the renderer
-     draws it, so the type carries the band rather than inventing columns. */
-  font-size: clamp(18px, 2.4vw, 46px);
+  font-size: max(13px, calc(100cqw / 19.2));
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
   color: var(--text-ticket);
@@ -1642,7 +1653,6 @@ pre.ascii-viz {
     gap: 28px;
   }
   .hero-ticket { align-self: stretch; }
-  .hero-rack { font-size: 18px; }
 }
 
 @media (max-width: 720px) {

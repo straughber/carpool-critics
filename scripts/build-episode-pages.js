@@ -1147,7 +1147,7 @@ function heroSignal(ep) {
   }
 
   return `<div class="hero-signal-label"><b>◊ SIGNAL</b>ARCHIVE // EP. ${escapeHtml(episodeNumber(ep, '--'))}</div>
-<pre class="hero-rack" data-ascii-viz data-style="bars" data-width="${width}" data-fps="${escapeAttr(Number(ep.signal.fps) || 12)}" data-envelope="${escapeAttr(ep.signal.url)}" aria-hidden="true">${baked}</pre>`;
+<div class="hero-rack-wrap"><pre class="hero-rack" data-ascii-viz data-style="bars" data-width="${width}" data-fps="${escapeAttr(Number(ep.signal.fps) || 12)}" data-envelope="${escapeAttr(ep.signal.url)}" aria-hidden="true">${baked}</pre></div>`;
 }
 
 /** Swap the contents of one marked region. A missing marker is a hard failure:
