@@ -24,7 +24,8 @@ Highlights:
   rest filed in a year-grouped archive
 * **Click-to-load player** so no YouTube iframe loads until someone presses play
 * **Transcripts on every episode page**, with speaker labels and the turns that survived the cut
-* **Sealed premieres** go up as a stub with the date and a 16×9 pixel mosaic of the cover:
+* **Sealed premieres** go up as a stub with the date (or `DATE TO BE ANNOUNCED` until the
+  upload is scheduled) and a 16×9 pixel mosaic of the cover:
   no title, no film, no link, and nothing pre-release in the sitemap or RSS
 * **Cached catalog data** so visitors never call YouTube or TMDb for metadata
 * **Scheduled episodes** get a real page before release, kept out of search until the
