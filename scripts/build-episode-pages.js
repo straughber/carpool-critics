@@ -743,10 +743,18 @@ function buildArchivePage(episodes, movies) {
   // A scheduled page is a creator review surface, not a catalogue entry.
   // It may appear here only as a sealed stub: date and episode number, never a
   // title or thumbnail that would leak the premiere before YouTube does.
+  //
+  // A draft is not scheduled yet, so it has no premiere date. It still gets a
+  // stub: the archive is the record, and an episode that exists but is withheld
+  // reads as `DATE TO BE ANNOUNCED` rather than as nothing at all. The date is
+  // the only thing that changes when the upload is scheduled.
   const archiveEpisodes = episodes.filter(isLiveEpisode);
   const sealedEpisodes = episodes
-    .filter(ep => !isLiveEpisode(ep) && ep.publishAt)
-    .sort((a, b) => new Date(a.publishAt) - new Date(b.publishAt));
+    .filter(ep => !isLiveEpisode(ep))
+    // Undated drafts sort after dated premieres, not before them: `new Date(null)`
+    // is the epoch, which would file "date to be announced" ahead of a real date.
+    .sort((a, b) => (a.publishAt ? new Date(a.publishAt).getTime() : Infinity)
+                  - (b.publishAt ? new Date(b.publishAt).getTime() : Infinity));
 
   // The live feed claims the newest five. Anything past that is archive-only,
   // and says so on the stub. That status is the whole difference between the
