@@ -22,6 +22,14 @@
 
   --font-mono: 'JetBrains Mono', 'VT323', 'Menlo', 'Andale Mono', monospace;
   --font-display: 'Archivo Black', 'Oswald', 'Arial Black', sans-serif;
+
+  /* DESIGN_SYSTEM.md §2.3 — the same frame and page margin as the cockpit, so a
+     document page and the home view share one grid instead of the 1000px
+     centred column this file used to float inside the 1600px frame. */
+  --frame-max: 1600px;
+  --page-margin: clamp(16px, 4vw, 48px);
+  --measure: 74ch;
+  --gutter: 24px;
 }
 
 * {
@@ -71,9 +79,9 @@ a:hover { text-decoration: none; }
 
 .wrap {
   width: 100%;
-  max-width: 1000px;
+  max-width: none;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--page-margin);
 }
 
 /* ---------- Page frame ----------
@@ -124,7 +132,7 @@ body {
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
-  max-width: 1600px;
+  max-width: var(--frame-max);
   margin: 0 auto;
   flex: 1 0 auto;
   display: flex;
@@ -136,12 +144,14 @@ body {
 
 .page-frame > .wrap { flex: 1 0 auto; }
 
-/* The archive is a list of horizontal tickets, not prose, so it uses the frame's
-   full content width with the cockpit's gutters. Episode pages keep the 1000px
-   reading column: a transcript at 1500px is a bus ride. */
+/* One frame, one page margin, on every document page. Long-form text keeps its
+   readability from a measure cap on the text element itself (74ch-78ch on the
+   transcript, description and quotes), not from a narrower container — a
+   transcript at 1500px is a bus ride, but centring the page in a field of
+   asphalt is what DESIGN_SYSTEM.md §2.3 forbids. */
 .wrap--wide {
-  max-width: 1600px;
-  padding: 0 clamp(16px, 4vw, 48px);
+  max-width: none;
+  padding: 0 var(--page-margin);
 }
 
 /* ---------- Article head ---------- */
@@ -944,3 +954,34 @@ pre.ascii-viz {
 @media (prefers-reduced-motion: reduce) {
   pre.ascii-viz { animation: none; }
 }
+
+/* ---------- Full-frame article layout ----------
+   DESIGN_SYSTEM.md §2.3: content sits IN the frame, and the frame is the same
+   1600px one the cockpit uses. The article used to be a 1000px column centred
+   in that frame, which left the width unused and is the "centred card floating
+   in asphalt" the document forbids. At desktop the width is used instead: the
+   reading column keeps its measure and the film card + tachometer sit in a rail
+   beside it. The two columns are separate containers so they flow independently
+   — sharing grid rows made the tall film card strand the reading column. */
+@media (min-width: 1100px) {
+  .ep-body {
+    display: grid;
+    /* 40/60: the receipt rail is wide enough to keep the film card horizontal,
+       and the reading column keeps a full measure for the transcript. The rail
+       is first in the DOM, so on mobile it stacks above the content and the tab
+       order matches the visual order. */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: var(--ds-space-6);
+    align-items: start;
+  }
+
+  .ep-rail {
+    position: sticky;
+    top: 96px;
+  }
+
+  /* A measure on the text itself, never a narrower container. */
+  .section--description .ep-description { max-width: var(--measure); }
+}
+
+.ep-rail > .section:first-child { margin-top: var(--ds-space-6); }

@@ -145,115 +145,58 @@
       <!-- VIEW 1: HOME COCKPIT (PROPORTIONAL LIFE-SIZE HOSTS)     -->
       <!-- ====================================================== -->
       <main class="view-panel active" id="view-home">
-        <div class="cockpit-stage">
-          <div class="vignette-overlay"></div>
+        <div class="hero-deck">
+          <div class="hero-copy">
+            <p class="hero-kicker">[ ◊ THE LATEST DISPATCH ]</p>
+            <h2 class="hero-display">Parked car.<br />Three critics.<br /><span class="hero-accent">One film.</span></h2>
+            <p class="hero-sub">Film review debriefs recorded inside a parked car the moment the credits roll. No traffic, no schedule, no second take.</p>
+            <div class="hero-cta">
+              <!-- HERO-BUTTON:START -->
+              <a class="btn-hero-primary" href="episodes/ep1-whalefall/">[ ▶ PLAY EP. 01 ]</a>
+<!-- HERO-BUTTON:END -->
+              <a class="btn-hero-ghost" href="episodes/">[ ◊ THE ARCHIVE ]</a>
+            </div>
+          </div>
+          <!-- HERO-TICKET:START -->
+          <aside class="hero-ticket" aria-label="Latest dispatch">
+            <div class="hero-ticket-head">
+              <span>ADMIT ONE // EP. 01</span>
+              <span class="hero-ticket-state">ON FILE</span>
+            </div>
+            <div class="hero-ticket-perf" aria-hidden="true"></div>
+            <div class="hero-ticket-body">
+              <div class="hero-ticket-film">Whalefall</div>
+              <div class="hero-ticket-meta">2026 // 21 MIN // 3 HOSTS</div>
+              <div class="hero-ticket-tach">
+                <div class="hero-ticket-tach-label">
+                  <span>◊ FINAL TACHOMETER</span>
+                  <span>3 HOSTS</span>
+                </div>
+                <div class="hero-ticket-score"><strong>SHANE</strong><span>[▓▓▓▓░░░░░░] 3.5/10</span></div>
+                <div class="hero-ticket-score"><strong>ALEX</strong><span>[▓▓▓░░░░░░░] 3.0/10</span></div>
+                <div class="hero-ticket-score"><strong>DAVE</strong><span>[▓▓▓▓▓▓░░░░] 5.5/10</span></div>
+              </div>
+              <div class="hero-ticket-foot">
+                <span>● REC [00:21:48]</span>
+                <span>AUSTIN, TX</span>
+              </div>
+            </div>
+          </aside>
+<!-- HERO-TICKET:END -->
+        </div>
 
-          <!-- 1. Background Car Interior Image (Categorized Media with Fallbacks) -->
-          <img
-            src="assets/images/cockpit/CurbsideCinema_Background.webp"
-            alt="Carpool Critics mobile studio inside a parked car overlooking the Austin, Texas night skyline"
-            class="stage-layer bg-car-image"
-            width="1600"
-            height="900"
-            loading="eager"
-            fetchpriority="high"
-            onerror="this.style.display='none'"
-          />
+        <div class="hero-signal">
+          <!-- HERO-SIGNAL:START -->
+          <div class="hero-signal-label"><b>◊ SIGNAL</b>ARCHIVE // EP. 01</div>
+          <div class="hero-rack" aria-hidden="true">▆▅▇▅▅▆▃▂▇▅▆▇▅▂▇▅▅▄▆▅▇▆▃▇▆▅▆▆▅▃▅▆▅▂▇▂▆▄▆▇▄▃▆▆▄▅▆▆▆▆▂▆▅▄▂▆▆▃▄▄▃▄▅▃▃▇▇▅▄▄▅█▄▃▅█▄▇▂▄▇▂▅▇▅▄▄▅▅▆█▄▂▅▆▆▅▄▅▆▇▃▇▆▅▅▃▆▆▅▄▆▆█▇▃▅▇▆█</div>
+<!-- HERO-SIGNAL:END -->
+        </div>
 
-          <!-- 2. Host Cutout Layers -->
-          <!-- DAVE (Center Back Seat) -->
-          <div class="host-group group-dave" id="group-dave">
-            <img
-              src="assets/images/hosts/Dave_CurbsideCritic.webp"
-              alt="Dave, back seat host and creature feature historian on Carpool Critics"
-              class="stage-layer host-cutout-img img-dave"
-              width="500"
-              height="700"
-              onerror="this.onerror=null; this.src='Dave_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/dave.svg';};"
-            />
-          </div>
-
-          <!-- ALEX (Passenger Seat) -->
-          <div class="host-group group-alex" id="group-alex">
-            <img
-              src="assets/images/hosts/Alex_CurbsideCritic.webp"
-              alt="Alex, passenger seat host analyzing screenplay pacing and narrative arcs on Carpool Critics"
-              class="stage-layer host-cutout-img img-alex"
-              width="500"
-              height="700"
-              onerror="this.onerror=null; this.src='Alex_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/alex.svg';};"
-            />
-          </div>
-
-          <!-- SHANE (Driver Seat) -->
-          <div class="host-group group-shane" id="group-shane">
-            <img
-              src="assets/images/hosts/Shane_CurbsideCritic.webp"
-              alt="Shane, driver seat host analyzing camera movement and cinematography on Carpool Critics"
-              class="stage-layer host-cutout-img img-shane"
-              width="500"
-              height="700"
-              onerror="this.onerror=null; this.src='Shane_CurbsideCritic.webp'; this.onerror=function(){this.src='assets/images/hosts/shane.svg';};"
-            />
-          </div>
-
-          <!-- 3. Clickable Host Hotspots -->
-          <div
-            class="host-hitbox hitbox-alex"
-            data-section="about"
-            role="button"
-            tabindex="0"
-            title="Alex • About Us"
-            onmouseenter="setHover('alex', true)"
-            onmouseleave="setHover('alex', false)"
-          >
-            <div class="host-nav-label label-alex">[ ABOUT US ]</div>
-          </div>
-
-          <div
-            class="host-hitbox hitbox-dave"
-            data-section="episodes"
-            role="button"
-            tabindex="0"
-            title="Dave • Episodes"
-            onmouseenter="setHover('dave', true)"
-            onmouseleave="setHover('dave', false)"
-          >
-            <div class="host-nav-label label-dave">[ EPISODES ]</div>
-          </div>
-
-          <div
-            class="host-hitbox hitbox-shane"
-            data-section="contact"
-            role="button"
-            tabindex="0"
-            title="Shane • Contact Us"
-            onmouseenter="setHover('shane', true)"
-            onmouseleave="setHover('shane', false)"
-          >
-            <div class="host-nav-label label-shane">[ CONTACT ]</div>
-          </div>
-
-          <!-- 4. Stage HUD: hard-edged, no glass -->
-          <div class="stage-hud stage-hud-tl" aria-hidden="true">
-            <span>TACH [▓▓▓▓▓▓▓░░░] 7.4</span>
-            <span>CAM 01 // WIDE CABIN</span>
-          </div>
-          <div class="stage-hud stage-hud-tc" aria-hidden="true">
-            <span class="stage-tagline">FRESH OUT THE DOORS // STRAIGHT TO THE DASH</span>
-          </div>
-          <div class="stage-hud stage-hud-tr" aria-hidden="true">
-            <span><span class="rec-dot">●</span> REC <span class="hud-clock" data-clock>00:00:00</span></span>
-          </div>
-          <div class="stage-hud stage-hud-bl" aria-hidden="true">
-            <span>◊ HOV-3 // THREE ABOARD</span>
-          </div>
-          <div class="signal-interference" id="signal-interference" aria-hidden="true"></div>
-          <div class="stage-frame" aria-hidden="true"></div>
-
-          <div class="cockpit-hint-pill">
-            [ ◊ CLICK A HOST // NAVIGATE ]
-          </div>
+        <div class="hero-hosts">
+          <span class="host-chip host-chip-accent">[ ALEX // SCREENPLAY ]</span>
+          <span class="host-chip">[ DAVE // CREATURE FEATURES ]</span>
+          <span class="host-chip">[ SHANE // CAMERA ]</span>
+          <span class="hero-hosts-note">◊ HOV-3 // THREE ABOARD</span>
         </div>
       </main>
 

@@ -25,6 +25,14 @@
 
   --font-mono: 'JetBrains Mono', 'VT323', 'Menlo', 'Andale Mono', monospace;
   --font-display: 'Archivo Black', 'Oswald', 'Arial Black', sans-serif;
+
+  /* DESIGN_SYSTEM.md §2.3 — one frame, one page margin, one reading measure.
+     The margin interpolates between the documented steps (16px at xs, 48px at
+     xl); above xl the frame stops at 1600px, and every surface sits IN it. */
+  --frame-max: 1600px;
+  --page-margin: clamp(16px, 4vw, 48px);
+  --measure: 74ch;
+  --gutter: 24px;
 }
 
 /* ========================================================
@@ -123,8 +131,10 @@ button {
    4. VIEWPORT & SHELL
    ======================================================== */
 .cinema-viewport {
-  width: 100vw;
-  max-width: 1600px;
+  /* 100% not 100vw: vw counts the scrollbar, which pushed the frame 15px wider
+     than the viewport and produced a horizontal scrollbar on document pages. */
+  width: 100%;
+  max-width: var(--frame-max);
   height: 100vh;
   height: 100dvh;
   margin: 0 auto;
@@ -1281,6 +1291,11 @@ button {
     padding: 0 10px;
     font-size: 8px;
     letter-spacing: 0.08em;
+    /* Four items cannot share 320px on one line; wrapping keeps the copyright
+       inside the frame instead of hanging 19px past it. */
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 2px;
   }
 
   .status-mid {
@@ -1374,4 +1389,270 @@ pre.ascii-viz {
 
 .cam-rail .cam-btn.ds-channel[data-state="empty"] {
   background: var(--bg-asphalt);
+}
+
+/* ========================================================
+   19. HOME: TYPE-LED HERO
+   The type is the hero and every value is rendered from the catalogue
+   (scripts/build-episode-pages.js -> HERO-* regions in index.html).
+   No composite, no cutout, no invented gauge. BRAND.md §0 + §5.
+   ======================================================== */
+.hero-deck {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 33vw, 520px);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+  padding: clamp(22px, 3.2vw, 48px) var(--page-margin) clamp(14px, 2vw, 28px);
+}
+
+.hero-copy { min-width: 0; }
+
+.hero-kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-amber);
+  margin-bottom: clamp(14px, 1.6vw, 26px);
+}
+
+.hero-display {
+  font-size: clamp(38px, 5.2vw, 104px);
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: var(--text-ticket);
+}
+
+.hero-accent { color: var(--accent-amber); }
+
+.hero-sub {
+  margin-top: clamp(16px, 1.8vw, 30px);
+  max-width: 62ch;
+  font-size: clamp(14px, 1.1vw, 19px);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.hero-cta {
+  margin-top: clamp(20px, 2.4vw, 36px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 18px;
+}
+
+.btn-hero-primary,
+.btn-hero-ghost {
+  display: inline-flex;
+  align-items: center;
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  text-decoration: none;
+}
+
+.btn-hero-primary {
+  background: var(--accent-amber);
+  color: var(--bg-asphalt);
+  border: 2px solid var(--accent-amber);
+  box-shadow: var(--hard-shadow-ink);
+}
+
+.btn-hero-primary:hover {
+  background: var(--bg-asphalt);
+  color: var(--accent-amber);
+}
+
+.btn-hero-ghost {
+  border: 2px dashed var(--text-muted);
+  color: var(--text-ticket);
+}
+
+.btn-hero-ghost:hover {
+  border-color: var(--accent-amber);
+  color: var(--accent-amber);
+}
+
+/* ---- dispatch ticket: the one card on the home page ---- */
+.hero-ticket {
+  align-self: center;
+  background: var(--bg-dash);
+  border: var(--rule);
+  box-shadow: var(--hard-shadow-ink);
+}
+
+.hero-ticket-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero-ticket-state { color: var(--accent-amber); }
+.hero-ticket-perf { border-top: var(--rule-dashed); }
+.hero-ticket-body { padding: clamp(18px, 1.6vw, 26px) 18px clamp(16px, 1.4vw, 22px); }
+
+.hero-ticket-film {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.3vw, 44px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.hero-ticket-meta {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hero-ticket-tach { margin-top: 22px; }
+
+.hero-ticket-tach-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hero-ticket-score {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: 12px;
+}
+
+.hero-ticket-score strong { font-weight: 700; letter-spacing: 0.14em; }
+
+.hero-ticket-score span {
+  color: var(--accent-amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-ticket-foot {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: var(--rule-dashed);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-ticket.is-empty .hero-ticket-film {
+  font-size: clamp(18px, 1.4vw, 22px);
+  color: var(--text-muted);
+}
+
+/* ---- signal strip: the episode's own baked envelope ---- */
+.hero-signal {
+  border-top: var(--rule);
+  padding: clamp(12px, 1.4vw, 18px) var(--page-margin) clamp(12px, 1.6vw, 20px);
+  display: grid;
+  grid-template-columns: clamp(140px, 14vw, 240px) minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 32px);
+  align-items: center;
+}
+
+.hero-signal-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.hero-signal-label b {
+  display: block;
+  color: var(--accent-amber);
+  letter-spacing: 0.2em;
+}
+
+.hero-rack {
+  font-size: clamp(16px, 2.1vw, 34px);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--text-ticket);
+}
+
+/* ---- who is in the car, without a photo ---- */
+.hero-hosts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  padding: 0 var(--page-margin) clamp(16px, 2vw, 22px);
+}
+
+.host-chip {
+  padding: 8px 12px;
+  border: 2px solid rgba(244, 240, 234, 0.4);
+  color: var(--text-ticket);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.host-chip-accent { border-color: var(--accent-amber); }
+
+.hero-hosts-note {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@media (max-width: 980px) {
+  /* The home view is a fixed-height shell (100dvh). Once the hero stacks, the
+     ticket makes the column taller than a phone, and a flex child with
+     min-height:0 gives its siblings the allotted height rather than its content
+     height — so the ticket painted over the signal strip. The panel scrolls
+     instead, and the deck takes its natural height. */
+  .view-panel.active {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .hero-deck {
+    flex: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 28px;
+  }
+  .hero-ticket { align-self: stretch; }
+  .hero-rack { font-size: 18px; }
+}
+
+@media (max-width: 720px) {
+  .hero-display { font-size: clamp(30px, 8.6vw, 52px); }
+  .hero-signal { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .hero-hosts-note { margin-left: 0; }
 }

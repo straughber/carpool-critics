@@ -55,7 +55,13 @@ echo $$ > "$LOCK/pid"
 trap 'rm -rf "$LOCK"' EXIT
 
 # ------------------------------------------------------------ working tree rule
-GENERATED_PATHS='^(episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/)'
+# index.html is a generated file now: its hero ticket, PLAY button and signal
+# strip are rewritten from the catalogue on every build (HERO-* regions). Without
+# it here, an unattended --auto run would refuse to publish the moment a new
+# episode dropped, which is exactly when the front door must update. The rest of
+# the page is still hand-authored, so a redesign of the shell should be published
+# by a manual run.
+GENERATED_PATHS='^(index\.html$|episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/)'
 UNAPPROVED="$(git status --porcelain | cut -c4- | grep -vE "$GENERATED_PATHS" || true)"
 if [ "$MODE" = "auto" ] && [ -n "$UNAPPROVED" ]; then
   printf '%s\n' "$UNAPPROVED" | sed 's/^/  /'
