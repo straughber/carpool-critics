@@ -204,13 +204,16 @@ function triggerSignalSurge() {
 const FEED_SIZE = 5;
 
 let episodeCatalogCache = null;
+let episodeCatalogError = null;
 let episodesViewReady = false;
 let activeVideoId = null;
 let camTuneTimer = null;
+let youtubeApiPromise = null;
 
 /** data/episodes.json is generated from the YouTube channel by scripts/fetch-youtube.js */
 async function getEpisodeCatalog() {
   if (episodeCatalogCache) return episodeCatalogCache;
+  episodeCatalogError = null;
   try {
     // GitHub Pages serves JSON with max-age=600, so a viewer who loads the SPA
     // right after a publish (or keeps a tab open) can mount a stale catalog and
@@ -221,7 +224,9 @@ async function getEpisodeCatalog() {
       episodeCatalogCache = Array.isArray(data) ? data : [];
       return episodeCatalogCache;
     }
+    episodeCatalogError = `HTTP ${res.status}`;
   } catch (err) {
+    episodeCatalogError = 'The request failed.';
     console.warn('Could not load data/episodes.json', err);
   }
   episodeCatalogCache = [];
@@ -252,6 +257,8 @@ async function initEpisodesView() {
   if (episodesViewReady) return;
   episodesViewReady = true;
 
+  setRailStatus('loading', '[ LOADING ] Fetching the channel log.');
+
   const feed = feedEpisodes(await getEpisodeCatalog());
 
   renderCamRail(feed);
@@ -262,10 +269,47 @@ async function initEpisodesView() {
     renderDeadFeed();
   }
 
+  // A failure to load and a channel with nothing on it are different states.
+  // The console says which one it is instead of showing NO SIGNAL for both.
+  if (episodeCatalogError) {
+    setRailStatus('error', `[ SIGNAL LOST ] The channel log did not load (${episodeCatalogError}).`,
+      { retry: true });
+  } else if (!feed.length) {
+    setRailStatus('empty', '[ NO DISPATCH ] Nothing has cleared the feed yet. The archive keeps the record.');
+  } else {
+    setRailStatus(null);
+  }
+
   // A deep link (#episodes) can resolve before the feed mounts. Pin the view to
   // its own heading instead of wherever the fragment scroll landed.
   const scroller = document.querySelector('#view-episodes .subpage-scroll-container');
   if (scroller) scroller.scrollTop = 0;
+}
+
+/**
+ * One inline status surface for the rail: loading, empty, or error.
+ * `state === null` hides it, because a loaded rail needs no commentary.
+ */
+function setRailStatus(state, message, options = {}) {
+  const el = document.getElementById('cam-rail-status');
+  if (!el) return;
+  if (!state) {
+    el.hidden = true;
+    return;
+  }
+  el.hidden = false;
+  el.dataset.state = state;
+  el.textContent = message;
+  if (state === 'error') window.Interference?.burst(el, 'tear', 2);
+  if (options.retry) {
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'ds-btn ds-btn--primary';
+    retry.textContent = '[ RETRY ]';
+    retry.addEventListener('click', () => window.location.reload());
+    el.append(' ');
+    el.append(retry);
+  }
 }
 
 function pad2(value) {
@@ -309,7 +353,8 @@ function renderCamRail(feed) {
     const ep = feed[cam - 1];
     if (!ep || !ep.youtubeId) {
       slots.push(`
-        <button type="button" class="cam-btn is-offline" disabled>
+        <button type="button" class="cam-btn ds-channel is-offline intf-host" data-state="empty" disabled>
+          <span class="intf intf--noise intf--still" aria-hidden="true"></span>
           <span class="cam-btn-id">CAM ${pad2(cam)}</span>
           <span class="cam-btn-title">NO SIGNAL</span>
           <span class="cam-btn-state" aria-hidden="true">▒░▒▓░▒▓░▒░</span>
@@ -319,8 +364,8 @@ function renderCamRail(feed) {
 
     const number = formatEpisodeNumber(ep, cam - 1);
     slots.push(`
-      <button type="button" class="cam-btn" data-ep="${escapeHtml(ep.id)}" data-cam="${cam}"
-              aria-current="false"
+      <button type="button" class="cam-btn ds-channel" data-ep="${escapeHtml(ep.id)}" data-cam="${cam}"
+              aria-pressed="false"
               aria-label="CAM ${pad2(cam)}, EP ${number}: ${escapeHtml(ep.shortTitle || ep.title)}">
         <span class="cam-btn-id">CAM ${pad2(cam)} // EP ${number}</span>
         <span class="cam-btn-title">${escapeHtml(ep.shortTitle || ep.title)}</span>
@@ -412,9 +457,10 @@ function selectEpisode(ep, options = {}) {
   }
 
   document.querySelectorAll('.cam-btn[data-ep]').forEach(btn => {
-    btn.setAttribute('aria-current', btn.getAttribute('data-ep') === ep.id ? 'true' : 'false');
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-ep') === ep.id ? 'true' : 'false');
   });
 
+  resolveSignal(ep);
   tuneFeed();
 
   if (options.autoplay) mountVideoPlayer(true);
@@ -434,21 +480,74 @@ function tuneFeed() {
   camTuneTimer = setTimeout(() => monitor.classList.remove('is-tuning'), 160);
 }
 
-/**
- * The iframe is ~1MB of third-party script, so it is only injected after an
- * explicit click. This is the single biggest Lighthouse win on this page.
- */
-function mountVideoPlayer(autoplay = true) {
-  const box = document.getElementById('video-facade-box');
-  if (!box || !activeVideoId) return;
+function signalElements() {
+  return {
+    strip: document.getElementById('signal-strip'),
+    label: document.getElementById('signal-label')
+  };
+}
 
-  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(activeVideoId)}?rel=0${autoplay ? '&autoplay=1' : ''}`;
-  const existing = box.querySelector('iframe');
-  if (existing) {
-    existing.src = src;
+/**
+ * The strip is a recording of the master, not a microphone. It says ARCHIVE
+ * when a baked envelope is loaded and IDLE when there is nothing to read.
+ */
+function applySignal(signal) {
+  const { strip, label } = signalElements();
+  if (!strip) return;
+  if (!signal || !signal.url) {
+    if (label) label.textContent = 'SIGNAL // IDLE';
+    window.AsciiVisualizer?.loadSignal(strip, null);
     return;
   }
+  if (label) label.textContent = 'SIGNAL // ARCHIVE';
+  window.AsciiVisualizer?.loadSignal(strip, signal).then(ok => {
+    if (!ok && label) label.textContent = 'SIGNAL // IDLE';
+  });
+}
 
+/**
+ * Prefer the catalog's signal, then the pipeline payload of the same episode:
+ * a site built before the field existed still finds its envelope.
+ */
+function resolveSignal(ep) {
+  if (ep.signal && ep.signal.url) {
+    applySignal(ep.signal);
+    return;
+  }
+  applySignal(null);
+  if (!ep.id || ep.id.indexOf('/') !== -1) return;
+  fetch(`data/pipeline/${encodeURIComponent(ep.id)}.json`, { cache: 'no-store' })
+    .then(response => (response.ok ? response.json() : null))
+    .then(payload => {
+      if (payload && payload.signal) applySignal(payload.signal);
+    })
+    .catch(() => {});
+}
+
+function loadYouTubeApi() {
+  if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+  if (youtubeApiPromise) return youtubeApiPromise;
+  youtubeApiPromise = new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('iframe api timeout')), 6000);
+    window.onYouTubeIframeAPIReady = () => {
+      clearTimeout(timer);
+      resolve(window.YT);
+    };
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.async = true;
+    script.onerror = () => {
+      clearTimeout(timer);
+      reject(new Error('iframe api blocked'));
+    };
+    document.head.appendChild(script);
+  });
+  return youtubeApiPromise;
+}
+
+function fallbackPlayer(box) {
+  if (box.querySelector('iframe')) return;
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(activeVideoId)}?rel=0&autoplay=1`;
   box.innerHTML = `
     <iframe
       id="main-video-player"
@@ -457,6 +556,48 @@ function mountVideoPlayer(autoplay = true) {
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
     ></iframe>`;
+}
+
+/**
+ * The iframe is ~1MB of third-party script, so it is only injected after an
+ * explicit click. The IFrame API is the only way to read the playhead, which is
+ * what lets the signal strip follow the episode instead of looping.
+ */
+function mountVideoPlayer(autoplay = true) {
+  const box = document.getElementById('video-facade-box');
+  if (!box || !activeVideoId) return;
+
+  if (window.__ccPlayer && typeof window.__ccPlayer.loadVideoById === 'function') {
+    window.__ccPlayer.loadVideoById(activeVideoId);
+    if (!autoplay) window.__ccPlayer.pauseVideo?.();
+    return;
+  }
+
+  loadYouTubeApi().then(YT => {
+    box.innerHTML = '<div id="main-video-player"></div>';
+    window.__ccPlayer = new YT.Player('main-video-player', {
+      videoId: activeVideoId,
+      playerVars: {
+        rel: 0,
+        autoplay: autoplay ? 1 : 0,
+        playsinline: 1,
+        origin: window.location.origin
+      },
+      events: {
+        onReady(event) {
+          const { strip } = signalElements();
+          if (strip) window.AsciiVisualizer?.attachPlayer(strip, event.target);
+          if (autoplay) event.target.playVideo();
+        },
+        onStateChange(event) {
+          const { strip } = signalElements();
+          if (!strip) return;
+          window.AsciiVisualizer?.setPlaying(
+            strip, event.data === YT.PlayerState.PLAYING);
+        }
+      }
+    });
+  }).catch(() => fallbackPlayer(box));
 }
 
 function activateVideoPlayer() {

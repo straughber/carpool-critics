@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- Primary SEO Meta Tags -->
   <title>Carpool Critics | Austin, TX Film Review Podcast</title>
@@ -70,10 +70,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 
   <!-- Production Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=6.0.2" />
+  <link rel="stylesheet" href="style.css?v=6.3.0" />
 
   <!-- The one top menu. Shared with every generated episode/archive page. -->
   <link rel="stylesheet" href="assets/css/site-bar.css?v=1.2.0" />
+
+  <!-- Component layer generated from DESIGN_SYSTEM.md. Loads after the layout. -->
+  <link rel="stylesheet" href="assets/css/design-system.css?v=1.1.0" />
+  <link rel="stylesheet" href="assets/css/interference.css?v=1.0.0" />
 
   <!-- Critical Above-the-Fold Styling (Prevents FOUC) -->
   <style>
@@ -83,9 +87,13 @@
 
   <!-- Defer Script Execution for Non-Blocking Initial Paint -->
   <script src="assets/js/site-bar.js?v=1.0.0" defer></script>
-  <script src="script.js?v=6.0.3" defer></script>
+  <script src="script.js?v=6.1.0" defer></script>
+  <script src="assets/js/ascii-visualizer.js?v=1.1.0" defer></script>
+  <script src="assets/js/interference.js?v=1.0.0" defer></script>
 </head>
 <body>
+
+  <a class="ds-skip-link" href="#content">[ SKIP TO CONTENT ]</a>
 
   <!-- CRT / VFD scanline plane. Decorative, never interactive. -->
   <div class="scanline-plane" aria-hidden="true"></div>
@@ -131,7 +139,7 @@
     <!-- ======================================================== -->
     <!-- VIEW STACK                                                -->
     <!-- ======================================================== -->
-    <div class="view-stack">
+    <div class="view-stack" id="content">
 
       <!-- ====================================================== -->
       <!-- VIEW 1: HOME COCKPIT (PROPORTIONAL LIFE-SIZE HOSTS)     -->
@@ -409,8 +417,15 @@
             </div>
 
             <!-- CHANNEL SELECT: five feeds, newest first. Empty slots are dead cameras. -->
-            <div class="cam-rail-wrap">
-              <p class="cam-rail-label">CAMERA SELECT // NEWEST FIRST</p>
+                        <div class="cam-rail-wrap">
+              <div class="ascii-viz-row" aria-hidden="true">
+                <span id="signal-label">SIGNAL // IDLE</span>
+                <pre class="ascii-viz" id="signal-strip" data-ascii-viz data-style="bars" data-width="32" data-fps="12"></pre>
+              </div>
+              <p class="cam-rail-label">CAMERA SELECT // NEWEST FIRST</p>CAMERA SELECT // NEWEST FIRST</p>
+              <p class="ds-notice" id="cam-rail-status" data-state="loading" role="status">
+                [ LOADING ] Fetching the channel log.
+              </p>
               <div class="cam-rail" id="cam-rail" role="group" aria-label="Camera feeds">
                 <!-- Populated at runtime from data/episodes.json (synced from YouTube) -->
               </div>
@@ -454,7 +469,7 @@
                rel="nofollow">Email us</a>
 
             <div class="contact-action-row">
-              <button type="button" class="btn-copy-email" id="copy-email-btn" onclick="copyContactEmail()">[ COPY EMAIL ]</button>
+              <button type="button" class="btn-copy-email ds-btn ds-btn--primary" id="copy-email-btn" onclick="copyContactEmail()">[ COPY EMAIL ]</button>
               <a class="contact-youtube-link" href="https://www.youtube.com/@CarpoolCritics" target="_blank" rel="noopener">[ WATCH ON YOUTUBE → ]</a>
             </div>
 

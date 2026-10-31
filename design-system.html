@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0A0A0C" />
+  <meta name="color-scheme" content="dark" />
+  <title>Design System Specimen | Carpool Critics</title>
+  <meta name="description" content="Internal specimen sheet for the Carpool Critics design system: tokens, type roles, spacing, components and their states." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/design-system.css?v=1.1.0" />
+  <link rel="stylesheet" href="assets/css/interference.css?v=1.0.0" />
+
+  <!-- The specimen page defines the raw BRAND.md tokens itself, so the sheet is
+       readable before any product stylesheet loads. The values are the palette;
+       the gate audits them. -->
+  <style>
+    :root {
+      --bg-asphalt: #0A0A0C;
+      --bg-dash: #121316;
+      --text-ticket: #F4F0EA;
+      --text-muted: #8E8D8A;
+      --accent-amber: #FFB000;
+      --accent-hov: #008751;
+      --accent-brake: #E63946;
+    }
+    * { box-sizing: border-box; }
+    html, body { background: var(--bg-asphalt); color: var(--text-ticket); }
+    body {
+      margin: 0;
+      font-family: var(--ds-font-mono);
+      font-size: 15px;
+      line-height: 1.6;
+      padding: var(--ds-space-6) var(--ds-space-4) var(--ds-space-10);
+    }
+    .spec { max-width: var(--ds-max-width); margin: 0 auto; }
+    .spec h1, .spec h2 {
+      font-family: var(--ds-font-display);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      margin: 0;
+    }
+    .spec h1 { font-size: 56px; letter-spacing: 0.02em; }
+    .spec h2 { font-size: 24px; margin-top: var(--ds-space-8); margin-bottom: var(--ds-space-4);
+               padding-bottom: var(--ds-space-2); border-bottom: 2px solid var(--text-ticket); }
+    .spec p { max-width: 68ch; }
+    .spec .note { color: var(--text-muted); }
+    .spec code { color: var(--accent-amber); }
+    .row { display: flex; flex-wrap: wrap; gap: var(--ds-space-5); align-items: flex-start; }
+    .col { display: flex; flex-direction: column; gap: var(--ds-space-3); }
+    .swatch { width: 200px; border: 2px solid var(--text-ticket); }
+    .swatch-chip { height: 72px; border-bottom: 2px solid var(--text-ticket); }
+    .swatch-meta { padding: var(--ds-space-2) var(--ds-space-3); font-size: 12px;
+                   letter-spacing: 0.12em; text-transform: uppercase; }
+    .bar { height: 14px; background: var(--accent-amber); }
+    .space-row { display: flex; align-items: center; gap: var(--ds-space-3); font-size: 12px; }
+    .space-fill { background: var(--accent-hov); height: 12px; }
+    table.spec-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    table.spec-table th, table.spec-table td {
+      border: 1px solid var(--text-muted); padding: var(--ds-space-2) var(--ds-space-3);
+      text-align: left; vertical-align: middle;
+    }
+    table.spec-table th { color: var(--text-muted); text-transform: uppercase;
+                          letter-spacing: 0.12em; font-size: 12px; }
+    .ticket-demo { display: grid; gap: var(--ds-space-5); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .demo-head { display: flex; justify-content: space-between; padding: var(--ds-space-2) var(--ds-space-3);
+                 border-bottom: 2px dashed var(--text-muted); color: var(--text-muted);
+                 font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .demo-body { padding: var(--ds-space-4); }
+    .demo-title { font-family: var(--ds-font-display); font-size: 24px; text-transform: uppercase; margin: 0 0 var(--ds-space-2); }
+    .demo-foot { display: flex; justify-content: space-between; padding: 0 var(--ds-space-3) var(--ds-space-3);
+                 color: var(--text-muted); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .do-dont { display: grid; gap: var(--ds-space-5); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .do-dont ul { margin: 0; padding-left: var(--ds-space-5); }
+    .do { border-left: 4px solid var(--accent-hov); padding-left: var(--ds-space-3); }
+    .dont { border-left: 4px solid var(--accent-brake); padding-left: var(--ds-space-3); }
+    .ascii-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                  gap: var(--ds-space-5); }
+    .ascii-item { border: 1px solid var(--text-muted); padding: var(--ds-space-3); }
+    .ascii-item h3 { margin: 0 0 var(--ds-space-2); color: var(--text-muted);
+                     font-family: var(--ds-font-mono); font-size: 11px; letter-spacing: .12em;
+                     text-transform: uppercase; }
+    pre.ascii { margin: 0; font-family: var(--ds-font-mono); font-size: 12px; line-height: 1.35;
+                color: var(--text-ticket); white-space: pre; overflow-x: auto; }
+    .ascii-viz-row { display: flex; align-items: center; gap: 12px; }
+    .intf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+                 gap: var(--ds-space-4); }
+    .intf-card { border: 1px solid var(--text-muted); padding: var(--ds-space-3); }
+    .intf-card h3 { margin: 0 0 var(--ds-space-2); color: var(--text-muted);
+                    font-family: var(--ds-font-mono); font-size: 11px;
+                    letter-spacing: .12em; text-transform: uppercase; }
+    .intf-demo { position: relative; height: 110px; overflow: hidden;
+                 background: var(--bg-dash); border: 1px solid var(--text-muted); }
+    .intf-demo .demo-label { position: absolute; left: 10px; bottom: 8px; z-index: 2;
+                             color: var(--text-ticket); font-family: var(--ds-font-mono);
+                             font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+    .intf-demo .demo-code { position: absolute; right: 10px; top: 8px; z-index: 2;
+                            color: var(--accent-brake); font-family: var(--ds-font-mono);
+                            font-size: 11px; letter-spacing: .12em; }
+  </style>
+</head>
+<body>
+
+  <a class="ds-skip-link" href="#content">[ SKIP TO CONTENT ]</a>
+
+  <main class="spec" id="content">
+    <p class="ds-eyebrow">SPECIMEN // NOT PUBLISHED // NOINDEX</p>
+    <h1>Design System</h1>
+    <p class="ds-lede">
+      The living sheet for <code>DESIGN_SYSTEM.md</code>. Every element below is rendered by
+      the generated component layer, so this page is the visual proof that the document and
+      the stylesheet agree. If a state looks wrong here, the system is wrong everywhere.
+    </p>
+
+    <h2>1. Palette</h2>
+    <div class="row">
+      <div class="swatch"><div class="swatch-chip" style="background:#0A0A0C"></div><div class="swatch-meta">bg-asphalt<br>#0A0A0C // 17.4:1 vs ticket</div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#121316"></div><div class="swatch-meta">bg-dash<br>#121316</div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#F4F0EA"></div><div class="swatch-meta">text-ticket<br>#F4F0EA</div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#8E8D8A"></div><div class="swatch-meta">text-muted<br>#8E8D8A // 6.0:1</div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#FFB000"></div><div class="swatch-meta">accent-amber<br>#FFB000 // 10.8:1</div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#008751"></div><div class="swatch-meta">accent-hov<br>#008751 // 4.3:1</div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#E63946"></div><div class="swatch-meta">accent-brake<br>#E63946 // 4.8:1</div></div>
+    </div>
+    <p class="note">HOV green is 4.3:1. It is a border, a bar, or a gauge cell, with ticket-ink text beside it. Never green type.</p>
+
+    <h2>2. Type roles</h2>
+    <table class="spec-table">
+      <thead><tr><th>Role</th><th>Specimen</th><th>Step</th></tr></thead>
+      <tbody>
+        <tr><td>eyebrow</td><td class="ds-eyebrow">FILE // 02</td><td>mono 12 / 0.24em / upper</td></tr>
+        <tr><td>label</td><td style="font-size:13px;letter-spacing:.12em;text-transform:uppercase">[ ARCHIVE ] // MIC 01</td><td>mono 13 / 0.12em / upper</td></tr>
+        <tr><td>body</td><td style="font-size:15px">Three people, one parked car, and a film they just walked out of.</td><td>mono 15 / 0</td></tr>
+        <tr><td>lede</td><td style="font-size:18px">Five feeds, newest first. Older dispatches live in the archive.</td><td>mono 18 / 0</td></tr>
+        <tr><td>section</td><td style="font-family:var(--ds-font-display);font-size:24px;text-transform:uppercase">◊ HOSTS</td><td>display 24</td></tr>
+        <tr><td>page</td><td style="font-family:var(--ds-font-display);font-size:34px;text-transform:uppercase">WHALEFALL (2026)</td><td>display 34</td></tr>
+        <tr><td>marquee</td><td style="font-family:var(--ds-font-display);font-size:56px;letter-spacing:.02em;text-transform:uppercase">Carpool Critics</td><td>display 56</td></tr>
+      </tbody>
+    </table>
+
+    <h2>3. Space scale</h2>
+    <div class="col">
+      <div class="space-row"><span style="width:88px">--ds-space-1</span><span class="space-fill" style="width:4px"></span><span>4px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-2</span><span class="space-fill" style="width:8px"></span><span>8px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-3</span><span class="space-fill" style="width:12px"></span><span>12px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-4</span><span class="space-fill" style="width:16px"></span><span>16px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-5</span><span class="space-fill" style="width:24px"></span><span>24px // group gap</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-6</span><span class="space-fill" style="width:32px"></span><span>32px // section gap</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-7</span><span class="space-fill" style="width:48px"></span><span>48px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-8</span><span class="space-fill" style="width:64px"></span><span>64px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-9</span><span class="space-fill" style="width:96px"></span><span>96px</span></div>
+      <div class="space-row"><span style="width:88px">--ds-space-10</span><span class="space-fill" style="width:128px"></span><span>128px</span></div>
+    </div>
+
+    <h2>4. Controls and states</h2>
+    <table class="spec-table">
+      <thead><tr><th>Component</th><th>rest</th><th>hover / selected</th><th>focus</th><th>disabled / loading</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>deck_button</code></td>
+          <td><button type="button" class="ds-btn">[ DASH ]</button></td>
+          <td><button type="button" class="ds-btn" style="border-color:var(--accent-amber);color:var(--accent-amber);box-shadow:var(--ds-shadow-hover-ink)">[ DASH ]</button></td>
+          <td><button type="button" class="ds-btn" style="outline:2px solid var(--accent-amber);outline-offset:2px">[ DASH ]</button></td>
+          <td><button type="button" class="ds-btn" disabled>[ DASH ]</button></td>
+        </tr>
+        <tr>
+          <td><code>action_button</code></td>
+          <td><button type="button" class="ds-btn ds-btn--primary">[ PLAY ]</button></td>
+          <td><button type="button" class="ds-btn ds-btn--primary" style="background:var(--accent-amber);color:var(--bg-asphalt);box-shadow:var(--ds-shadow-hover)">[ PLAY ]</button></td>
+          <td><button type="button" class="ds-btn ds-btn--primary" style="outline:2px solid var(--accent-amber);outline-offset:2px">[ PLAY ]</button></td>
+          <td><button type="button" class="ds-btn ds-btn--primary" aria-busy="true">[ LOAD ░▒▓ ]</button></td>
+        </tr>
+        <tr>
+          <td><code>channel_select</code></td>
+          <td><button type="button" class="ds-channel">CAM 01 // EP 02<br>CLUB KID</button></td>
+          <td><button type="button" class="ds-channel" aria-pressed="true" style="border-left-width:4px;border-color:var(--accent-amber)">CAM 02 // EP 01<br>WHALEFALL</button></td>
+          <td><button type="button" class="ds-channel" style="outline:2px solid var(--accent-amber);outline-offset:2px">CAM 03</button></td>
+          <td><button type="button" class="ds-channel" data-state="empty" disabled>CAM 04 // NO SIGNAL<br>▒░▒▓░▒▓░▒░</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. Notices</h2>
+    <div class="col">
+      <p class="ds-notice">[ INFO ] The archive is the complete record. The feed carries five.</p>
+      <p class="ds-notice" data-state="loading">[ LOADING ] Fetching the channel log.</p>
+      <p class="ds-notice" data-state="empty">[ NO DISPATCH ] Nothing has cleared the feed yet. The archive keeps the record.</p>
+      <p class="ds-notice" data-state="error">[ SIGNAL LOST ] The channel log did not load (HTTP 503). <button type="button" class="ds-btn ds-btn--primary">[ RETRY ]</button></p>
+    </div>
+
+    <h2>6. Ticket card</h2>
+    <div class="ticket-demo">
+      <article class="ds-ticket">
+        <div class="demo-head"><span>ADMIT ONE // EP 02</span><span>HOV-3</span></div>
+        <div class="demo-body">
+          <h3 class="demo-title">Club Kid (2026)</h3>
+          <p class="note" style="margin:0">1H 46M // PG-13 // THRILLER</p>
+        </div>
+        <div class="demo-foot"><span>◊ SHANE ◊ ALEX ◊ DAVE</span><span>[ PLAY ]</span></div>
+      </article>
+      <article class="ds-ticket" data-state="empty">
+        <div class="demo-head"><span>ADMIT ONE // EP 03</span><span>HOV-3</span></div>
+        <div class="demo-body"><h3 class="demo-title" style="color:var(--text-muted)">░░ NO DISPATCH</h3>
+          <p class="note" style="margin:0">The frame stays. The record is empty.</p></div>
+      </article>
+    </div>
+
+    <h2>7. Scoreboard</h2>
+    <table class="ds-scoreboard spec-table">
+      <thead><tr><th>HOST</th><th>RT CRITICS</th><th>RT AUDIENCE</th><th>TACH</th></tr></thead>
+      <tbody>
+        <tr><td>SHANE</td><td>72%</td><td>68%</td><td>8.0</td></tr>
+        <tr><td>ALEX</td><td>65%</td><td>70%</td><td>6.5</td></tr>
+        <tr><td>DAVE</td><td data-missing="true">--/--</td><td data-missing="true">--/--</td><td data-missing="true">--/--</td></tr>
+      </tbody>
+    </table>
+
+    <h2>8. Data display</h2>
+    <p class="note">
+      One data component per view. Zero-based, direct labels, no legend; a missing value keeps
+      its row and reads <code>--</code>. Every chart ships beside its values in a table or a
+      summary line, because a picture of a number is not an accessible number.
+    </p>
+
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">table // .ds-table</h3>
+    <table class="ds-table">
+      <caption>RETENTION BY ACT // SORTED BY ACT, NEWEST FIRST</caption>
+      <thead>
+        <tr><th>ACT</th><th data-num>AVG VIEWS</th><th data-num>RETENTION %</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ACT 0</td><td data-num>4,812</td><td data-num>92.0</td></tr>
+        <tr><td>ACT 1</td><td data-num>4,208</td><td data-num>78.4</td></tr>
+        <tr><td>ACT 2</td><td data-num>3,377</td><td data-num>61.2</td></tr>
+        <tr><td>ACT 3</td><td data-missing="true" data-num>--</td><td data-missing="true" data-num>--</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">bars // .ds-bars</h3>
+    <ul class="ds-bars">
+      <li><span>ACT 0</span><span class="ds-bar-track"><span class="ds-bar" style="--ds-value:92"></span></span><span class="ds-bar-value">92.0</span></li>
+      <li><span>ACT 1</span><span class="ds-bar-track"><span class="ds-bar" style="--ds-value:78"></span></span><span class="ds-bar-value">78.4</span></li>
+      <li><span>ACT 2</span><span class="ds-bar-track"><span class="ds-bar" style="--ds-value:61"></span></span><span class="ds-bar-value">61.2</span></li>
+      <li><span>ACT 3</span><span class="ds-bar-track"><span class="ds-bar" style="--ds-value:0"></span></span><span class="ds-bar-value">--</span></li>
+    </ul>
+
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">leaderboard // .ds-leaderboard</h3>
+    <ol class="ds-leaderboard">
+      <li><span>SHANE</span><span>8.0</span><span data-move>+1</span></li>
+      <li><span>DAVE</span><span>7.0</span><span></span></li>
+      <li><span>ALEX</span><span data-missing="true">--</span><span></span></li>
+    </ol>
+
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">sparkline // .ds-spark</h3>
+    <figure class="ds-figure" style="padding:var(--ds-space-3)">
+      <pre class="ds-spark" aria-label="Retention by minute: 16 samples falling from 92 to 41 percent">██▇▇▆▆▆▅▄▄▃▃▂▂▁▁</pre>
+      <figcaption class="note" style="font-size:12px;margin-top:var(--ds-space-2)">ASCII blocks from <code>ascii_art.sparkline()</code>; a gap stays a gap.</figcaption>
+    </figure>
+
+    <h2>9. Do / Don't</h2>
+    <div class="do-dont">
+      <div class="do">
+        <p><strong>DO</strong></p>
+        <ul>
+          <li>Space with the scale; group with distance, not a border.</li>
+          <li>One amber primary per view.</li>
+          <li>Give every async surface empty, loading and error states.</li>
+          <li>Let a missing number keep its cell and read <code>--/--</code>.</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <p><strong>DON'T</strong></p>
+        <ul>
+          <li>Add a sixth nav item instead of finding the link's home.</li>
+          <li>Centre a card in a field of asphalt.</li>
+          <li>Use opacity as a state.</li>
+          <li>Animate a state change, a card entry, or a list reveal.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>10. Contrast floor</h2>
+    <p class="note">
+      Body 4.5:1 minimum, large text 3.0:1 at 24px or larger, non-text (borders, focus rings,
+      gauge cells) 3.0:1. Measured from the palette by <code>tools/design_system.py</code>,
+      not quoted from this page.
+    </p>
+    <h2>11. Graphic frames</h2>
+    <p class="note">
+      A board is a rectangle with a top, a middle and a bottom. These bands come from the
+      <code>BRAND.md</code> safe zones through <code>design_system.GRAPHIC_FRAME</code>, so a
+      graphic is laid out in bands rather than eyeballed coordinates.
+    </p>
+    <div class="do-dont">
+      <div>
+        <p><strong>16:9 // 1920x1080</strong></p>
+        <pre style="margin:0;color:var(--text-muted);font-size:12px;line-height:1.5">0    ┌────────────────────────────┐
+     │ header   40..120  REC / title│
+140  ├────────────────────────────┤
+     │ body    140..820  the board │
+820  ├────────────────────────────┤
+     │ footer  820..1024 lower third│
+1080 └────────────────────────────┘
+        margin 80px    gutter 24px</pre>
+      </div>
+      <div>
+        <p><strong>9:16 // 1080x1920</strong></p>
+        <pre style="margin:0;color:var(--text-muted);font-size:12px;line-height:1.5">0    ┌────────────────────────────┐
+     │ marquee    0..250  title    │
+250  ├────────────────────────────┤
+     │ cabin    250..1470 footage  │
+1470 ├────────────────────────────┤
+     │ caption 1476..1536 one line │
+1536 ├────────────────────────────┤
+     │ telemetry 1536..1920 decor. │
+1920 └────────────────────────────┘
+        right 15% and bottom 20% are platform UI</pre>
+      </div>
+    </div>
+    <p class="note">Density: 5 words per reveal maximum, 0.28s of screen time per word minimum, one idea per board.</p>
+
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">Audio visualizer</h3>
+    <p class="note">Same envelope, two renderers: this strip and the PNG frames the edit overlays. Stepped at 12fps; reduced motion freezes it.</p>
+    <div class="ascii-viz-row" style="margin-bottom:var(--ds-space-5)">
+      <span style="font-family:var(--ds-font-mono);font-size:11px;letter-spacing:.14em;color:var(--text-muted)">SIGNAL // DEMO</span>
+      <pre class="ascii-viz" data-ascii-viz data-style="bars" data-width="32" data-fps="12" style="margin:0;font-family:var(--ds-font-mono);font-size:18px;line-height:1;color:var(--accent-hov)"></pre>
+    </div>
+    <h2>12. ASCII art options</h2>
+    <p class="note">
+      The brand&rsquo;s only illustration medium. Thirty-one registered compositions;
+      <code>tools/ascii_art.py --list</code> is the authority and
+      <code>--check</code> fails when this catalog and <code>DESIGN_SYSTEM.md</code> drift.
+      Copy-tier patterns are ASCII only; graphic-tier patterns may use box drawing and blocks.
+    </p>
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">rules</h3>
+    <div class="ascii-grid">
+      <div class="ascii-item"><h3>rule.double // video, web</h3><pre class="ascii">══════════════════════════════════</pre><p class="note" style="margin:8px 0 0;font-size:12px">A major break: acts, page sections, chapter changes.</p></div>
+      <div class="ascii-item"><h3>rule.light // video, web</h3><pre class="ascii">──────────────────────────────────</pre><p class="note" style="margin:8px 0 0;font-size:12px">A minor break inside a panel.</p></div>
+      <div class="ascii-item"><h3>rule.ascii // copy, web</h3><pre class="ascii">============================</pre><p class="note" style="margin:8px 0 0;font-size:12px">The copy box&#x27;s major break, safe in a proportional font.</p></div>
+      <div class="ascii-item"><h3>rule.perforation // copy, web, video</h3><pre class="ascii">- - - - - - - - - - - - - - </pre><p class="note" style="margin:8px 0 0;font-size:12px">A tear line: card edges, receipt rows.</p></div>
+      <div class="ascii-item"><h3>rule.chevron // copy, web, video</h3><pre class="ascii">&gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; </pre><p class="note" style="margin:8px 0 0;font-size:12px">Direction of travel; a chapter moving forward.</p></div>
+      <div class="ascii-item"><h3>rule.lane // copy, web</h3><pre class="ascii">| | | | | | | | | | | | | | </pre><p class="note" style="margin:8px 0 0;font-size:12px">A lane divider; never inside a sentence.</p></div>
+      <div class="ascii-item"><h3>rule.signal // video, web</h3><pre class="ascii">▁▂▄▆█▆▄▂▁▂▄▆█▆▄▂▁▂▄▆█▆▄▂▁▂▄▆█▆▄▂</pre><p class="note" style="margin:8px 0 0;font-size:12px">An audio or energy strip under a marquee.</p></div>
+      <div class="ascii-item"><h3>rule.barcode // video, web</h3><pre class="ascii">▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐▌▐</pre><p class="note" style="margin:8px 0 0;font-size:12px">A receipt&#x27;s machine-readable edge.</p></div>
+      <div class="ascii-item"><h3>rule.hatch // video</h3><pre class="ascii">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</pre><p class="note" style="margin:8px 0 0;font-size:12px">A texture band; once per frame at most.</p></div>
+    </div>
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">frames</h3>
+    <div class="ascii-grid">
+      <div class="ascii-item"><h3>frame.double // video, web</h3><pre class="ascii">╔═[ HOV-3 ]══════════════════════╗
+║ CABIN FEED // WIDE             ║
+╚════════════════════════════════╝</pre><p class="note" style="margin:8px 0 0;font-size:12px">A titled panel: HUD, camera card, score board.</p></div>
+      <div class="ascii-item"><h3>frame.light // video, web</h3><pre class="ascii">┌─[ HOV-3 ]──────────────────────┐
+│ CABIN FEED // WIDE             │
+└────────────────────────────────┘</pre><p class="note" style="margin:8px 0 0;font-size:12px">A quiet panel around secondary content.</p></div>
+      <div class="ascii-item"><h3>frame.terminal // copy, web</h3><pre class="ascii">+-[ HOV-3 ]----------------+
+| CABIN FEED // WIDE       |
++--------------------------+</pre><p class="note" style="margin:8px 0 0;font-size:12px">The copy-safe frame: text-only surfaces.</p></div>
+      <div class="ascii-item"><h3>frame.receipt // web, video</h3><pre class="ascii">- -[ HOV-3 ]- - - - - - - - - - -
+CABIN FEED // WIDE
+- - - - - - - - - - - - - - - - -</pre><p class="note" style="margin:8px 0 0;font-size:12px">Paper: top and bottom tear lines, no sides.</p></div>
+      <div class="ascii-item"><h3>frame.corners // video, web</h3><pre class="ascii">▌                                ▐
+▌                                ▐</pre><p class="note" style="margin:8px 0 0;font-size:12px">Four corner ticks; the frame is the footage.</p></div>
+    </div>
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">gauges</h3>
+    <div class="ascii-grid">
+      <div class="ascii-item"><h3>gauge.tach // video, web</h3><pre class="ascii">[▓▓▓▓▓▓▓▓░░] 8.0/10</pre><p class="note" style="margin:8px 0 0;font-size:12px">The ten-cell score, always with its number.</p></div>
+      <div class="ascii-item"><h3>gauge.tach_ascii // copy, web</h3><pre class="ascii">[########--] 8.0/10</pre><p class="note" style="margin:8px 0 0;font-size:12px">The same score for a text-only surface.</p></div>
+      <div class="ascii-item"><h3>gauge.fuel // video, web</h3><pre class="ascii">E [████████] F</pre><p class="note" style="margin:8px 0 0;font-size:12px">A continuous value between two named ends.</p></div>
+      <div class="ascii-item"><h3>gauge.loader // web, video</h3><pre class="ascii">[ ░▒▓ ]</pre><p class="note" style="margin:8px 0 0;font-size:12px">Wait state; stepped, never a spinner.</p></div>
+      <div class="ascii-item"><h3>gauge.tape // video, web</h3><pre class="ascii">[ 0000 ]</pre><p class="note" style="margin:8px 0 0;font-size:12px">A counter: episode, take, timecode.</p></div>
+    </div>
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">stamps</h3>
+    <div class="ascii-grid">
+      <div class="ascii-item"><h3>stamp.hov // video, web</h3><pre class="ascii">◊ HOV-3</pre><p class="note" style="margin:8px 0 0;font-size:12px">The brand mark and the lane number.</p></div>
+      <div class="ascii-item"><h3>stamp.lane // copy, web</h3><pre class="ascii">[ HOV-3 ]</pre><p class="note" style="margin:8px 0 0;font-size:12px">The lane number where the diamond cannot be drawn.</p></div>
+      <div class="ascii-item"><h3>stamp.rec // video, web</h3><pre class="ascii">● REC [00:21:48]</pre><p class="note" style="margin:8px 0 0;font-size:12px">The recording block; top-right of a 16:9 frame.</p></div>
+      <div class="ascii-item"><h3>stamp.dead // web, video</h3><pre class="ascii">▒░▒▓ NO SIGNAL</pre><p class="note" style="margin:8px 0 0;font-size:12px">A channel with no dispatch; never animated.</p></div>
+      <div class="ascii-item"><h3>stamp.spoiler // video, web</h3><pre class="ascii">[ ▒ SPOILER ▒ ]</pre><p class="note" style="margin:8px 0 0;font-size:12px">A spoiler gate; the hatch is not decoration.</p></div>
+      <div class="ascii-item"><h3>stamp.spoiler_ascii // copy, web</h3><pre class="ascii">[ SPOILER ]</pre><p class="note" style="margin:8px 0 0;font-size:12px">The same gate where only ASCII survives.</p></div>
+      <div class="ascii-item"><h3>stamp.approved // web, video</h3><pre class="ascii">[ APPROVED ]</pre><p class="note" style="margin:8px 0 0;font-size:12px">A state that was measured, not a mood.</p></div>
+    </div>
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">diagrams</h3>
+    <div class="ascii-grid">
+      <div class="ascii-item"><h3>diagram.seats // video, web</h3><pre class="ascii">   ◊ DAVE
+◊ ALEX   ◊ SHANE</pre><p class="note" style="margin:8px 0 0;font-size:12px">Who is in the car and where; never a stock icon.</p></div>
+      <div class="ascii-item"><h3>diagram.pulse // video, web</h3><pre class="ascii">▁▃▅▇▅▃▁</pre><p class="note" style="margin:8px 0 0;font-size:12px">A waveform trace; decorative under audio facts.</p></div>
+      <div class="ascii-item"><h3>diagram.timeline // video, web</h3><pre class="ascii">|--|----|--|---|</pre><p class="note" style="margin:8px 0 0;font-size:12px">Cuts or beats along one line.</p></div>
+      <div class="ascii-item"><h3>diagram.arrow // copy, web, video</h3><pre class="ascii">---&gt;</pre><p class="note" style="margin:8px 0 0;font-size:12px">One direction of travel; never a pointer to a button.</p></div>
+    </div>
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">numerals</h3>
+    <div class="ascii-grid">
+      <div class="ascii-item"><h3>digits.3x5 // video, web</h3><pre class="ascii">███     ███
+█ █     █ █
+███     █ █
+█ █     █ █
+███  █  ███</pre><p class="note" style="margin:8px 0 0;font-size:12px">A score readable at thumbnail size; 0-9 plus . - /.</p></div>
+    </div>
+
+    <h2>13. Interference</h2>
+    <p class="note">
+      A state signal, not a texture. Every effect names a condition from the ladder;
+      the generated layer is <code>assets/css/interference.css</code> and the burst API is
+      <code>Interference.burst(element, effect, frames)</code>. Reduced motion freezes
+      each effect on its representative frame.
+    </p>
+    <table class="spec-table">
+      <thead><tr><th>State</th><th>Meaning</th><th>Allowed</th><th>Duration</th></tr></thead>
+      <tbody>
+        <tr><td><code>idle</code></td><td>Nothing wrong</td><td>scanlines only</td><td>static</td></tr>
+        <tr><td><code>degraded</code></td><td>Readable but weak</td><td>vstripes, roll, noise, tear</td><td>≤ 3 frames, max 1 / 4s</td></tr>
+        <tr><td><code>lost</code></td><td>Picture gone</td><td>noise, roll, headswitch</td><td>hold; still mandatory</td></tr>
+        <tr><td><code>fatal</code></td><td>Failure with an action</td><td>noise, tear</td><td>one burst, then still</td></tr>
+        <tr><td><code>transition</code></td><td>Feed or act change</td><td>blackband</td><td>6 frames, once</td></tr>
+      </tbody>
+    </table>
+
+    <div class="intf-grid" style="margin-top:var(--ds-space-4)">
+      <div class="intf-card"><h3>vstripes // degraded</h3>
+        <div class="intf-demo intf-host"><span class="intf intf--vstripes"></span><span class="demo-label">CAM 03 // WEAK</span></div>
+      </div>
+      <div class="intf-card"><h3>roll // degraded, lost</h3>
+        <div class="intf-demo intf-host"><span class="intf intf--roll"></span><span class="demo-label">CAM 03</span></div>
+      </div>
+      <div class="intf-card"><h3>noise // degraded, lost, fatal</h3>
+        <div class="intf-demo intf-host"><span class="intf intf--noise intf--still"></span><span class="demo-label">NO SIGNAL</span></div>
+      </div>
+      <div class="intf-card"><h3>headswitch // lost</h3>
+        <div class="intf-demo intf-host"><span class="intf intf--headswitch"></span><span class="demo-label">TAPE END</span></div>
+      </div>
+      <div class="intf-card"><h3>tear // degraded, fatal</h3>
+        <div class="intf-demo intf-host" id="demo-tear"><span class="demo-label">FAULT</span></div>
+        <button type="button" class="ds-btn" onclick="Interference.burst(document.getElementById('demo-tear'), 'tear', 2)">[ REPLAY ]</button>
+      </div>
+      <div class="intf-card"><h3>blackband // transition</h3>
+        <div class="intf-demo intf-host" id="demo-blackband"><span class="demo-label">FEED CHANGE</span></div>
+        <button type="button" class="ds-btn" onclick="Interference.burst(document.getElementById('demo-blackband'), 'blackband', 6)">[ REPLAY ]</button>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--ds-font-display);text-transform:uppercase;font-size:18px;margin:var(--ds-space-6) 0 var(--ds-space-3)">Where it is used</h3>
+    <div class="intf-grid">
+      <div class="intf-card"><h3>dead camera</h3>
+        <button type="button" class="ds-channel intf-host" data-state="empty" disabled>
+          <span class="intf intf--noise intf--still" aria-hidden="true"></span>
+          <span>CAM 05 // NO SIGNAL<br><span class="note" style="font-size:11px">▒░▒▓░▒▓░▒░</span></span>
+        </button>
+        <p class="note" style="margin:8px 0 0;font-size:12px">Still, never animated.</p>
+      </div>
+      <div class="intf-card"><h3>feed error</h3>
+        <p class="ds-notice" data-state="error" id="demo-error">[ SIGNAL LOST ] The channel log did not load (HTTP 503).</p>
+        <button type="button" class="ds-btn" onclick="Interference.burst(document.getElementById('demo-error'), 'tear', 2)">[ REPLAY ]</button>
+      </div>
+      <div class="intf-card"><h3>404</h3>
+        <p class="note">A full page, not a badge: one 8-frame burst, then the still, code and two exits.</p>
+        <a class="ds-btn" href="404.html">[ OPEN THE 404 PAGE ]</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="assets/js/ascii-visualizer.js?v=1.1.0" defer></script>
+  <script src="assets/js/interference.js?v=1.0.0" defer></script>
+</body>
+</html>

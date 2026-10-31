@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <title>We Argued About Whalefall for 22 Minutes · Episode 1 | Carpool Critics</title>
   <meta name="description" content="Whalefall (2026): I at one point was thinking, is he going to get pooped out?" />
@@ -31,9 +31,12 @@
   <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="Carpool Critics episodes" href="https://carpoolcritics.com/feed.xml">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/episode.css?v=5.4.0" />
+  <link rel="stylesheet" href="../../assets/css/episode.css?v=5.6.0" />
   <link rel="stylesheet" href="../../assets/css/site-bar.css?v=1.2.0" />
+  <link rel="stylesheet" href="../../assets/css/design-system.css?v=1.1.0" />
+  <link rel="stylesheet" href="../../assets/css/interference.css?v=1.0.0" />
   <script src="../../assets/js/site-bar.js?v=1.0.0" defer></script>
+  <script src="../../assets/js/ascii-visualizer.js?v=1.1.0" defer></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -91,6 +94,8 @@
 </head>
 <body>
 
+  <a class="ds-skip-link" href="#content">[ SKIP TO CONTENT ]</a>
+
   <div class="scanline-plane" aria-hidden="true"></div>
 
   <div class="page-frame">
@@ -124,11 +129,11 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <main id="content" class="wrap">
 
     <article>
-      <header class="ep-head">
-        <p class="eyebrow">◊ Carpool Critics // EPISODE 1</p>
+      <header class="ep-head ds-page-header">
+        <p class="eyebrow ds-eyebrow">◊ Carpool Critics // EPISODE 1</p>
         <h1 class="ep-title">We Argued About Whalefall for 22 Minutes</h1>
         <div class="ep-byline">
         <span>EPISODE 1</span>
@@ -138,11 +143,16 @@
         </div>
       </header>
 
-      <a class="poster-link" href="https://www.youtube.com/watch?v=Be0RFbGbbSU" rel="noopener" aria-label="[ ▶ PLAY ] Watch We Argued About Whalefall for 22 Minutes on YouTube">
+      <a class="poster-link ds-figure" href="https://www.youtube.com/watch?v=Be0RFbGbbSU" rel="noopener" aria-label="[ ▶ PLAY ] Watch We Argued About Whalefall for 22 Minutes on YouTube">
         <img src="https://i.ytimg.com/vi/Be0RFbGbbSU/maxresdefault.jpg" alt="We Argued About Whalefall for 22 Minutes video thumbnail" width="1280" height="720" decoding="async" />
         <span class="play-badge" aria-hidden="true">[ ▶ PLAY ]</span>
       </a>
       <p class="poster-note">FULL EPISODE ON YOUTUBE // 21m</p>
+      <div class="ascii-viz-row" aria-hidden="true">
+        <span>SIGNAL // ARCHIVE</span>
+        <pre class="ascii-viz" data-ascii-viz data-style="bars" data-width="32" data-fps="12"
+             data-envelope="../../data/signal/ep1.bin"></pre>
+      </div>
 
       <section class="section"><p class="ep-description">Whalefall (2026): I at one point was thinking, is he going to get pooped out?</p></section>
       
@@ -174,7 +184,7 @@
       
       <section class="section" aria-labelledby="scores-heading">
         <h2 class="section-title" id="scores-heading">◊ FINAL TACHOMETER</h2>
-        <div class="scorecard">
+        <div class="scorecard ds-scoreboard">
           <div class="score-row"><strong>◊ SHANE</strong><span class="gauge">[▓▓▓▓░░░░░░] 3.5/10</span></div>
           <div class="score-row"><strong>◊ ALEX</strong><span class="gauge">[▓▓▓░░░░░░░] 3.0/10</span></div>
           <div class="score-row"><strong>◊ DAVE</strong><span class="gauge">[▓▓▓▓▓▓░░░░] 5.5/10</span></div>

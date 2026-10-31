@@ -111,5 +111,15 @@
     "calibration": "episodes/EP01_Whale_Fall/01_Raw_Footage/spatial_framing_calibration.json",
     "droppedTranscriptTurns": 52,
     "transcriptTurns": 72
+  },
+  "signal": {
+    "url": "data/signal/ep1.bin",
+    "fps": 12,
+    "width": 32,
+    "frames": 15696,
+    "glyphs": "▁▂▃▄▅▆▇█",
+    "durationSeconds": 1308.0,
+    "bytes": 502272,
+    "source": "episodes/EP01_Whale_Fall/02_Transcription/EP01_Whale_Fall_Master_Audio_Mastered.wav"
   }
 }
