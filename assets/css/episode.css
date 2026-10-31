@@ -31,7 +31,7 @@
   border-radius: 0;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 
 body {
   background: var(--bg-asphalt);
@@ -89,12 +89,17 @@ body {
 
 .wrap { flex: 1 0 auto; }
 
-.site-foot { flex: 0 0 auto; }
+.site-foot { flex: 0 0 auto; padding-bottom: env(safe-area-inset-bottom); }
 
 /* ---------- Top bar ----------
    The site bar lives in assets/css/site-bar.css and is shared with
    index.html. Only footer specifics belong here. */
 .site-foot .foot-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding-top: var(--ds-space-2);
+  padding-bottom: var(--ds-space-2);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
@@ -116,6 +121,9 @@ body {
    while every other surface stopped at the frame. */
 .page-frame {
   width: 100%;
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   max-width: 1600px;
   margin: 0 auto;
   flex: 1 0 auto;
@@ -335,7 +343,7 @@ h1.ep-title {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
+  padding: 10px 14px;
   border-bottom: var(--rule-dashed);
   font-family: var(--font-mono);
   font-size: 9px;
@@ -388,9 +396,10 @@ h1.ep-title {
 }
 
 /* ---------- Sections ---------- */
-.section { margin: 30px 0; }
+.section { margin: var(--ds-space-6) 0; }
 
 h2.section-title {
+  scroll-margin-top: 96px;
   font-family: var(--font-display);
   font-size: 21px;
   letter-spacing: 0;
@@ -591,6 +600,7 @@ h2.section-title {
 }
 
 .transcript-turn {
+  max-width: 78ch;
   padding: 10px 0 10px 14px;
   border-bottom: 1px dashed rgba(142, 141, 138, 0.35);
   position: relative;
@@ -641,6 +651,8 @@ h2.section-title {
 .speaker-shane { color: var(--text-ticket); border-color: var(--accent-brake); }
 
 .turn-text {
+  max-width: 74ch;
+  padding-right: var(--ds-space-4);
   font-size: 13px;
   line-height: 1.7;
   color: var(--text-ticket);
@@ -649,6 +661,7 @@ h2.section-title {
 /* ---------- Archive: filed by year ---------- */
 /* The archive is the paper record: dated groups, not a feed. */
 .archive-year {
+  scroll-margin-top: 96px;
   margin: 26px 0 34px;
 }
 
@@ -755,7 +768,7 @@ h2.section-title {
 .archive-row {
   display: flex;
   gap: 16px;
-  padding: 12px 14px;
+  padding: 16px;
   align-items: flex-start;
 }
 
@@ -896,4 +909,38 @@ h2.section-title {
 
 @media (prefers-reduced-motion: reduce) {
   .rec-dot { animation: none; }
+}
+
+/* ---------- Archive signal strip (DESIGN_SYSTEM.md 12.7) ---------- */
+.ascii-viz-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 18px;
+  min-height: 22px;
+}
+
+.ascii-viz-row > span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+pre.ascii-viz {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--accent-hov);
+  white-space: pre;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  pre.ascii-viz { animation: none; }
 }

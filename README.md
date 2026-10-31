@@ -65,14 +65,19 @@ loaded by `index.html` and by every generated page, so it never reshapes between
 ```text
 carpool-critics/
 ├── index.html                   # SPA shell: home cockpit, live feed, hosts, contact
-├── style.css                    # Site styles
+├── style.css                    # Site layout styles
 ├── assets/css/site-bar.css      # The one top menu (shared by every page)
+├── assets/css/design-system.css # GENERATED tokens + component states (DESIGN_SYSTEM.md)
+├── assets/css/interference.css # GENERATED static/tear/loss states (DESIGN_SYSTEM.md 13)
+├── 404.html                     # Branded NO SIGNAL state, one burst then still
+├── design-system.html           # Living specimen sheet: palette, type, states (noindex)
 ├── script.js                    # View router, live-feed channel select, contact helpers
 ├── assets/                      # Cockpit plate, host cutouts, per-episode thumbnails
 ├── data/
 │   ├── episodes.json            # GENERATED public catalog
 │   ├── movies.json              # Cached TMDb metadata
 │   ├── pipeline/                # GENERATED per-episode payloads
+│   ├── signal/                  # GENERATED ASCII audio envelopes (<id>.bin)
 │   └── transcripts/             # On-demand dialogue transcripts
 ├── episodes/                    # GENERATED episode and archive pages
 ├── scripts/                     # Data sync, page builder, publish automation

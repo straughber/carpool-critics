@@ -7,8 +7,8 @@
   "title": "Club Kid: Notes We Took in a Parked Car | Review",
   "shortTitle": "Ep. 2: Club Kid",
   "youtubeId": null,
-  "duration": "21m",
-  "durationSeconds": 1292,
+  "duration": "35m",
+  "durationSeconds": 2118,
   "publishedAt": null,
   "publishAt": null,
   "uploadedAt": null,
@@ -64,34 +64,34 @@
   "transcriptFile": "data/transcripts/ep2.json",
   "hosts": [
     {
-      "name": "Shane",
+      "name": "Alex",
       "seat": "driver",
       "role": "Driver",
       "seatPosition": "front_left",
-      "faceX": 0.6521,
-      "faceY": 0.3337,
+      "faceX": 0.6499,
+      "faceY": 0.3482,
       "detected": true,
-      "description": "Shane / Driver punch-in"
+      "description": "Alex / driver punch-in"
     },
     {
-      "name": "Alex",
+      "name": "Shane",
       "seat": "passenger",
       "role": "Passenger",
       "seatPosition": "front_right",
-      "faceX": 0.3937,
-      "faceY": 0.3701,
+      "faceX": 0.3513,
+      "faceY": 0.3768,
       "detected": true,
-      "description": "Alex / Passenger punch-in"
+      "description": "Shane / passenger punch-in"
     },
     {
       "name": "Dave",
       "seat": "backseat",
       "role": "Back Seat",
       "seatPosition": "back_center",
-      "faceX": 0.5,
-      "faceY": 0.4,
-      "detected": false,
-      "description": "Dave / Backseat center punch-in"
+      "faceX": 0.4698,
+      "faceY": 0.371,
+      "detected": true,
+      "description": "Dave / backseat punch-in"
     }
   ],
   "scorecards": {
@@ -100,19 +100,28 @@
     "Dave": 4.0
   },
   "bestMoment": {
-    "time": "00:00:24",
-    "seconds": 24,
+    "time": "00:00:00",
+    "seconds": 0,
     "label": "explosive clash",
     "quote": "Shane and Shane GPT. Shane and his bots. Shane GPT. Okay so welcome back to Carpool Critics episode 2. Today we have our wonderful Alex. Ale..."
   },
-  "shorts": [],
   "source": {
     "episode": "EP02_Club_Kid",
     "publishingPackage": "episodes/EP02_Club_Kid/03_Episode_Cuts/publishing_package.json",
     "transcript": "episodes/EP02_Club_Kid/02_Transcription/EP02_Club_Kid_transcript.json",
     "timeMap": "episodes/EP02_Club_Kid/03_Episode_Cuts/master_timeline_map.json",
     "calibration": "episodes/EP02_Club_Kid/01_Raw_Footage/spatial_framing_calibration.json",
-    "droppedTranscriptTurns": 45,
-    "transcriptTurns": 76
+    "droppedTranscriptTurns": 3,
+    "transcriptTurns": 120
+  },
+  "signal": {
+    "url": "data/signal/ep2.bin",
+    "fps": 12,
+    "width": 32,
+    "frames": 25416,
+    "glyphs": "▁▂▃▄▅▆▇█",
+    "durationSeconds": 2118.0,
+    "bytes": 813312,
+    "source": "episodes/EP02_Club_Kid/02_Transcription/EP02_Club_Kid_Master_Audio_Mastered.wav"
   }
 }

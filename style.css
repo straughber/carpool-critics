@@ -40,6 +40,8 @@
 
 html {
   background: var(--bg-asphalt);
+  /* A jump to a section must not land under the sticky brand bar. */
+  scroll-padding-top: 96px;
 }
 
 body {
@@ -133,6 +135,13 @@ button {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* A notched phone in landscape must not put the frame under the sensor. */
+.cinema-viewport {
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* ========================================================
@@ -423,7 +432,7 @@ button {
 .subpage-scroll-container {
   width: 100%;
   height: 100%;
-  padding: 22px clamp(16px, 4vw, 48px) 44px;
+  padding: 22px clamp(16px, 4vw, 48px) max(44px, calc(var(--ds-space-6) + env(safe-area-inset-bottom)));
   background: var(--bg-asphalt);
   overflow-y: auto;
   /* The feed mounts after first paint. Scroll anchoring must not shove the
@@ -513,7 +522,7 @@ button {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
+  padding: 10px 14px;
   border-bottom: var(--rule-dashed);
   font-family: var(--font-mono);
   font-size: 9px;
@@ -539,7 +548,7 @@ button {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding: 0 14px 10px;
+  padding: 0 14px 14px;
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
@@ -858,6 +867,10 @@ button {
   margin-top: 18px;
 }
 
+#cam-rail-status {
+  margin: var(--ds-space-2) 0;
+}
+
 .cam-rail-label {
   font-family: var(--font-mono);
   font-size: 9px;
@@ -873,7 +886,7 @@ button {
 .cam-rail {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--ds-space-3);
 }
 
 .cam-btn {
@@ -881,7 +894,7 @@ button {
   flex-direction: column;
   gap: 6px;
   min-height: 92px;
-  padding: 9px 10px;
+  padding: 10px 12px;
   border: 2px dashed var(--text-muted);
   background: var(--bg-dash);
   text-align: left;
@@ -895,7 +908,7 @@ button {
   box-shadow: var(--hard-shadow);
 }
 
-.cam-btn[aria-current="true"] {
+.cam-btn[aria-pressed="true"] {
   border: 2px solid var(--accent-amber);
   box-shadow: var(--hard-shadow);
 }
@@ -910,8 +923,8 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
-.cam-btn[aria-current="true"] .cam-btn-id,
-.cam-btn[aria-current="true"] .cam-btn-state {
+.cam-btn[aria-pressed="true"] .cam-btn-id,
+.cam-btn[aria-pressed="true"] .cam-btn-state {
   color: var(--accent-amber);
 }
 
@@ -958,7 +971,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--ds-space-3);
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px dashed rgba(142, 141, 138, 0.45);
@@ -1084,9 +1097,9 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  min-height: 28px;
-  padding: 0 16px;
+  gap: var(--ds-space-3);
+  min-height: 44px;
+  padding: 8px var(--ds-space-4) max(8px, env(safe-area-inset-bottom));
   border-top: 2px solid var(--text-ticket);
   background: var(--bg-asphalt);
   color: var(--text-muted);
@@ -1103,7 +1116,14 @@ button {
 }
 
 .status-link,
-.foot-link {
+.foot-link,
+.video-permalink,
+.cam-archive-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding-top: var(--ds-space-2);
+  padding-bottom: var(--ds-space-2);
   color: var(--text-muted);
   text-decoration: none;
 }
@@ -1284,4 +1304,74 @@ button {
   .stage-hud.is-rgb-split span {
     text-shadow: 2px 2px 0 var(--bg-asphalt);
   }
+}
+
+/* ========================================================
+   ASCII AUDIO VISUALIZER (DESIGN_SYSTEM.md 12.7)
+   A measurement display, stepped at 12fps. Green is the
+   audio colour (BRAND.md section 2); the strip is decorative
+   and aria-hidden, never the only carrier of a fact.
+   ======================================================== */
+.ascii-viz-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 4px;
+  min-height: 22px;
+}
+
+.ascii-viz-row > span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+pre.ascii-viz {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--accent-hov);
+  white-space: pre;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  pre.ascii-viz { animation: none; }
+}
+
+/* ========================================================
+   CAM RAIL ON THE DS CHANNEL CONTRACT
+   .ds-channel owns the states (DESIGN_SYSTEM.md 4.1); the rail
+   owns the layout. These selectors are more specific than the
+   component layer, which loads after this file.
+   ======================================================== */
+.cam-rail .cam-btn.ds-channel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 6px;
+  min-height: 92px;
+  padding: 10px 12px;
+  border: 2px dashed var(--text-muted);
+  background: var(--bg-dash);
+  color: var(--text-ticket);
+  font-size: inherit;
+}
+
+.cam-rail .cam-btn.ds-channel[aria-pressed="true"] {
+  border-width: 2px 2px 2px 4px;
+  border-style: solid;
+  border-color: var(--accent-amber);
+  box-shadow: var(--hard-shadow);
+}
+
+.cam-rail .cam-btn.ds-channel[data-state="empty"] {
+  background: var(--bg-asphalt);
 }

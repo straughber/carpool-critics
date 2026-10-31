@@ -152,7 +152,8 @@ function mergeCatalogs(catalog, payloads) {
       movieQuery: payload.movieQuery || base.movieQuery,
       movieYear: payload.movieYear || base.movieYear,
       movie: payload.movie || base.movie,
-      transcriptFile: payload.transcriptFile || base.transcriptFile
+      transcriptFile: payload.transcriptFile || base.transcriptFile,
+      signal: payload.signal || base.signal || null
     };
     if (episode.slug && seenSlugs.has(episode.slug)) {
       console.warn(`[Pages] Duplicate slug ${episode.slug}; keeping the first payload`);
@@ -338,7 +339,7 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeAttr(description)}" />
@@ -367,19 +368,24 @@ function pageShell({ title, description, canonical, ogImage, ogType = 'article',
   <link rel="apple-touch-icon" href="${asset('assets/apple-touch-icon.png')}">
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} episodes" href="${siteUrl('/feed.xml')}">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.4.0" />
+  <link rel="stylesheet" href="${asset('assets/css/episode.css')}?v=5.6.0" />
   <link rel="stylesheet" href="${asset('assets/css/site-bar.css')}?v=1.2.0" />
+  <link rel="stylesheet" href="${asset('assets/css/design-system.css')}?v=1.1.0" />
+  <link rel="stylesheet" href="${asset('assets/css/interference.css')}?v=1.0.0" />
   <script src="${asset('assets/js/site-bar.js')}?v=1.0.0" defer></script>
+  <script src="${asset('assets/js/ascii-visualizer.js')}?v=1.1.0" defer></script>
   ${jsonLdBlocks}
 </head>
 <body>
+
+  <a class="ds-skip-link" href="#content">[ SKIP TO CONTENT ]</a>
 
   <div class="scanline-plane" aria-hidden="true"></div>
 
   <div class="page-frame">
 ${siteBar(asset, current)}
 
-  <main class="wrap${wide ? ' wrap--wide' : ''}">
+  <main id="content" class="wrap${wide ? ' wrap--wide' : ''}">
 ${body}
   </main>
 
@@ -468,7 +474,7 @@ function scorecardSection(episode) {
   return `
       <section class="section" aria-labelledby="scores-heading">
         <h2 class="section-title" id="scores-heading">◊ FINAL TACHOMETER</h2>
-        <div class="scorecard">
+        <div class="scorecard ds-scoreboard">
           ${rows}
         </div>
       </section>`;
@@ -598,21 +604,29 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
       </nav>`;
 
   const poster = isLive
-    ? `<a class="poster-link" href="${escapeAttr(watchUrl(episode.youtubeId))}" rel="noopener" aria-label="[ ▶ PLAY ] Watch ${escapeAttr(title)} on YouTube">
+    ? `<a class="poster-link ds-figure" href="${escapeAttr(watchUrl(episode.youtubeId))}" rel="noopener" aria-label="[ ▶ PLAY ] Watch ${escapeAttr(title)} on YouTube">
         <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} video thumbnail`)}" width="1280" height="720" decoding="async" />
         <span class="play-badge" aria-hidden="true">[ ▶ PLAY ]</span>
       </a>
       <p class="poster-note">FULL EPISODE ON YOUTUBE // ${escapeHtml(episode.duration || '')}</p>`
-    : `<div class="poster-link is-preview">
+    : `<div class="poster-link ds-figure is-preview">
         <img src="${escapeAttr(heroImage)}" alt="${escapeAttr(`${title} preview thumbnail`)}" width="1280" height="720" decoding="async" />
         <span class="premiere-badge">[ PREMIERES ]</span>
       </div>
       <p class="poster-note">PREMIERES ${escapeHtml(publishLabel.toUpperCase())} // FULL EPISODE DROPS ON YOUTUBE</p>`;
 
+  const signalStrip = episode.signal && episode.signal.url
+    ? `<div class="ascii-viz-row" aria-hidden="true">
+        <span>SIGNAL // ARCHIVE</span>
+        <pre class="ascii-viz" data-ascii-viz data-style="bars" data-width="32" data-fps="12"
+             data-envelope="${escapeAttr(pageAsset(episode.signal.url, depth))}"></pre>
+      </div>`
+    : '';
+
   const body = `
     <article>
-      <header class="ep-head">
-        <p class="eyebrow">◊ ${escapeHtml(SITE_NAME)} // EPISODE ${escapeHtml(String(episode.number || ''))}</p>
+      <header class="ep-head ds-page-header">
+        <p class="eyebrow ds-eyebrow">◊ ${escapeHtml(SITE_NAME)} // EPISODE ${escapeHtml(String(episode.number || ''))}</p>
         <h1 class="ep-title">${escapeHtml(h1)}</h1>
         <div class="ep-byline">
         ${byline}
@@ -620,6 +634,7 @@ async function buildEpisodePage(episode, movie, transcript, siblings) {
       </header>
 
       ${poster}
+      ${signalStrip}
 
       ${description ? `<section class="section"><p class="ep-description">${escapeHtml(description)}</p></section>` : ''}
       ${filmCard(movie)}
@@ -702,7 +717,8 @@ function sealedStub(ep) {
   // Nothing identifiable may reach this markup: no title, no shortTitle, no
   // description and no real thumbnail. The archive is indexable and the film
   // is the whole premise of the episode.
-  return `        <li class="archive-item archive-item--sealed ticket">
+  return `        <li class="archive-item archive-item--sealed ticket intf-host">
+          <span class="intf intf--noise intf--still" aria-hidden="true"></span>
           <div class="ticket-head">
             <span>ADMIT ONE // EP #${number}</span>
             <span class="ticket-head-right">[ SEALED ]</span>
@@ -711,7 +727,7 @@ function sealedStub(ep) {
             ${plate}
             <div class="archive-body">
               <div class="archive-title">PREMIERES ${escapeHtml(premiere)}</div>
-              <div class="archive-meta">TITLE // TAKE // SCORE WITHHELD</div>
+              <div class="archive-meta">SIGNAL // SEALED · TITLE // TAKE // SCORE WITHHELD</div>
               <p class="archive-desc">The film, the takes and the scores stay in the glovebox until the premiere.</p>
             </div>
           </div>
@@ -819,7 +835,12 @@ ${sealedEpisodes.map(sealedStub).join('\n')}
       </p>
     </header>
 
-${sealedBlock}${sealedBlock ? '\n\n' : ''}${groups || '    <section class="section"><p class="ep-description">No episodes published yet.</p></section>'}
+${sealedBlock}${sealedBlock ? '\n\n' : ''}${groups || `    <section class="section">
+      <p class="ds-notice intf-host" data-state="empty">
+        <span class="intf intf--noise intf--still" aria-hidden="true"></span>
+        [ NO DISPATCH ] Nothing has cleared the archive yet. The feed opens with the first episode.
+      </p>
+    </section>`}
 `;
 
   return pageShell({
@@ -987,7 +1008,11 @@ async function run() {
   console.log(`[Pages] sitemap.xml (${liveCount + 2} urls, ${episodes.length - liveCount} pre-release excluded) + robots.txt + feed.xml`);
 }
 
-run().catch(err => {
-  console.error('[Pages] Fatal:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  run().catch(err => {
+    console.error('[Pages] Fatal:', err);
+    process.exit(1);
+  });
+}
+
+module.exports = { sealedStub, buildArchivePage, buildEpisodePage, mergeCatalogs };

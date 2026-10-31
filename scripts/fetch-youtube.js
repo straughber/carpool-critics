@@ -284,6 +284,7 @@ function applyPipelinePayload(episode, payload) {
     movieQuery: first(payload.movieQuery, episode.movieQuery),
     movieYear: first(payload.movieYear, episode.movieYear),
     transcriptFile: first(payload.transcriptFile, episode.transcriptFile),
+    signal: first(payload.signal, episode.signal),
     status: first(episode.status, payload.status, 'live'),
     publishAt: first(payload.publishAt, episode.publishAt)
   };
@@ -305,6 +306,7 @@ function emptyEpisode(videoId) {
     movieQuery: null,
     movieYear: null,
     transcriptFile: null,
+    signal: null,
     number: null,
     id: null,
     slug: null,
