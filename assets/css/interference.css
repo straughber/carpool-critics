@@ -30,8 +30,8 @@
 .intf--vstripes {
   background-image: repeating-linear-gradient(
     to right,
-    rgba(244, 240, 234, 0.06) 0 1px,
-    transparent 1px 3px
+    rgba(244, 240, 234, 0.06) 0 2px,
+    transparent 2px 6px
   );
   animation: intf-stripes 0.333s steps(3) infinite;
 }
@@ -102,7 +102,7 @@
 
 @keyframes intf-stripes {
   from { background-position-x: 0; }
-  to { background-position-x: -3px; }
+  to { background-position-x: -6px; }
 }
 @keyframes intf-roll {
   from { background-position-y: -90%; }
