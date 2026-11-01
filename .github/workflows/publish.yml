@@ -42,4 +42,9 @@ jobs:
         env:
           # Optional. Without it the build reuses the committed data/movies.json.
           TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+          # Read-only key for the channel. This is what lets the daily rebuild see
+          # that a held episode has gone public and promote its page to indexable;
+          # without it the build falls back to the RSS feed (~15 recent videos) and
+          # quietly misses older metadata.
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: ./scripts/publish.sh --auto
