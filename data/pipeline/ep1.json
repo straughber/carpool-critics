@@ -3,7 +3,7 @@
   "siteId": "ep1",
   "number": 1,
   "slug": "ep1-whalefall",
-  "status": "scheduled",
+  "status": "live",
   "title": "Whalefall: Our Predictions, Notarized | Review",
   "shortTitle": "Ep. 1: Whalefall",
   "youtubeId": "diJB9TFQncU",
@@ -14,9 +14,9 @@
   "uploadedAt": "2026-11-01T13:57:37.481502",
   "description": "Whalefall (2026): I think the critics are going to have a hard time with this film.",
   "descriptionOverride": null,
-  "thumbnail": "assets/images/episodes/ep1-whalefall/thumbnail.png",
-  "ogImage": "https://carpoolcritics.com/assets/images/episodes/ep1-whalefall/thumbnail.png",
-  "sealedThumb": "assets/images/episodes/sealed/ep1.png",
+  "thumbnail": "https://i.ytimg.com/vi/diJB9TFQncU/hqdefault.jpg",
+  "ogImage": null,
+  "sealedThumb": null,
   "chapters": [
     {
       "time": "00:00",
