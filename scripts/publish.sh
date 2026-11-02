@@ -61,7 +61,7 @@ trap 'rm -rf "$LOCK"' EXIT
 # episode dropped, which is exactly when the front door must update. The rest of
 # the page is still hand-authored, so a redesign of the shell should be published
 # by a manual run.
-GENERATED_PATHS='^(index\.html$|episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/|data/signal/|assets/css/interference\.css$)'
+GENERATED_PATHS='^(index\.html$|episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/|data/signal/|data/shorts_ledger\.json$|assets/css/interference\.css$)'
 UNAPPROVED="$(git status --porcelain | cut -c4- | grep -vE "$GENERATED_PATHS" || true)"
 if [ "$MODE" = "auto" ] && [ -n "$UNAPPROVED" ]; then
   printf '%s\n' "$UNAPPROVED" | sed 's/^/  /'

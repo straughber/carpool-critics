@@ -370,6 +370,13 @@ function loadKnownShortVideoIds(payloads = []) {
       // Absent or malformed ledger: no contribution.
     }
   };
+  // The ledgers above live in the production workspace, which a site checkout does
+  // not have: in GitHub Actions `WORKSPACE_ROOT` is the runner's parent directory,
+  // so every one of those reads misses. `data/shorts_ledger.json` is the committed
+  // copy, written by tools/site_refresh.py, so CI can still refuse a Short as an
+  // episode. Without it the daily build failed its own guard ("no Short ids found")
+  // and never published.
+  readInto(path.join(__dirname, '..', 'data', 'shorts_ledger.json'));
   readInto(path.join(WORKSPACE_ROOT, 'logs', 'shorts_schedule_ledger.json'));
   for (const payload of payloads) collectVideoIds(payload && payload.shorts, ids);
   try {

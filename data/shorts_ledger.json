@@ -1,0 +1,105 @@
+{
+  "note": "Every uploaded Short id, committed so the site build can refuse a Short as an episode without the production workspace. Written by tools/site_refresh.py.",
+  "shorts": [
+    {
+      "video_id": "mVDPA3TqL-Q",
+      "episode": "episodes",
+      "short_id": 1
+    },
+    {
+      "video_id": "xNYoBMg1Ih8",
+      "episode": "episodes",
+      "short_id": 2
+    },
+    {
+      "video_id": "9Xzc7j9cY6Q",
+      "episode": "episodes",
+      "short_id": 3
+    },
+    {
+      "video_id": "vTDMBBa7iZo",
+      "episode": "episodes",
+      "short_id": 4
+    },
+    {
+      "video_id": "BiftGD5--f8",
+      "episode": "episodes",
+      "short_id": 5
+    },
+    {
+      "video_id": "H1jpEKNjNwI",
+      "episode": "episodes",
+      "short_id": 6
+    },
+    {
+      "video_id": "g3x8s4aOV88",
+      "episode": "episodes",
+      "short_id": 7
+    },
+    {
+      "video_id": "ZQjwhil5lRk",
+      "episode": "episodes",
+      "short_id": 8
+    },
+    {
+      "video_id": "VNyVUUieuE8",
+      "episode": "episodes",
+      "short_id": 9
+    },
+    {
+      "video_id": "dBWe4qD8DKA",
+      "episode": "episodes",
+      "short_id": 10
+    },
+    {
+      "video_id": "uvCFbGh4EV4",
+      "episode": "episodes",
+      "short_id": 1
+    },
+    {
+      "video_id": "ZR7KUFCSskY",
+      "episode": "episodes",
+      "short_id": 2
+    },
+    {
+      "video_id": "uooMjZvZ6kY",
+      "episode": "episodes",
+      "short_id": 3
+    },
+    {
+      "video_id": "l3d7CiuPv0M",
+      "episode": "episodes",
+      "short_id": 4
+    },
+    {
+      "video_id": "a-iVL328GTM",
+      "episode": "episodes",
+      "short_id": 5
+    },
+    {
+      "video_id": "7Bvqzv9frI0",
+      "episode": "episodes",
+      "short_id": 6
+    },
+    {
+      "video_id": "gRf9T_hhD5E",
+      "episode": "episodes",
+      "short_id": 7
+    },
+    {
+      "video_id": "dIv9-B_Cf0g",
+      "episode": "episodes",
+      "short_id": 8
+    },
+    {
+      "video_id": "T8YWb9Ff0Us",
+      "episode": "episodes",
+      "short_id": 9
+    },
+    {
+      "video_id": "rpIz8ih-OXo",
+      "episode": "episodes",
+      "short_id": 10
+    }
+  ]
+}
