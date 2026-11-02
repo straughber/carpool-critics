@@ -31,39 +31,5 @@
     "transcriptFile": "data/transcripts/ep1.json",
     "status": "live",
     "publishAt": "2026-11-02T16:00:00Z"
-  },
-  {
-    "id": "ep2",
-    "number": 2,
-    "slug": "ep1-whalefall",
-    "title": "We Argued About Whalefall for 22 Minutes",
-    "shortTitle": "Ep. 1: Whalefall",
-    "youtubeId": "Be0RFbGbbSU",
-    "duration": "21m",
-    "durationSeconds": 1309,
-    "publishedAt": "2026-10-27T12:49:08Z",
-    "date": null,
-    "description": "I at one point was thinking, is he going to get pooped out?",
-    "descriptionOverride": null,
-    "thumbnail": "https://i.ytimg.com/vi/Be0RFbGbbSU/hqdefault.jpg",
-    "chapters": [
-      {
-        "time": "00:00",
-        "label": "The Hook: The Worst Possible Question"
-      },
-      {
-        "time": "00:20",
-        "label": "Show Intro and the IMDb Premise Read"
-      },
-      {
-        "time": "01:20",
-        "label": "Guessing the Rotten Tomatoes Number,"
-      }
-    ],
-    "movieQuery": "Whalefall",
-    "movieYear": 2026,
-    "transcriptFile": "data/transcripts/ep1.json",
-    "status": "live",
-    "publishAt": null
   }
 ]
