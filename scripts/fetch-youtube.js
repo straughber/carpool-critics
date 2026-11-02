@@ -605,8 +605,30 @@ async function run() {
   // The exception is a Short. Once it is in the catalog it would otherwise be
   // kept on every build - it is never "seen in the scrape", because the scrape
   // rejects it - so a leaked Short would be pinned forever. It is evicted here.
+  // ...unless the episode was REPLACED. A pipeline payload names the video a site
+  // page belongs to, so when the payload's id differs from the id the previous
+  // catalogue held for that same siteId, the old upload is superseded and must be
+  // dropped rather than kept and renumbered. EP01's relaunch hit exactly this: the
+  // 21:48 cut was privated, the 36:23 cut took its place, and the fallback kept the
+  // old video and published it as "Ep. 2" beside the real episode 2.
+  const supersededByPayload = new Map();
+  for (const payload of pipeline) {
+    if (!payload || !payload.siteId || !payload.youtubeId) continue;
+    for (const prior of previous) {
+      if (!prior.youtubeId || prior.youtubeId === payload.youtubeId) continue;
+      if (prior.id === payload.siteId || String(prior.number) === String(payload.number)) {
+        supersededByPayload.set(prior.youtubeId, payload.siteId);
+      }
+    }
+  }
+
   for (const prior of previous) {
     if (!prior.youtubeId || seenVideoIds.has(prior.youtubeId)) continue;
+    if (supersededByPayload.has(prior.youtubeId)) {
+      console.warn(`[YouTube] Dropping ${prior.id || prior.youtubeId} (${prior.youtubeId}): ` +
+                   `superseded by ${supersededByPayload.get(prior.youtubeId)}'s current upload`);
+      continue;
+    }
     if (excludedVideoIds.has(prior.youtubeId)) {
       console.warn(`[YouTube] Dropping ${prior.id || prior.youtubeId} from the catalogue: Short, not an episode`);
       continue;
