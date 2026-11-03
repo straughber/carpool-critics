@@ -1,45 +1,41 @@
 {
-  "updated_at": "2026-10-27T04:29:31.537482+00:00",
+  "updated_at": "2026-11-03T14:57:55.325124+00:00",
   "standings": {
     "Shane": 1,
     "Alex": 0,
     "Dave": 1
   },
   "last_recap": {
-    "episode_id": "EP01_Whale_Fall",
-    "movie_title": "Whalefall",
-    "actual_critics": 71,
-    "actual_audience": 82,
+    "episode_id": "EP02_Club_Kid",
+    "movie_title": "Club Kid",
+    "actual_critics": null,
+    "actual_audience": null,
     "guesses": {
       "Shane": {
-        "critics": 65,
-        "audience": 55,
-        "critics_diff": 6,
-        "audience_diff": 27
+        "critics": null,
+        "audience": null,
+        "critics_diff": null,
+        "audience_diff": null
       },
       "Alex": {
-        "critics": 44,
-        "audience": 62,
-        "critics_diff": 27,
-        "audience_diff": 20
+        "critics": null,
+        "audience": null,
+        "critics_diff": null,
+        "audience_diff": null
       },
       "Dave": {
-        "critics": 59,
-        "audience": 69,
-        "critics_diff": 12,
-        "audience_diff": 13
+        "critics": null,
+        "audience": null,
+        "critics_diff": null,
+        "audience_diff": null
       }
     },
     "points_awarded": {
-      "Shane": 1,
+      "Shane": 0,
       "Alex": 0,
-      "Dave": 1
+      "Dave": 0
     },
-    "critics_winners": [
-      "Shane"
-    ],
-    "audience_winners": [
-      "Dave"
-    ]
+    "critics_winners": [],
+    "audience_winners": []
   }
 }
