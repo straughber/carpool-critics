@@ -5,13 +5,20 @@ name: Publish site
 # what promotes a scheduled episode to indexable once YouTube makes it public.
 #
 # The production pipeline also publishes immediately after an upload (via
-# tools/run_episode_pipeline.py --upload). This cron covers the release-time
-# flip and any metadata drift edited directly in YouTube Studio.
+# tools/run_episode_pipeline.py --upload). The crons cover the release-time flip
+# and any metadata drift edited directly in YouTube Studio. The second daily run
+# exists because the first one is scheduled before the channel's publish hour:
+# a build that starts earlier than the premiere can only ever see yesterday.
 
 on:
   schedule:
-    # 09:15 America/Chicago (CDT). GitHub cron is UTC.
+    # 09:15 America/Chicago (CDT). GitHub cron is UTC. Morning backstop for
+    # metadata drifted in Studio, and for the rare earlier premiere.
     - cron: "15 14 * * *"
+    # 12:15 America/Chicago (CDT): just after the channel's 16:00Z premiere hour,
+    # so a release-day flip reaches the site the same afternoon instead of the
+    # next morning. Without this, a 16:00Z premiere waited ~17h for the flip.
+    - cron: "15 17 * * *"
   workflow_dispatch:
 
 permissions:
