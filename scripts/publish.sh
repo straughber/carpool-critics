@@ -86,6 +86,14 @@ node -e '
   }
 ' || fail "invalid JSON in data/" 1
 
+# The prep packs are encrypted because /prep/data/ is published. A plaintext
+# pack names an unreleased film, its cast and the spoiler questions - on
+# 2026-10-27 one was committed here, so this is a gate rather than a note.
+# `.enc.json` is the published form and `leaderboard.json` carries no pack
+# content, so both are exempt; anything else readable is a leak.
+PLAIN_PREP="$(ls prep/data/*.json 2>/dev/null | grep -vE '/leaderboard\.json$|\.enc\.json$' || true)"
+[ -z "$PLAIN_PREP" ] || fail "plaintext prep pack in prep/data - encrypt it first: $PLAIN_PREP" 1
+
 # A Short is a clip cut from an episode, never an episode. A leaked Short once
 # took "Ep. 2" and a page beside the real episode, so this is a hard gate: no
 # uploaded Short id and nothing under five minutes may appear in the catalogue.
