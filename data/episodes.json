@@ -1,5 +1,46 @@
 [
   {
+    "id": "ep2",
+    "number": 2,
+    "slug": "ep2-club-kid",
+    "title": "Club Kid: Notes We Took in a Parked Car | Review",
+    "shortTitle": "Ep. 2: Club Kid",
+    "youtubeId": "FGZAvqkFVYw",
+    "duration": "35m",
+    "durationSeconds": 2139,
+    "publishedAt": "2026-11-06T16:00:02Z",
+    "date": null,
+    "description": "Club Kid (2026): I had almost no expectations going in.",
+    "thumbnail": "https://i.ytimg.com/vi/FGZAvqkFVYw/hqdefault.jpg",
+    "chapters": [
+      {
+        "time": "00:00",
+        "label": "Show Open"
+      },
+      {
+        "time": "01:16",
+        "label": "Show Intro and the IMDb Premise Read"
+      },
+      {
+        "time": "03:23",
+        "label": "Guessing the Rotten Tomatoes Number, Unearned"
+      },
+      {
+        "time": "19:47",
+        "label": "Spoilers and One Unnecessary Theory"
+      },
+      {
+        "time": "33:17",
+        "label": "Scorecards Nobody Agreed To"
+      }
+    ],
+    "movieQuery": "Club Kid",
+    "movieYear": 2026,
+    "transcriptFile": "data/transcripts/ep2.json",
+    "status": "live",
+    "publishAt": "2026-11-06T16:00:00Z"
+  },
+  {
     "id": "ep1",
     "number": 1,
     "slug": "ep1-whalefall",
