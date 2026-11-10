@@ -153,6 +153,9 @@ node -e '
     }
   };
   walk("episodes");
+  // The in-car app is a page too: it links app.js/app.css by hand, so a pack
+  // whose shape changed under a cached script must fail here, not in the car.
+  walk("prep");
   pages.push("index.html");
   let bad = 0;
   for (const page of pages) {

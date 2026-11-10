@@ -5,7 +5,7 @@
    up on the next online visit; other assets are stale-while-revalidate so the
    app opens instantly and still works offline. */
 
-const CACHE = 'ccprep-v3';
+const CACHE = 'ccprep-v4';
 const SHELL = [
   './',
   './index.html',

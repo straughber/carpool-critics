@@ -1039,7 +1039,10 @@ async function boot() {
   await loadPackList();
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // updateViaCache:'none' so a new sw.js is never judged against the HTTP
+    // cache: a stale shell is how a browser kept an old app.js for a pack that
+    // had already changed shape.
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
   }
 }
 
