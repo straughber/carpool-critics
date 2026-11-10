@@ -17,88 +17,61 @@ const PACK_STORE = 'ccprep:pack:';
 const PACK_CACHE = 'ccprep:lastPack';
 
 const SEGMENTS = [
-  { key: 'intro',   name: 'Movie Intro & IMDb Read',          start: 0,    end: 120  },
-  { key: 'rt',      name: "Last Episode's RT Scoreboard",     start: 120,  end: 270  },
-  { key: 'nonspoil',name: 'Non-Spoiler, RT Guesses, Rec',     start: 270,  end: 570  },
-  { key: 'spoiler', name: 'Spoiler Deep-Dive',                start: 570,  end: 1230 },
-  { key: 'scores',  name: 'Final Tachometer Scores',          start: 1230, end: 1350 },
-  { key: 'bits',    name: 'Humorous Bits for Shorts',         start: 1350, end: 1650 },
-  { key: 'outro',   name: 'Outro & 20s End-Screen Hold',      start: 1650, end: 1680 }
+  { key: 'intro',      name: 'Movie Intro & IMDb Read',                    start: 0,    end: 70   },
+  { key: 'rt_game',    name: 'Blind Rotten Tomatoes Game',                 start: 70,   end: 240  },
+  { key: 'non_spoiler',name: 'One Non-Spoiler Reaction',                   start: 240,  end: 350  },
+  { key: 'spoiler',    name: 'Spoiler Warning + Open-Ended Debate',        start: 350,  end: 1050 },
+  { key: 'scorecards', name: 'Tachometer, Reason & Theatres vs Streaming', start: 1050, end: 1190 },
+  { key: 'outro',      name: 'Outro, Review Request & 20s Hold',           start: 1190, end: 1230 }
 ];
 
-/* ============================================================
-   Curated decks — richer, movie-specific questions.
-   Keyed by IMDb id. Falls back to a generic builder.
-   ============================================================ */
-const CURATED = {
-  tt38058097: () => ({
-    non_spoiler_prompts: [
-      'One-Sentence Vibe Check: walking out of Club Kid, what was your gut reaction compared to what you expected going in?',
-      "The Tone Balancing Act: this mixes gritty NYC club culture with a surprise-10-year-old family dramedy. Without spoiling plot, does that clash work or give you whiplash?"
-    ],
-    recommendation_prompt: {
-      main: 'Who is the #1 person you would recommend Club Kid to — and who is the absolute WORST person you could accidentally watch this movie with?',
-      follow_up: "Is this a 'see it in a theater with a crowd' movie or a 'stream on the couch' movie?"
-    },
-    spoiler_questions: [
-      { tag: 'The Main Character Test',
-        question: 'Firstman wrote, directed and starred as Peter, who starts as a total disaster of a human being. At what exact moment (if ever) did you start rooting for him as a dad?' },
-      { tag: "Flipping the 'Surprise Kid' Trope",
-        question: "We've seen 'party guy gets handed a kid' in Big Daddy and Instructions Not Included. How does Club Kid subvert it — or did the drugs and club chaos around a 10-year-old cross the line for you?" },
-      { tag: 'Scene-Stealer Award',
-        question: "Between Arlo, Cara Delevingne as Sophie, and Nicky — the freeloading roommate waiting on a 'six-figure philosophy job' — who stole every scene they were in?" },
-      { tag: 'The Runtime Test',
-        question: 'A party-promoter comedy usually runs 90 minutes; this one runs over two hours. Which subplot earned that runtime, and what would you leave on the cutting room floor?' },
-      { tag: 'The Ending Payoff',
-        question: 'Did the ending between Peter and Arlo feel earned, or did the movie let Peter off the hook too easily?' }
-    ],
-    humorous_bits_for_shorts: [
-      { id: 'bit_infinite_promoter', title: 'The Infinite-Budget Club Promoter Pitch', target_duration: '60-90s',
-        prompt: 'If you were a club promoter with an INFINITE budget and 24 hours to get people into your party establishment — and the goal is a night so legendary the city has to pass a new law the next morning — what is the gimmick, who is working the door, and how are you getting people inside?' },
-      { id: 'bit_child_audit', title: 'The Brutal 10-Year-Old Life Audit', target_duration: '45-75s',
-        prompt: 'In the movie, Peter\'s chaotic adult habits get exposed the second a 10-year-old moves in. If a brutally honest 10-year-old shadowed YOU for 48 hours right now, what is the weirdest habit or most pathetic adult routine they would roast you for first?' },
-      { id: 'bit_fake_career', title: "The 'Six-Figure Philosopher' Excuse", target_duration: '45-60s',
-        prompt: "Peter's roommate refuses to pay rent until he lands a 'six-figure job as a philosopher.' If you had to invent a pretentious fake career title to convince your roommates you shouldn't pay rent for a year, what is your job and what does your 'workday' look like?" },
-      { id: 'bit_worst_babysitter', title: 'The Worst Movie Babysitter Draft', target_duration: '45-60s',
-        prompt: 'You have to leave a 10-year-old for a three-day weekend with Peter from Club Kid OR one other terrible (non-villain) movie adult. Who is the absolute worst movie character you could hire as a babysitter?' }
-    ]
-  })
-};
+const TARGET_SECONDS = SEGMENTS[SEGMENTS.length - 1].end;
 
+/* ============================================================
+   The phone-side deck. Same shape as the Mac tool's
+   `generate_question_deck` (2026-11-10): IMDb read, the blind
+   Tomatoes game first, one non-spoiler reaction, open-ended
+   spoiler questions, the scorecard with its reason and a
+   theatres-versus-streaming call, then the review request.
+   No expectations question, no scoreboard, no humour bits.
+   ============================================================ */
 function genericDeck(movie) {
   const title = movie.title || 'this movie';
-  const director = movie.director || 'the director';
-  const runtime = movie.runtime || '';
-  const synopsis = (movie.synopsis || '').replace(/\s+/g, ' ').slice(0, 150);
+  const lead = (movie.cast || [])[0];
+  const leadName = lead && lead.role ? String(lead.role).split('(')[0].trim() : '';
+
   return {
-    non_spoiler_prompts: [
-      `One-Sentence Vibe Check: walking out of ${title}, how did it compare to what the trailer and premise promised?`,
-      `Without spoiling the plot, what is the single biggest strength and the single biggest warning sign of ${title}?`
-    ],
-    recommendation_prompt: {
-      main: `Who would you recommend ${title} to — and who is the absolute worst person to watch this movie with?`,
-      follow_up: 'Full-price ticket, $8 discount Tuesday, streaming couch, or skip?'
+    rt_game: {
+      tag: 'Blind Tomatoes',
+      prompt: 'What is your score for both the Tomatometer and the Popcornmeter — and why?',
+      detail: 'Lock both numbers before anyone looks them up, then give the reason in one sentence. The reason is the game, not the number.',
+      critics_label: 'Tomatometer (critics)',
+      audience_label: 'Popcornmeter (audience)'
     },
-    spoiler_questions: [
-      { tag: 'The Lead Performance & Direction',
-        question: `How did ${director} handle the tone of ${title}, and at what point did the main character win you over — or lose you?` },
-      { tag: 'Scene-Stealer Award',
-        question: 'Which supporting character or single scene stole the entire movie?' },
-      { tag: "The 'Wait, What?' Logic Check",
-        question: 'What was the most unbelievable moment, and where did you have to suspend the most disbelief?' },
-      { tag: `Pacing & Runtime${runtime ? ' (' + runtime + ')' : ''}`,
-        question: 'If you were in the editing room, which ten minutes are you cutting, and what needed more room to breathe?' },
-      { tag: 'The Climax & Ending',
-        question: 'Did the final act stick the landing — and how would you have rewritten the ending?' }
+    non_spoiler_prompts: [
+      `Without spoiling anything: what was your honest reaction walking out of ${title}?`
     ],
-    humorous_bits_for_shorts: [
-      { id: 'bit_infinite_budget', title: 'The Infinite-Budget Premise Flip', target_duration: '60-90s',
-        prompt: `${synopsis ? 'Based on the setup — "' + synopsis + '…" — ' : ''}if you were dropped into the main character's shoes with an INFINITE budget and 24 hours to fix their problem in the most absurd way possible, what is your master plan?` },
-      { id: 'bit_survival_test', title: 'The Real-Life Survival Test', target_duration: '45-75s',
-        prompt: `If Shane, Alex and Dave were all dropped into the plot of ${title} today, who survives the longest and who folds in the first fifteen minutes?` },
-      { id: 'bit_sequel_pitch', title: 'The Unhinged Sequel Pitch', target_duration: '45-60s',
-        prompt: `A studio executive locks you in an elevator with $50 million for "${title} 2" — but it has to switch genres completely. What is the title and the opening scene?` }
-    ]
+    spoiler_questions: [
+      { tag: 'The Surprise',
+        question: `What was one scene in ${title} that surprised you — and what did you not see coming?` },
+      { tag: 'The Moment',
+        question: `Where did ${title} win you over, or lose you — and can you take us to that scene?` },
+      { tag: 'The Character',
+        question: leadName
+          ? `Did ${leadName} work for you as the centre of ${title} — and what did the film leave you wanting to know about them?`
+          : `Which character in ${title} did you understand the least — and what did the film leave unanswered about them?` },
+      { tag: 'The Point',
+        question: `What do you think ${title} was actually trying to say — and did it say it?` },
+      { tag: 'The Ending',
+        question: `Did the ending earn what ${title} set up? Why or why not?` }
+    ],
+    scorecard: {
+      tag: 'Tachometer',
+      prompt: `After hearing everyone's perspective, what would you personally rate ${title} — and why do you rate it like that?`,
+      house_prompt: 'For those watching at home: should they see this in theaters or wait for streaming?',
+      score_label: '/ 10'
+    },
+    outro_prompt: 'If you have a movie you want the Carpool Critics to review, let us know on our socials or email us.'
   };
 }
 
@@ -399,43 +372,7 @@ function saveState() {
 }
 
 function deckFor(movie) {
-  const curated = CURATED[movie.imdb_id];
-  return curated ? curated() : genericDeck(movie);
-}
-
-function rtBlock(recap) {
-  if (!recap || !recap.guesses) {
-    return '<p class="hint">No previous episode predictions on file yet — run the Mac prep tool once with a finished episode.</p>';
-  }
-  const rows = HOSTS.map((host) => {
-    const g = recap.guesses[host] || {};
-    const c = g.critics != null ? `${g.critics}%` : '—';
-    const a = g.audience != null ? `${g.audience}%` : '—';
-    const cd = g.critics_diff != null ? `<span class="rt-diff">off by ${g.critics_diff}</span>` : '';
-    const ad = g.audience_diff != null ? `<span class="rt-diff">off by ${g.audience_diff}</span>` : '';
-    const cw = (recap.critics_winners || []).includes(host) ? '<span class="win">◊ CLOSEST</span>' : '';
-    const aw = (recap.audience_winners || []).includes(host) ? '<span class="win">◊ CLOSEST</span>' : '';
-    const pts = (recap.points_awarded || {})[host] || 0;
-    return `<tr>
-      <td>${esc(host)}</td>
-      <td>${c}${cd}${cw}</td>
-      <td>${a}${ad}${aw}</td>
-      <td class="pts">+${pts}</td>
-    </tr>`;
-  }).join('');
-
-  return `
-    <div class="rt-top">
-      <div>Last movie: <strong>${esc(recap.movie_title || '—')}</strong></div>
-      <div class="rt-actuals">
-        <span class="rt-actual">Critics <strong>${recap.actual_critics != null ? recap.actual_critics + '%' : '—'}</strong></span>
-        <span class="rt-actual">Audience <strong>${recap.actual_audience != null ? recap.actual_audience + '%' : '—'}</strong></span>
-      </div>
-    </div>
-    <table class="rt-table">
-      <thead><tr><th>Host</th><th>Critics guess</th><th>Audience guess</th><th>Pts</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+  return genericDeck(movie);
 }
 
 function standingsBlock(standings) {
@@ -462,7 +399,7 @@ function field(id, placeholder, extra = '') {
   return `<input type="text" data-field="${esc(id)}" value="${esc(value)}" placeholder="${esc(placeholder)}" ${extra} />`;
 }
 
-function movieHeader(movie, recap, standings) {
+function movieHeader(movie) {
   const pills = [
     movie.director ? `<span class="pill">Dir. <strong>${esc(movie.director)}</strong></span>` : '',
     movie.runtime ? `<span class="pill"><strong>${esc(movie.runtime)}</strong></span>` : '',
@@ -492,9 +429,26 @@ function render(pack) {
   state = readStore(pack.key, null) || newState();
 
   const movie = pack.movie || {};
-  const recap = pack.previous_episode_rt_recap || pack.fallback_recap || null;
   const standings = pack.season_leaderboard || pack.fallback_standings || null;
   const deck = pack.question_deck || deckFor(movie);
+  const title = movie.title || 'this movie';
+
+  // Every prompt is read defensively: packs prepared before the 2026-11-10
+  // rework carry no `rt_game` / `scorecard`, and an old pack must still open
+  // rather than render "undefined" in the car.
+  const rtGame = deck.rt_game || {
+    prompt: 'What is your score for both the Tomatometer and the Popcornmeter — and why?',
+    detail: 'Lock both numbers before anyone looks them up, then give the reason in one sentence.',
+    critics_label: 'Tomatometer (critics)',
+    audience_label: 'Popcornmeter (audience)'
+  };
+  const scorecard = deck.scorecard || {
+    prompt: `After hearing everyone's perspective, what would you personally rate ${title} — and why do you rate it like that?`,
+    house_prompt: 'For those watching at home: should they see this in theaters or wait for streaming?',
+    score_label: '/ 10'
+  };
+  const outroPrompt = deck.outro_prompt ||
+    'If you have a movie you want the Carpool Critics to review, let us know on our socials or email us.';
 
   const seg = (key, num, name, clock, body) => `
     <section class="seg" data-seg="${key}">
@@ -511,8 +465,9 @@ function render(pack) {
       ${HOSTS.map((h) => `
         <div class="host">
           <h4>${esc(h)}</h4>
-          ${field(`${pack.key}:guess:${h}:critics`, 'Critics %', 'inputmode="numeric"')}
-          ${field(`${pack.key}:guess:${h}:audience`, 'Audience %', 'inputmode="numeric"')}
+          ${field(`${pack.key}:guess:${h}:critics`, rtGame.critics_label || 'Critics %', 'inputmode="numeric"')}
+          ${field(`${pack.key}:guess:${h}:audience`, rtGame.audience_label || 'Audience %', 'inputmode="numeric"')}
+          ${field(`${pack.key}:guess:${h}:why`, 'Why?')}
         </div>`).join('')}
     </div>`;
 
@@ -520,16 +475,17 @@ function render(pack) {
     <div class="grid-3">
       ${HOSTS.map((h) => `
         <div class="host">
-          <h4>${esc(h)}</h4>
-          ${field(`${pack.key}:score:${h}`, '/10', 'inputmode="decimal"')}
-          ${field(`${pack.key}:verdict:${h}`, 'Full / $8 / Stream / Skip')}
+          <h4>${esc(h)} ${esc(scorecard.score_label || '/ 10')}</h4>
+          ${field(`${pack.key}:score:${h}`, 'Score', 'inputmode="decimal"')}
+          ${field(`${pack.key}:why:${h}`, 'Why?')}
+          ${field(`${pack.key}:verdict:${h}`, 'Theatres / Streaming')}
         </div>`).join('')}
     </div>`;
 
   const html = `
     <div class="card">
       <h2 class="card-title card-title-lg">${esc(movie.title || 'Untitled')} ${movie.release_year ? `<span class="title-year">(${esc(movie.release_year)})</span>` : ''}</h2>
-      ${movieHeader(movie, recap, standings)}
+      ${movieHeader(movie)}
       ${standings ? standingsBlock(standings) : ''}
       <div class="actions">
         <button class="btn" id="export-btn">Export notes</button>
@@ -537,46 +493,37 @@ function render(pack) {
       </div>
     </div>
 
-    ${seg('intro', 1, 'Movie Intro & IMDb Read', '0:00–2:00',
+    ${seg('intro', 1, 'Movie Intro & IMDb Read', '0:00–1:10',
       `<p class="hint">Keep the IMDb read under 60 seconds. Read the synopsis above out loud, then hand off.</p>` +
-      qItem(`${pack.key}:intro:read`, 'Act 1 · CarPlay card', 'Read the premise, director and runtime, then introduce the movie in one sentence each.') +
-      qItem(`${pack.key}:intro:expectations`, 'Act 1 · no spoilers', 'What did each of you expect walking in, based only on the poster and the premise?')
+      qItem(`${pack.key}:intro:read`, 'Act 1 · CarPlay card', 'Read the premise, director and runtime, then introduce the movie in one sentence each.')
     )}
 
-    ${seg('rt', 2, "Last Episode's RT Scoreboard", '2:00–4:30',
-      `<p class="hint">Read the scoreboard, roast the loser, award the points.</p>` +
-      rtBlock(recap) +
-      qItem(`${pack.key}:rt:banter`, 'Scoreboard banter', 'Did the audience and the critics actually agree with you last week — and who is already due for humble pie?')
-    )}
-
-    ${seg('nonspoil', 3, 'Non-Spoiler, Guesses & Recommendation', '4:30–9:30',
-      deck.non_spoiler_prompts.map((p, i) => qItem(`${pack.key}:ns:${i}`, 'Non-spoiler take', p)).join('') +
-      `<p class="hint" style="margin-top:14px;">Lock in the Rotten Tomatoes guesses before anyone looks them up.</p>` +
+    ${seg('rt_game', 2, 'Blind Rotten Tomatoes Game', '1:10–4:00',
+      qItem(`${pack.key}:rt:prompt`, 'First game', rtGame.prompt, '', '') +
+      (rtGame.detail ? `<p class="hint">${esc(rtGame.detail)}</p>` : '') +
       guesses +
-      `<div class="callout">Read the guesses back out loud — that is your clean 30-second short.</div>` +
-      qItem(`${pack.key}:rec:main`, 'Audience recommendation', deck.recommendation_prompt.main) +
-      qItem(`${pack.key}:rec:follow`, 'Audience recommendation', deck.recommendation_prompt.follow_up || '')
+      `<div class="callout">Lock both numbers before anyone looks them up. The reason is the game, not the number.</div>`
     )}
 
-    ${seg('spoiler', 4, 'Spoiler Deep-Dive', '9:30–20:30',
+    ${seg('non_spoiler', 3, 'One Non-Spoiler Reaction', '4:00–5:50',
+      deck.non_spoiler_prompts.map((p, i) => qItem(`${pack.key}:ns:${i}`, 'Social reaction short', p)).join('') +
+      `<div class="callout">One answer each, clean and no spoilers.</div>`
+    )}
+
+    ${seg('spoiler', 4, 'Spoiler Warning + Open-Ended Debate', '5:50–17:30',
       `<div class="callout">Say the spoiler warning out loud: <strong>“Spoiler warning in three, two, one.”</strong> The editor cuts Act 3 on that line.</div>` +
-      deck.spoiler_questions.map((q, i) => qItem(`${pack.key}:sp:${i}`, q.tag, q.question)).join('') +
-      qItem(`${pack.key}:sp:wild`, 'Free square', 'Best line, biggest laugh, or the thing you will still be arguing about in the car next week.')
+      deck.spoiler_questions.map((q, i) => qItem(`${pack.key}:sp:${i}`, q.tag, q.question)).join('')
     )}
 
-    ${seg('scores', 5, 'Final Tachometer Scores', '20:30–22:30',
-      `<p class="hint">Score out of 10 to one decimal, plus a ticket verdict. Say the number clearly for the tachometer graphic.</p>` +
-      scores
+    ${seg('scorecards', 5, 'Tachometer, Reason & Theatres vs Streaming', '17:30–19:50',
+      `<p class="hint">Score out of 10, say why, then make the call for the audience. Say the number clearly for the tachometer graphic.</p>` +
+      qItem(`${pack.key}:score:prompt`, 'Tachometer', scorecard.prompt) +
+      scores +
+      `<div class="callout"><strong>For those watching at home:</strong> ${esc(scorecard.house_prompt || '')}</div>`
     )}
 
-    ${seg('bits', 6, 'Humorous Bits for Shorts', '22:30–27:30',
-      `<p class="hint">Pick two or three. Whoever asks reads the prompt clean and loud — that becomes the three-second hook.</p>` +
-      deck.humorous_bits_for_shorts.map((b, i) =>
-        qItem(`${pack.key}:bit:${b.id || i}`, `Bit ${i + 1} · ${b.title}`, b.prompt, ' q-bit', b.target_duration)).join('')
-    )}
-
-    ${seg('outro', 7, 'Outro & 20s End-Screen Hold', '27:30–28:00',
-      qItem(`${pack.key}:outro:tease`, 'Wrap', 'Tease next week’s movie and ask viewers to drop their Rotten Tomatoes guesses in the comments.') +
+    ${seg('outro', 6, 'Outro, Review Request & 20s Hold', '19:50–20:30',
+      qItem(`${pack.key}:outro:request`, 'Wrap', outroPrompt) +
       `<div class="callout">Then keep talking naturally for <strong>20 seconds</strong> before you stop the camera. That is the YouTube end-screen pad.</div>`
     )}
   `;
@@ -722,20 +669,20 @@ function animateTimer() {
   const resetEl = $('#timer-reset');
   if (resetEl) resetEl.hidden = seconds === 0 && !running;
 
-  clockEl.classList.toggle('is-running', running && seconds < 1680);
-  clockEl.classList.toggle('is-over', seconds >= 1680);
+  clockEl.classList.toggle('is-running', running && seconds < TARGET_SECONDS);
+  clockEl.classList.toggle('is-over', seconds >= TARGET_SECONDS);
 
   const active = SEGMENTS.find((s) => seconds < s.end) || SEGMENTS[SEGMENTS.length - 1];
-  phaseEl.textContent = seconds >= 1680
+  phaseEl.textContent = seconds >= TARGET_SECONDS
     ? '● Over target — wrap it up'
     : `${active.name} · ends ${fmtClock(active.end)}`;
 
-  const pct = Math.min(100, (seconds / 1680) * 100);
+  const pct = Math.min(100, (seconds / TARGET_SECONDS) * 100);
   fillEl.style.width = pct + '%';
   fillEl.className = pct >= 100 ? 'over' : pct >= 80 ? 'warn' : '';
 
   $$('.seg').forEach((el) => {
-    el.classList.toggle('is-now', seconds < 1680 && el.dataset.seg === active.key);
+    el.classList.toggle('is-now', seconds < TARGET_SECONDS && el.dataset.seg === active.key);
   });
 }
 
@@ -904,7 +851,6 @@ async function loadPackList({ restore = true } = {}) {
       const pack = await loadJson(`data/${btn.dataset.pack}`, null);
       if (!pack) { toast('Could not load that pack'); return; }
       pack.key = pack.key || packKeyFor(pack, btn.dataset.pack.replace(/\.json$/, ''));
-      pack.fallback_recap = leaderboard.last_recap;
       pack.fallback_standings = leaderboard.standings;
       writeStore(PACK_MEMORY, pack.key);
       render(pack);
@@ -940,7 +886,6 @@ async function loadPackList({ restore = true } = {}) {
         </span>
         <span class="pack-chev" aria-hidden="true">&gt;</span>`;
       btn.addEventListener('click', () => {
-        pack.fallback_recap = pack.previous_episode_rt_recap || leaderboard.last_recap;
         pack.fallback_standings = pack.season_leaderboard || leaderboard.standings;
         writeStore(PACK_MEMORY, pack.key);
         render(pack);
@@ -958,7 +903,6 @@ async function loadPackList({ restore = true } = {}) {
     const pack = await loadJson(`data/${lastEntry.file}`, null);
     if (pack) {
       pack.key = pack.key || lastEntry.key || lastEntry.file.replace(/\.json$/, '');
-      pack.fallback_recap = leaderboard.last_recap;
       pack.fallback_standings = leaderboard.standings;
       render(pack);
     }
@@ -966,7 +910,6 @@ async function loadPackList({ restore = true } = {}) {
   }
   const lastLocal = localPacks().find((p) => p.key === last);
   if (lastLocal) {
-    lastLocal.fallback_recap = lastLocal.previous_episode_rt_recap || leaderboard.last_recap;
     lastLocal.fallback_standings = lastLocal.season_leaderboard || leaderboard.standings;
     render(lastLocal);
   }
@@ -997,7 +940,6 @@ function wireGenerator() {
         key,
         episode_number: nextEpisodeNumber(),
         movie,
-        previous_episode_rt_recap: leaderboard.last_recap,
         season_leaderboard: leaderboard.standings,
         question_deck: deckFor(movie),
         generated_on: 'phone'
@@ -1088,7 +1030,6 @@ async function boot() {
     const pack = await loadJson(`data/${wanted}`, null);
     if (pack) {
       pack.key = wanted.replace(/\.json$/, '');
-      pack.fallback_recap = leaderboard.last_recap;
       pack.fallback_standings = leaderboard.standings;
       writeStore(PACK_MEMORY, pack.key);
       render(pack);

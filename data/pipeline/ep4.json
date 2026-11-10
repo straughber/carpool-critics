@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "siteId": "ep4",
+  "number": 4,
+  "slug": "ep4-ebenezer",
+  "status": "draft",
+  "title": "Ebenezer 2: A Pitch Nobody Asked For | Review",
+  "shortTitle": "Ep. 4: Ebenezer",
+  "youtubeId": null,
+  "duration": "29m",
+  "durationSeconds": 1777,
+  "publishedAt": null,
+  "publishAt": "2026-11-12T17:00:00Z",
+  "uploadedAt": null,
+  "description": "Ebenezer (2026): Was there a favorite of your cast members?",
+  "descriptionOverride": null,
+  "thumbnail": "assets/images/episodes/ep4-ebenezer/thumbnail.png",
+  "ogImage": "https://carpoolcritics.com/assets/images/episodes/ep4-ebenezer/thumbnail.png",
+  "sealedThumb": "assets/images/episodes/sealed/ep4.png",
+  "chapters": [
+    {
+      "time": "00:00",
+      "label": "Show Open"
+    },
+    {
+      "time": "00:32",
+      "label": "Show Intro and the IMDb Premise Read"
+    },
+    {
+      "time": "05:45",
+      "label": "Guessing the Rotten Tomatoes Number, Unearned"
+    },
+    {
+      "time": "17:51",
+      "label": "Spoilers and One Unnecessary Theory"
+    },
+    {
+      "time": "28:34",
+      "label": "Scorecards Nobody Agreed To"
+    }
+  ],
+  "movieQuery": "Ebenezer",
+  "movieYear": 2026,
+  "movie": {
+    "title": "Ebenezer",
+    "year": 2026,
+    "overview": "An elderly miser embarks on a supernatural journey after visits from the ghost of his former business partner and the Spirits of Christmas Past, Present, and Yet to Come force him to confront his past and fight for a second chance at happiness.",
+    "runtimeMinutes": 115,
+    "runtime": "1h 55m",
+    "certification": "PG-13",
+    "genres": [
+      "Fantasy",
+      "Comedy"
+    ],
+    "director": "Ti West",
+    "imdbUrl": "https://www.imdb.com/title/tt38773219/",
+    "tmdbUrl": "https://www.themoviedb.org/movie/1567605",
+    "source": "tmdb"
+  },
+  "transcriptFile": "data/transcripts/ep4.json",
+  "hosts": [
+    {
+      "name": "ALEX",
+      "seat": "driver",
+      "role": "Driver",
+      "seatPosition": "front_left",
+      "faceX": 0.6638,
+      "faceY": 0.4664,
+      "detected": true,
+      "description": "Alex / driver punch-in"
+    },
+    {
+      "name": "Shane",
+      "seat": "passenger",
+      "role": "Passenger",
+      "seatPosition": "front_right",
+      "faceX": 0.3663,
+      "faceY": 0.4812,
+      "detected": true,
+      "description": "Shane / passenger punch-in"
+    },
+    {
+      "name": "DAVE",
+      "seat": "backseat",
+      "role": "Back Seat",
+      "seatPosition": "back_center",
+      "faceX": 0.4998,
+      "faceY": 0.487,
+      "detected": true,
+      "description": "Dave / backseat punch-in"
+    }
+  ],
+  "scorecards": {},
+  "bestMoment": {
+    "time": "00:28:08",
+    "seconds": 1688,
+    "label": "high energy banter",
+    "quote": "McKellen's voice was very... Yeah, that's true. Ian McKellen had some hard words to understand. And then that scene popped up, and then righ..."
+  },
+  "source": {
+    "episode": "EP04_Ebenezer",
+    "publishingPackage": "episodes/EP04_Ebenezer/03_Episode_Cuts/publishing_package.json",
+    "transcript": "episodes/EP04_Ebenezer/02_Transcription/EP04_Ebenezer_transcript.json",
+    "timeMap": "episodes/EP04_Ebenezer/03_Episode_Cuts/master_timeline_map.json",
+    "calibration": "episodes/EP04_Ebenezer/01_Raw_Footage/spatial_framing_calibration.json",
+    "droppedTranscriptTurns": 5,
+    "transcriptTurns": 120
+  },
+  "signal": {
+    "url": "data/signal/ep4.bin",
+    "fps": 12,
+    "width": 32,
+    "frames": 21324,
+    "glyphs": "▁▂▃▄▅▆▇█",
+    "durationSeconds": 1777.0,
+    "bytes": 682368,
+    "source": "episodes/EP04_Ebenezer/02_Transcription/EP04_Ebenezer_Master_Audio_Mastered.wav"
+  }
+}
