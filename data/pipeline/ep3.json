@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "siteId": "ep3",
+  "number": 3,
+  "slug": "ep3-how-to-rob-a-bank",
+  "status": "scheduled",
+  "title": "How to Rob a Bank: We Are Not Qualified to Review This",
+  "shortTitle": "Ep. 3: How to Rob a Bank",
+  "youtubeId": "wKP85QglngQ",
+  "duration": "30m",
+  "durationSeconds": 1829,
+  "publishedAt": "2026-11-11T15:00:00Z",
+  "publishAt": "2026-11-11T15:00:00Z",
+  "uploadedAt": "2026-11-11T02:12:06.641023",
+  "description": "How to Rob a Bank (2026): Nobody in this car is qualified to review How to Rob a Bank. We did it anyway.",
+  "descriptionOverride": null,
+  "thumbnail": "assets/images/episodes/ep3-how-to-rob-a-bank/thumbnail.png",
+  "ogImage": "https://carpoolcritics.com/assets/images/episodes/ep3-how-to-rob-a-bank/thumbnail.png",
+  "sealedThumb": "assets/images/episodes/sealed/ep3.png",
+  "chapters": [
+    {
+      "time": "00:00",
+      "label": "Show Open"
+    },
+    {
+      "time": "02:48",
+      "label": "Guessing the Rotten Tomatoes Number, Unearned"
+    },
+    {
+      "time": "09:07",
+      "label": "Spoilers and One Unnecessary Theory"
+    },
+    {
+      "time": "26:53",
+      "label": "Scorecards Nobody Agreed To"
+    }
+  ],
+  "movieQuery": "How to Rob a Bank",
+  "movieYear": 2026,
+  "movie": {
+    "title": "How to Rob a Bank",
+    "year": 2026,
+    "overview": "A crew of social media-savvy bank robbers broadcasts their daring heists, unaware that their growing viral fame has put them in the crosshairs of a veteran FBI agent and a brilliant software engineer. Despite the unlikely duo closing in, the crime ring pushes past their limits, putting everything on the line for their most ambitious heist yet.",
+    "runtimeMinutes": 122,
+    "runtime": "2h 02m",
+    "certification": "R",
+    "genres": [
+      "Action",
+      "Crime",
+      "Thriller"
+    ],
+    "director": "David Leitch",
+    "imdbUrl": "https://www.imdb.com/title/tt35866986/",
+    "tmdbUrl": "https://www.themoviedb.org/movie/1437511",
+    "source": "tmdb"
+  },
+  "transcriptFile": "data/transcripts/ep3.json",
+  "hosts": [
+    {
+      "name": "ALEX",
+      "seat": "driver",
+      "role": "Driver",
+      "seatPosition": "front_left",
+      "faceX": 0.6574,
+      "faceY": 0.4633,
+      "detected": true,
+      "description": "Alex / driver punch-in"
+    },
+    {
+      "name": "SHANE",
+      "seat": "passenger",
+      "role": "Passenger",
+      "seatPosition": "front_right",
+      "faceX": 0.2855,
+      "faceY": 0.4905,
+      "detected": true,
+      "description": "Shane / passenger punch-in"
+    },
+    {
+      "name": "SARABETH",
+      "seat": "backseat_passenger",
+      "role": "Back Seat // Passenger Side",
+      "seatPosition": "rear_right",
+      "faceX": 0.4411,
+      "faceY": 0.5038,
+      "detected": true,
+      "description": "Sarabeth / backseat_passenger punch-in"
+    },
+    {
+      "name": "DAVE",
+      "seat": "backseat_driver",
+      "role": "Back Seat // Driver Side",
+      "seatPosition": "rear_left",
+      "faceX": 0.5399,
+      "faceY": 0.4993,
+      "detected": true,
+      "description": "Dave / backseat_driver punch-in"
+    }
+  ],
+  "scorecards": {
+    "Shane": 8.9,
+    "Sarabeth": 8.0,
+    "Dave": 7.7,
+    "Alex": 7.2
+  },
+  "bestMoment": {
+    "time": "00:00:22",
+    "seconds": 22,
+    "label": "high energy banter",
+    "quote": "Hello! It's Sarah Beth. Who are you? I'm Sarah Beth. I'm Alex's wife. I'm the first guest of this show. Yep. And then who are you? I am Dave..."
+  },
+  "source": {
+    "episode": "EP03_How_to_Rob_a_Bank",
+    "publishingPackage": "episodes/EP03_How_to_Rob_a_Bank/03_Episode_Cuts/publishing_package.json",
+    "transcript": "episodes/EP03_How_to_Rob_a_Bank/02_Transcription/EP03_How_to_Rob_a_Bank_transcript.json",
+    "timeMap": "episodes/EP03_How_to_Rob_a_Bank/03_Episode_Cuts/master_timeline_map.json",
+    "calibration": "episodes/EP03_How_to_Rob_a_Bank/01_Raw_Footage/spatial_framing_calibration.json",
+    "droppedTranscriptTurns": 4,
+    "transcriptTurns": 138
+  },
+  "signal": {
+    "url": "data/signal/ep3.bin",
+    "fps": 12,
+    "width": 32,
+    "frames": 21948,
+    "glyphs": "▁▂▃▄▅▆▇█",
+    "durationSeconds": 1829.0,
+    "bytes": 702336,
+    "source": "episodes/EP03_How_to_Rob_a_Bank/02_Transcription/EP03_How_to_Rob_a_Bank_Master_Audio_Mastered.wav"
+  }
+}
