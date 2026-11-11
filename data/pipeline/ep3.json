@@ -4,7 +4,7 @@
   "number": 3,
   "slug": "ep3-how-to-rob-a-bank",
   "status": "scheduled",
-  "title": "How to Rob a Bank: We Are Not Qualified to Review This",
+  "title": "How to Rob a Bank, Graded on a Tachometer | Review",
   "shortTitle": "Ep. 3: How to Rob a Bank",
   "youtubeId": "wKP85QglngQ",
   "duration": "30m",
@@ -57,7 +57,7 @@
   "transcriptFile": "data/transcripts/ep3.json",
   "hosts": [
     {
-      "name": "ALEX",
+      "name": "Alex",
       "seat": "driver",
       "role": "Driver",
       "seatPosition": "front_left",
@@ -67,7 +67,7 @@
       "description": "Alex / driver punch-in"
     },
     {
-      "name": "SHANE",
+      "name": "Shane",
       "seat": "passenger",
       "role": "Passenger",
       "seatPosition": "front_right",
@@ -77,7 +77,7 @@
       "description": "Shane / passenger punch-in"
     },
     {
-      "name": "SARABETH",
+      "name": "Sarabeth",
       "seat": "backseat_passenger",
       "role": "Back Seat // Passenger Side",
       "seatPosition": "rear_right",
@@ -87,7 +87,7 @@
       "description": "Sarabeth / backseat_passenger punch-in"
     },
     {
-      "name": "DAVE",
+      "name": "Dave",
       "seat": "backseat_driver",
       "role": "Back Seat // Driver Side",
       "seatPosition": "rear_left",
