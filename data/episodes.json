@@ -1,5 +1,42 @@
 [
   {
+    "id": "ep3",
+    "number": 3,
+    "slug": "ep3-how-to-rob-a-bank",
+    "title": "How to Rob a Bank: We Are Not Qualified to Review This",
+    "shortTitle": "Ep. 3: How to Rob a Bank",
+    "youtubeId": "wKP85QglngQ",
+    "duration": "30m",
+    "durationSeconds": 1849,
+    "publishedAt": "2026-11-11T07:00:17-08:00",
+    "date": null,
+    "description": "How to Rob a Bank (2026): Nobody in this car is qualified to review How to Rob a Bank. We did it anyway.",
+    "thumbnail": "https://i.ytimg.com/vi/wKP85QglngQ/hqdefault.jpg",
+    "chapters": [
+      {
+        "time": "00:00",
+        "label": "Show Open"
+      },
+      {
+        "time": "02:48",
+        "label": "Guessing the Rotten Tomatoes Number, Unearned"
+      },
+      {
+        "time": "09:07",
+        "label": "Spoilers and One Unnecessary Theory"
+      },
+      {
+        "time": "26:53",
+        "label": "Scorecards Nobody Agreed To"
+      }
+    ],
+    "movieQuery": "How to Rob a Bank",
+    "movieYear": 2026,
+    "transcriptFile": "data/transcripts/ep3.json",
+    "status": "live",
+    "publishAt": "2026-11-11T15:00:00Z"
+  },
+  {
     "id": "ep2",
     "number": 2,
     "slug": "ep2-club-kid",

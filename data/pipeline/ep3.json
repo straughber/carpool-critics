@@ -3,8 +3,8 @@
   "siteId": "ep3",
   "number": 3,
   "slug": "ep3-how-to-rob-a-bank",
-  "status": "scheduled",
-  "title": "How to Rob a Bank, Graded on a Tachometer | Review",
+  "status": "live",
+  "title": "How to Rob a Bank: We Are Not Qualified to Review This",
   "shortTitle": "Ep. 3: How to Rob a Bank",
   "youtubeId": "wKP85QglngQ",
   "duration": "30m",
@@ -14,9 +14,9 @@
   "uploadedAt": "2026-11-11T02:12:06.641023",
   "description": "How to Rob a Bank (2026): Nobody in this car is qualified to review How to Rob a Bank. We did it anyway.",
   "descriptionOverride": null,
-  "thumbnail": "assets/images/episodes/ep3-how-to-rob-a-bank/thumbnail.png",
-  "ogImage": "https://carpoolcritics.com/assets/images/episodes/ep3-how-to-rob-a-bank/thumbnail.png",
-  "sealedThumb": "assets/images/episodes/sealed/ep3.png",
+  "thumbnail": "https://i.ytimg.com/vi/wKP85QglngQ/hqdefault.jpg",
+  "ogImage": null,
+  "sealedThumb": null,
   "chapters": [
     {
       "time": "00:00",
