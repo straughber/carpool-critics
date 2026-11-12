@@ -1,5 +1,46 @@
 [
   {
+    "id": "ep4",
+    "number": 4,
+    "slug": "ep4-ebenezer",
+    "title": "Honk If You Understood Ebenezer",
+    "shortTitle": "Ep. 4: Ebenezer",
+    "youtubeId": "HrP28pu_dkk",
+    "duration": "29m",
+    "durationSeconds": 1798,
+    "publishedAt": "2026-11-12T17:00:24Z",
+    "date": null,
+    "description": "Ebenezer (2026): Was there a favorite of your cast members?",
+    "thumbnail": "https://i.ytimg.com/vi/HrP28pu_dkk/hqdefault.jpg",
+    "chapters": [
+      {
+        "time": "00:00",
+        "label": "Show Open"
+      },
+      {
+        "time": "00:32",
+        "label": "Show Intro and the IMDb Premise Read"
+      },
+      {
+        "time": "05:45",
+        "label": "Guessing the Rotten Tomatoes Number, Unearned"
+      },
+      {
+        "time": "17:51",
+        "label": "Spoilers and One Unnecessary Theory"
+      },
+      {
+        "time": "28:34",
+        "label": "Scorecards Nobody Agreed To"
+      }
+    ],
+    "movieQuery": "Ebenezer",
+    "movieYear": 2026,
+    "transcriptFile": "data/transcripts/ep4.json",
+    "status": "live",
+    "publishAt": "2026-11-12T17:00:00Z"
+  },
+  {
     "id": "ep3",
     "number": 3,
     "slug": "ep3-how-to-rob-a-bank",
