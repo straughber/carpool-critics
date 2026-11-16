@@ -61,7 +61,13 @@ trap 'rm -rf "$LOCK"' EXIT
 # episode dropped, which is exactly when the front door must update. The rest of
 # the page is still hand-authored, so a redesign of the shell should be published
 # by a manual run.
-GENERATED_PATHS='^(index\.html$|episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/|data/signal/|data/shorts_ledger\.json$|assets/css/interference\.css$)'
+#
+# `prep/data/` is here for the same reason: `generate_episode_prep.py
+# --publish-web` writes the encrypted in-car pack, its index entry and the
+# leaderboard, and the pipeline's `website_publish` stage runs this script with
+# --auto. Without it, publishing a new episode's prep would always be refused as
+# a "hand edit" and the hosts' app would go stale exactly when a shoot is coming.
+GENERATED_PATHS='^(index\.html$|episodes/|assets/images/episodes/|sitemap\.xml$|robots\.txt$|feed\.xml$|data/episodes\.json$|data/movies\.json$|data/transcripts/|data/pipeline/|data/signal/|data/shorts_ledger\.json$|assets/css/interference\.css$|prep/data/)'
 UNAPPROVED="$(git status --porcelain | cut -c4- | grep -vE "$GENERATED_PATHS" || true)"
 if [ "$MODE" = "auto" ] && [ -n "$UNAPPROVED" ]; then
   printf '%s\n' "$UNAPPROVED" | sed 's/^/  /'
