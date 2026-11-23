@@ -747,14 +747,36 @@ function resetClock() {
    ============================================================ */
 async function loadJson(path, fallback = null) {
   try {
-    if (path.endsWith('.enc.json')) {
-      const pack = await loadEncryptedJson(path);
+    // `.includes`, not `.endsWith`: a cache-busting query (`index.enc.json?t=…`)
+    // is still an encrypted envelope, and reading it as plain JSON returned the
+    // ciphertext envelope instead of the pack list.
+    if (path.includes('.enc.json')) {
+      // Packs are encrypted *content*, and a pack can be re-published under the
+      // same key (EP05 was re-published with its release date). A unique query
+      // is a CDN miss, so a host never reads a superseded pack for ten minutes.
+      const url = `${path}${path.includes('?') ? '&' : '?'}t=${Date.now()}`;
+      const pack = await loadEncryptedJson(url);
       return pack ?? fallback;
     }
     const res = await fetch(path, { cache: 'no-cache' });
     if (!res.ok) return fallback;
     return await res.json();
   } catch { return fallback; }
+}
+
+/**
+ * The pack index, always fetched past the CDN.
+ *
+ * GitHub Pages serves `prep/data/` with `max-age=600`, and after a new pack was
+ * published the edge kept handing back the previous index for the rest of that
+ * window - which is how EP05 still read "The Hunger Games" after it had been
+ * replaced by "Focker In-Law". A unique query string is a CDN miss, so the list
+ * a host sees is the list the Mac actually pushed.
+ */
+async function loadIndex() {
+  const index = await loadJson('data/index.enc.json', { packs: [] });
+  window.__packIndex = index.packs || [];
+  return index;
 }
 
 function b64ToBytes(value) {
@@ -807,7 +829,7 @@ function packKeyFor(pack, file) {
   return pack.key || `ep${String(pack.episode_number ?? '').padStart(2, '0')}-${slugify(pack.movie?.title)}` || file;
 }
 
-async function loadPackList({ restore = true } = {}) {
+async function loadPackList({ restore = true, focus = true } = {}) {
   $('#pane-packs').innerHTML = `
     <div class="pane-head">
       <p class="pane-eyebrow">VIEW // 01</p>
@@ -815,9 +837,9 @@ async function loadPackList({ restore = true } = {}) {
     </div>
     <p class="hint">Prep packs generated on the Mac. Tap one to load it in the car.</p>
     <div id="pack-list" class="pack-list"><div class="skeleton">Loading packs…</div></div>`;
-  showPane('packs');
+  if (focus) showPane('packs');
 
-  const index = await loadJson('data/index.enc.json', { packs: [] });
+  const index = await loadIndex();
   const packs = (index.packs || []).filter((p) => p.enabled !== false);
   const listEl = $('#pack-list');
 
@@ -898,6 +920,29 @@ async function loadPackList({ restore = true } = {}) {
   if (lastLocal) {
     render(lastLocal);
   }
+}
+
+/**
+ * Re-read the pack index when the app returns to the foreground.
+ *
+ * A prep app left open on a home screen keeps whatever pack list it loaded in
+ * the car last time - which is how a replaced episode stayed on the list. Only
+ * a changed index redraws the list, and the pane the host is reading is left
+ * alone (`focus: false`).
+ */
+function wireIndexRefresh() {
+  const signature = (packs) => (packs || []).map((p) => `${p.key}:${p.generated_at || ''}`).join('|');
+  const refresh = async () => {
+    if (document.visibilityState && document.visibilityState !== 'visible') return;
+    const before = signature(window.__packIndex);
+    const index = await loadIndex();
+    if (signature(index.packs) === before) return;
+    if (!document.querySelector('#pane-packs.is-hidden')) return;  // not on the list: next visit picks it up
+    await loadPackList({ restore: false, focus: false });
+  };
+  document.addEventListener('visibilitychange', refresh);
+  window.addEventListener('online', refresh);
+  window.addEventListener('focus', refresh);
 }
 
 /* ============================================================
@@ -986,9 +1031,9 @@ async function boot() {
   startTimer();
   wireGenerator();
   wireMore();
+  wireIndexRefresh();
 
-  const index = await loadJson('data/index.enc.json', { packs: [] });
-  window.__packIndex = index.packs || [];
+  await loadIndex();
 
   const wanted = new URLSearchParams(location.search).get('pack');
   if (wanted) {

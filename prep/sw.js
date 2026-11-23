@@ -5,7 +5,7 @@
    up on the next online visit; other assets are stale-while-revalidate so the
    app opens instantly and still works offline. */
 
-const CACHE = 'ccprep-v5';
+const CACHE = 'ccprep-v6';
 const SHELL = [
   './',
   './index.html',
@@ -56,9 +56,13 @@ self.addEventListener('fetch', (event) => {
 
   if (isData || isNavigation || isSource) {
     // Network first: fresh HTML, JS, CSS and packs whenever there is signal.
+    // A cache-busted data request (`…?t=…`) is deliberately *not* stored: it
+    // exists to miss every cache, and keeping each one would grow this cache
+    // without bound for a file the next visit will re-fetch anyway.
+    const busted = url.searchParams.has('t');
     event.respondWith(
       fetch(request)
-        .then((response) => put(request, response))
+        .then((response) => (busted ? response : put(request, response)))
         .catch(() => caches.match(request, { ignoreSearch: true })
           .then((hit) => hit || caches.match('./index.html')))
     );
