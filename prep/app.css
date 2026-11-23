@@ -648,34 +648,7 @@ pre {
 }
 
 /* ============================================================
-   11. SEASON STANDINGS
-   (The last-episode scoreboard was removed from the show on
-   2026-11-10; the season strip stays as off-air context.)
-   ============================================================ */
-.standings-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.standing {
-  border: 2px solid var(--text-muted);
-  padding: 5px 10px;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.standing strong {
-  color: var(--text-ticket);
-  font-size: 12px;
-}
-
-/* ============================================================
-   12. QUESTION DECK
+   11. QUESTION DECK
    ============================================================ */
 .q {
   display: flex;
@@ -778,7 +751,7 @@ pre {
 }
 
 /* ============================================================
-   13. SCORE GRID
+   12. SCORE GRID
    ============================================================ */
 .grid-3 {
   display: grid;
@@ -832,7 +805,7 @@ pre {
 }
 
 /* ============================================================
-   14. NOTES, STEPS, CONSOLE
+   13. NOTES, STEPS, CONSOLE
    ============================================================ */
 .notes-out {
   background: var(--bg-asphalt);
@@ -865,7 +838,7 @@ pre {
 }
 
 /* ============================================================
-   15. STATUS BAR
+   14. STATUS BAR
    ============================================================ */
 .status-bar {
   display: flex;
@@ -907,7 +880,7 @@ pre {
 }
 
 /* ============================================================
-   16. REC TIMER DECK (fixed, bottom)
+   15. REC TIMER DECK (fixed, bottom)
    ============================================================ */
 .timer-bar[hidden] {
   display: none;
@@ -1071,7 +1044,7 @@ pre {
 }
 
 /* ============================================================
-   17. TOAST
+   16. TOAST
    ============================================================ */
 .toast {
   position: fixed;
@@ -1101,7 +1074,7 @@ pre {
 }
 
 /* ============================================================
-   18. WIDE SCREENS (this is still a phone-first app)
+   17. WIDE SCREENS (this is still a phone-first app)
    ============================================================ */
 @media (min-width: 720px) {
   .wrap {

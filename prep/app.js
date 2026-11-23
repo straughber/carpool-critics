@@ -5,7 +5,6 @@
    Data sources:
      data/index.enc.json      packs exported from the Mac tool
      data/*.json          one full prep pack per episode
-     data/leaderboard.json  season RT standings + last recap
      Wikipedia API        movie facts for on-the-go generation
    ============================================================ */
 
@@ -375,12 +374,6 @@ function deckFor(movie) {
   return genericDeck(movie);
 }
 
-function standingsBlock(standings) {
-  if (!standings) return '';
-  return `<div class="standings-row">${HOSTS.map((h) =>
-    `<span class="standing">${esc(h)}: <strong>${standings[h] || 0}</strong> pts</span>`).join('')}</div>`;
-}
-
 function qItem(id, tag, text, extraClass = '', meta = '') {
   const done = state.checks[id] ? ' is-done' : '';
   const checked = state.checks[id] ? ' checked' : '';
@@ -429,7 +422,6 @@ function render(pack) {
   state = readStore(pack.key, null) || newState();
 
   const movie = pack.movie || {};
-  const standings = pack.season_leaderboard || pack.fallback_standings || null;
   const deck = pack.question_deck || deckFor(movie);
   const title = movie.title || 'this movie';
 
@@ -486,7 +478,6 @@ function render(pack) {
     <div class="card">
       <h2 class="card-title card-title-lg">${esc(movie.title || 'Untitled')} ${movie.release_year ? `<span class="title-year">(${esc(movie.release_year)})</span>` : ''}</h2>
       ${movieHeader(movie)}
-      ${standings ? standingsBlock(standings) : ''}
       <div class="actions">
         <button class="btn" id="export-btn">Export notes</button>
         ${movie.imdb_url ? `<a class="btn" href="${esc(movie.imdb_url)}" target="_blank" rel="noopener">[ IMDb ]</a>` : ''}
@@ -754,8 +745,6 @@ function resetClock() {
 /* ============================================================
    Packs: index, load, render
    ============================================================ */
-let leaderboard = { standings: {}, last_recap: null };
-
 async function loadJson(path, fallback = null) {
   try {
     if (path.endsWith('.enc.json')) {
@@ -851,7 +840,6 @@ async function loadPackList({ restore = true } = {}) {
       const pack = await loadJson(`data/${btn.dataset.pack}`, null);
       if (!pack) { toast('Could not load that pack'); return; }
       pack.key = pack.key || packKeyFor(pack, btn.dataset.pack.replace(/\.json$/, ''));
-      pack.fallback_standings = leaderboard.standings;
       writeStore(PACK_MEMORY, pack.key);
       render(pack);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -886,7 +874,6 @@ async function loadPackList({ restore = true } = {}) {
         </span>
         <span class="pack-chev" aria-hidden="true">&gt;</span>`;
       btn.addEventListener('click', () => {
-        pack.fallback_standings = pack.season_leaderboard || leaderboard.standings;
         writeStore(PACK_MEMORY, pack.key);
         render(pack);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -903,14 +890,12 @@ async function loadPackList({ restore = true } = {}) {
     const pack = await loadJson(`data/${lastEntry.file}`, null);
     if (pack) {
       pack.key = pack.key || lastEntry.key || lastEntry.file.replace(/\.json$/, '');
-      pack.fallback_standings = leaderboard.standings;
       render(pack);
     }
     return;
   }
   const lastLocal = localPacks().find((p) => p.key === last);
   if (lastLocal) {
-    lastLocal.fallback_standings = lastLocal.season_leaderboard || leaderboard.standings;
     render(lastLocal);
   }
 }
@@ -940,7 +925,6 @@ function wireGenerator() {
         key,
         episode_number: nextEpisodeNumber(),
         movie,
-        season_leaderboard: leaderboard.standings,
         question_deck: deckFor(movie),
         generated_on: 'phone'
       };
@@ -970,23 +954,6 @@ function nextEpisodeNumber() {
 /* ============================================================
    More tab
    ============================================================ */
-function renderMore() {
-  const el = $('#standings');
-  const standings = leaderboard.standings || {};
-  const recap = leaderboard.last_recap;
-
-  if (!Object.keys(standings).length) {
-    el.innerHTML = '<p class="hint">No standings yet. They appear after the Mac tool scores a finished episode.</p>';
-    return;
-  }
-
-  el.innerHTML = HOSTS.map((h) =>
-    `<span class="standing">${esc(h)}: <strong>${standings[h] || 0}</strong> pts</span>`).join('') +
-    (recap ? `<div style="margin-top:10px;font-size:12px;color:var(--text-muted);">
-      Last scored: <strong style="color:var(--text-ticket)">${esc(recap.movie_title || '')}</strong> —
-      critics ${recap.actual_critics ?? '—'}% · audience ${recap.actual_audience ?? '—'}%</div>` : '');
-}
-
 function wireMore() {
   $('#copy-all-btn').addEventListener('click', async () => {
     const text = JSON.stringify(allStoredNotes(), null, 2);
@@ -1020,17 +987,14 @@ async function boot() {
   wireGenerator();
   wireMore();
 
-  leaderboard = await loadJson('data/leaderboard.json', { standings: {}, last_recap: null });
   const index = await loadJson('data/index.enc.json', { packs: [] });
   window.__packIndex = index.packs || [];
-  renderMore();
 
   const wanted = new URLSearchParams(location.search).get('pack');
   if (wanted) {
     const pack = await loadJson(`data/${wanted}`, null);
     if (pack) {
       pack.key = wanted.replace(/\.json$/, '');
-      pack.fallback_standings = leaderboard.standings;
       writeStore(PACK_MEMORY, pack.key);
       render(pack);
       return;

@@ -5,15 +5,14 @@
    up on the next online visit; other assets are stale-while-revalidate so the
    app opens instantly and still works offline. */
 
-const CACHE = 'ccprep-v4';
+const CACHE = 'ccprep-v5';
 const SHELL = [
   './',
   './index.html',
   './app.css',
   './app.js',
   '../assets/css/site-bar.css',
-  './data/index.enc.json',
-  './data/leaderboard.json'
+  './data/index.enc.json'
 ];
 
 self.addEventListener('install', (event) => {
