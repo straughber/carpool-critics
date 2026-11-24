@@ -62,5 +62,21 @@
     "imdbUrl": "https://www.imdb.com/title/tt35866986/",
     "tmdbUrl": "https://www.themoviedb.org/movie/1437511",
     "source": "tmdb"
+  },
+  "ep5": {
+    "title": "Focker In-Law",
+    "year": 2026,
+    "overview": "Henry, son of Greg and Pam Focker, aims to marry Olivia, a strong-willed former hostage negotiator who appears to be his complete mismatch. To Greg's shock, father-in-law Jack Byrnes takes a liking to Olivia, and her unprecedented rise into his Circle of Trust sparks chaos in the family before Jack's 80th birthday party.",
+    "runtimeMinutes": 105,
+    "runtime": "1h 45m",
+    "certification": "PG-13",
+    "genres": [
+      "Comedy",
+      "Romance"
+    ],
+    "director": "John Hamburg",
+    "imdbUrl": "https://www.imdb.com/title/tt34966140/",
+    "tmdbUrl": "https://www.themoviedb.org/movie/1400336",
+    "source": "tmdb"
   }
 }

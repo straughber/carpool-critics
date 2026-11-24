@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "siteId": "ep5",
+  "number": 5,
+  "slug": "ep5-focker-in-law",
+  "status": "scheduled",
+  "title": "We Guessed Focker In-Law's Rotten Tomatoes Score | Review",
+  "shortTitle": "Ep. 5: Focker In-Law",
+  "youtubeId": "rdMveNAlHUU",
+  "duration": "29m",
+  "durationSeconds": 1754,
+  "publishedAt": "2026-11-24T18:00:00Z",
+  "publishAt": "2026-11-24T18:00:00Z",
+  "uploadedAt": "2026-11-24T01:13:09.522521",
+  "description": "Focker In-Law (2026): We both said that film was way funnier than we expected it to be.",
+  "descriptionOverride": null,
+  "thumbnail": "assets/images/episodes/ep5-focker-in-law/thumbnail.png",
+  "ogImage": "https://carpoolcritics.com/assets/images/episodes/ep5-focker-in-law/thumbnail.png",
+  "sealedThumb": "assets/images/episodes/sealed/ep5.png",
+  "chapters": [
+    {
+      "time": "00:00",
+      "label": "Show Open"
+    },
+    {
+      "time": "06:49",
+      "label": "Spoilers and One Unnecessary Theory"
+    },
+    {
+      "time": "26:37",
+      "label": "Scorecards Nobody Agreed To"
+    }
+  ],
+  "movieQuery": "Focker In-Law",
+  "movieYear": 2026,
+  "movie": {
+    "title": "Focker In-Law",
+    "year": 2026,
+    "overview": "Henry, son of Greg and Pam Focker, aims to marry Olivia, a strong-willed former hostage negotiator who appears to be his complete mismatch. To Greg's shock, father-in-law Jack Byrnes takes a liking to Olivia, and her unprecedented rise into his Circle of Trust sparks chaos in the family before Jack's 80th birthday party.",
+    "runtimeMinutes": 105,
+    "runtime": "1h 45m",
+    "certification": "PG-13",
+    "genres": [
+      "Comedy",
+      "Romance"
+    ],
+    "director": "John Hamburg",
+    "imdbUrl": "https://www.imdb.com/title/tt34966140/",
+    "tmdbUrl": "https://www.themoviedb.org/movie/1400336",
+    "source": "tmdb"
+  },
+  "transcriptFile": "data/transcripts/ep5.json",
+  "hosts": [
+    {
+      "name": "Shane",
+      "seat": "driver",
+      "role": "Driver",
+      "seatPosition": "front_left",
+      "faceX": 0.6906,
+      "faceY": 0.4078,
+      "detected": true,
+      "description": "Shane / driver punch-in"
+    },
+    {
+      "name": "Dave",
+      "seat": "passenger",
+      "role": "Passenger",
+      "seatPosition": "front_right",
+      "faceX": 0.2881,
+      "faceY": 0.435,
+      "detected": true,
+      "description": "Dave / passenger punch-in"
+    },
+    {
+      "name": "Spencer",
+      "seat": "backseat_driver",
+      "role": "Back Seat // Driver Side",
+      "seatPosition": "rear_left",
+      "faceX": 0.506,
+      "faceY": 0.4133,
+      "detected": true,
+      "description": "Spencer / backseat_driver punch-in"
+    }
+  ],
+  "scorecards": {
+    "Spencer": 9.0,
+    "Dave": 8.7,
+    "Shane": 6.5
+  },
+  "bestMoment": {
+    "time": "00:03:05",
+    "seconds": 185,
+    "label": "explosive clash",
+    "quote": "I? Much like the other ones, I think the critics are probably going to be harsh, as they always are with comedies. I would say their best ca..."
+  },
+  "source": {
+    "episode": "EP05_Focker_In_Law",
+    "publishingPackage": "episodes/EP05_Focker_In_Law/03_Episode_Cuts/publishing_package.json",
+    "transcript": "episodes/EP05_Focker_In_Law/02_Transcription/EP05_Focker_In_Law_transcript.json",
+    "timeMap": "episodes/EP05_Focker_In_Law/03_Episode_Cuts/master_timeline_map.json",
+    "calibration": "episodes/EP05_Focker_In_Law/01_Raw_Footage/spatial_framing_calibration.json",
+    "droppedTranscriptTurns": 2,
+    "transcriptTurns": 88
+  },
+  "signal": {
+    "url": "data/signal/ep5.bin",
+    "fps": 12,
+    "width": 32,
+    "frames": 21048,
+    "glyphs": "▁▂▃▄▅▆▇█",
+    "durationSeconds": 1754.0,
+    "bytes": 673536,
+    "source": "episodes/EP05_Focker_In_Law/02_Transcription/EP05_Focker_In_Law_Master_Audio_Mastered.wav"
+  }
+}
