@@ -1,5 +1,38 @@
 [
   {
+    "id": "ep5",
+    "number": 5,
+    "slug": "ep5-focker-in-law",
+    "title": "We Guessed Focker In-Law's Rotten Tomatoes Score | Review",
+    "shortTitle": "Ep. 5: Focker In-Law",
+    "youtubeId": "rdMveNAlHUU",
+    "duration": "29m",
+    "durationSeconds": 1774,
+    "publishedAt": "2026-11-24T18:00:25Z",
+    "date": null,
+    "description": "Focker In-Law (2026): We both said that film was way funnier than we expected it to be.",
+    "thumbnail": "https://i.ytimg.com/vi/rdMveNAlHUU/hqdefault.jpg",
+    "chapters": [
+      {
+        "time": "00:00",
+        "label": "Show Open"
+      },
+      {
+        "time": "06:49",
+        "label": "Spoilers and One Unnecessary Theory"
+      },
+      {
+        "time": "26:37",
+        "label": "Scorecards Nobody Agreed To"
+      }
+    ],
+    "movieQuery": "Focker In-Law",
+    "movieYear": 2026,
+    "transcriptFile": "data/transcripts/ep5.json",
+    "status": "live",
+    "publishAt": "2026-11-24T18:00:00Z"
+  },
+  {
     "id": "ep4",
     "number": 4,
     "slug": "ep4-ebenezer",
@@ -7,8 +40,8 @@
     "shortTitle": "Ep. 4: Ebenezer",
     "youtubeId": "HrP28pu_dkk",
     "duration": "29m",
-    "durationSeconds": 1797,
-    "publishedAt": "2026-11-12T09:00:24-08:00",
+    "durationSeconds": 1798,
+    "publishedAt": "2026-11-12T17:00:24Z",
     "date": null,
     "description": "Ebenezer (2026): Was there a favorite of your cast members?",
     "thumbnail": "https://i.ytimg.com/vi/HrP28pu_dkk/hqdefault.jpg",
@@ -48,8 +81,8 @@
     "shortTitle": "Ep. 3: How to Rob a Bank",
     "youtubeId": "wKP85QglngQ",
     "duration": "30m",
-    "durationSeconds": 1849,
-    "publishedAt": "2026-11-11T07:00:17-08:00",
+    "durationSeconds": 1850,
+    "publishedAt": "2026-11-11T15:00:17Z",
     "date": null,
     "description": "How to Rob a Bank (2026): Nobody in this car is qualified to review How to Rob a Bank. We did it anyway.",
     "thumbnail": "https://i.ytimg.com/vi/wKP85QglngQ/hqdefault.jpg",
@@ -122,12 +155,12 @@
     "id": "ep1",
     "number": 1,
     "slug": "ep1-whalefall",
-    "title": "Whalefall: Our Predictions, Notarized | Review",
+    "title": "Whalefall: We Are Confidently Wrong",
     "shortTitle": "Ep. 1: Whalefall",
     "youtubeId": "diJB9TFQncU",
     "duration": "36m",
-    "durationSeconds": 2164,
-    "publishedAt": "2026-11-02T16:00:00Z",
+    "durationSeconds": 2184,
+    "publishedAt": "2026-11-02T16:00:12Z",
     "date": null,
     "description": "Whalefall (2026): I think the critics are going to have a hard time with this film.",
     "thumbnail": "https://i.ytimg.com/vi/diJB9TFQncU/hqdefault.jpg",
